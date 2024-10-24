@@ -18,12 +18,20 @@ jobs:
                 plone-version:
                   - 'Plone52'
                   - 'Plone60'
-                python-version: [3.7, 3.8, 3.9]
-
+                python-version: [3.8, 3.9, 3.10]
+                include:
+                  - plone-version: 'Plone52'
+                    python-version: 3.8
+                include:
+                  - plone-version: 'Plone60'
+                    python-version: 3.9
+                include:
+                  - plone-version: 'Plone60'
+                    python-version: 3.10
         steps:
             - uses: actions/setup-python@v4
               with:
-                  python-version: '3.9'
+                  python-version: '3.10'
             - uses: actions/checkout@v3
             - uses: actions/cache@v3
               with:
@@ -62,4 +70,4 @@ jobs:
               uses: "codecov/codecov-action@v3"
               with:
                 fail_ci_if_error: true
-              if: matrix.python-version == '3.7'
+              if: matrix.python-version == '3.10'
