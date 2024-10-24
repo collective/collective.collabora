@@ -19,13 +19,15 @@ class CollectiveCollaboraLayer(PloneSandboxLayer):
         # The z3c.autoinclude feature is disabled in the Plone fixture base
         # layer.
         import plone.app.dexterity
+
         self.loadZCML(package=plone.app.dexterity)
         import plone.restapi
+
         self.loadZCML(package=plone.restapi)
         self.loadZCML(package=collective.collabora)
 
     def setUpPloneSite(self, portal):
-        applyProfile(portal, 'collective.collabora:default')
+        applyProfile(portal, "collective.collabora:default")
 
 
 COLLECTIVE_COLLABORA_FIXTURE = CollectiveCollaboraLayer()
@@ -33,13 +35,13 @@ COLLECTIVE_COLLABORA_FIXTURE = CollectiveCollaboraLayer()
 
 COLLECTIVE_COLLABORA_INTEGRATION_TESTING = IntegrationTesting(
     bases=(COLLECTIVE_COLLABORA_FIXTURE,),
-    name='CollectiveCollaboraLayer:IntegrationTesting',
+    name="CollectiveCollaboraLayer:IntegrationTesting",
 )
 
 
 COLLECTIVE_COLLABORA_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(COLLECTIVE_COLLABORA_FIXTURE,),
-    name='CollectiveCollaboraLayer:FunctionalTesting',
+    name="CollectiveCollaboraLayer:FunctionalTesting",
 )
 
 
@@ -49,5 +51,5 @@ COLLECTIVE_COLLABORA_ACCEPTANCE_TESTING = FunctionalTesting(
         REMOTE_LIBRARY_BUNDLE_FIXTURE,
         z2.ZSERVER_FIXTURE,
     ),
-    name='CollectiveCollaboraLayer:AcceptanceTesting',
+    name="CollectiveCollaboraLayer:AcceptanceTesting",
 )
