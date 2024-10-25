@@ -66,10 +66,16 @@ jobs:
               run: |
                   tox -r -e black-check
 
+            - name: Lint with tox
+              run: |
+                  tox -r
+              env:
+                ACTION: lint
+
             - name: Test with tox
               run: |
                   tox -r
               env:
-                PLONEVERSION: ${{ matrix.plone-version }}
+                ACTION: ${{ matrix.plone-version }}
 
 # To add coverage, see  https://hynek.me/articles/ditch-codecov-python/
