@@ -10,7 +10,36 @@ on:
         branches: [main]
 
 jobs:
-    build:
+    lint:
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+              python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+              action-version: 'lint'
+        steps:
+            - name: Git checkout
+              uses: actions/checkout@v4
+
+            - name: Set up Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v4
+              with:
+                  python-version: ${{ matrix.python-version }}
+
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install tox tox-gh-actions
+
+            - name: Black-Check
+              run: |
+                  tox -r -e black-check
+
+            - name: Lint with tox
+              run: |
+                  tox -r
+
+    build_and_test:
         runs-on: ubuntu-latest
         strategy:
             fail-fast: false
@@ -66,22 +95,10 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install tox tox-gh-actions
 
-            - name: Black-Check
-              run: |
-                  tox -r -e black-check
-
-            - name: Lint with tox
-              run: |
-                  tox -r
-              env:
-                MATCH_ACTION_ENV: lint
-                PYTHON_VERSION: ${{ matrix.plone-version }}
-
             - name: Test with tox
               run: |
                   tox -r
               env:
-                MATCH_ACTION_ENV: ${{ matrix.plone-version }}
-                PYTHON_VERSION: ${{ matrix.plone-version }}
+                PLONE_VERSION: ${{ matrix.plone-version }}
 
 # To add coverage, see  https://hynek.me/articles/ditch-codecov-python/
