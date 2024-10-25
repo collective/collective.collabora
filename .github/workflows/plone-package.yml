@@ -16,14 +16,14 @@ jobs:
             fail-fast: true
             matrix:
                 include:
-                  - plone-version: 'Plone52'
-                    python-version: 3.8
+                  - python-version: 3.8
+                    plone-version: 'Plone52'
                 include:
-                  - plone-version: 'Plone60'
-                    python-version: 3.9
+                  - python-version: 3.9
+                    plone-version: 'Plone60'
                 include:
-                  - plone-version: 'Plone60'
-                    python-version: 3.10
+                  - python-version: 3.10
+                    plone-version: 'Plone60'
         steps:
             - uses: actions/setup-python@v4
               with:
