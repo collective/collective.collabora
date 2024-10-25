@@ -18,11 +18,11 @@ jobs:
                 plone-version: ['Plone52', 'Plone60']
                 include:
                   - plone-version: 'Plone52'
-                    python-version: 'py38'
+                    python-version: '3.8'
                   - plone-version: 'Plone60'
-                    python-version: 'py39'
+                    python-version: '3.9'
                   - plone-version: 'Plone60'
-                    python-version: 'py310'
+                    python-version: '3.10'
 
         steps:
             - uses: actions/setup-python@v4
