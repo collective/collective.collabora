@@ -17,8 +17,10 @@ jobs:
             matrix:
               python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
               plone-version: ['Plone52', 'Plone60']
-              # While tox skips invalid matrix combinations, Github actions
-              # does schedule and fail jobs for these. So exclude them.
+              # While tox skips invalid matrix combinations, Github actions does
+              # schedule and fail jobs for these. So exclude them. We could also
+              # use include instead, but then the job names do not contain the
+              # Plone version.
               exclude:
                 - python-version: '3.8'
                   plone-version: 'Plone60'
