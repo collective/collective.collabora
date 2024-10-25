@@ -13,21 +13,17 @@ jobs:
     build:
         runs-on: ubuntu-latest
         strategy:
-            fail-fast: true
+            fail-fast: false
             matrix:
-                include:
-                  - python-version: 3.8
-                    plone-version: 'Plone52'
-                include:
-                  - python-version: 3.9
-                    plone-version: 'Plone60'
-                include:
-                  - python-version: 3.10
-                    plone-version: 'Plone60'
+                plone-version:
+                  - 'Plone52'
+                  - 'Plone60'
+                python-version: [3.7, 3.8, 3.9]
+
         steps:
             - uses: actions/setup-python@v4
               with:
-                  python-version: '3.10'
+                  python-version: '3.9'
             - uses: actions/checkout@v3
             - uses: actions/cache@v3
               with:
@@ -66,4 +62,4 @@ jobs:
               uses: "codecov/codecov-action@v3"
               with:
                 fail_ci_if_error: true
-              if: matrix.python-version == '3.10'
+              if: matrix.python-version == '3.7'
