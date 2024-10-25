@@ -13,17 +13,17 @@ jobs:
     build:
         runs-on: ubuntu-latest
         strategy:
-            fail-fast: false
+            fail-fast: true
             matrix:
-                plone-version:
-                  - 'Plone52'
-                  - 'Plone60'
                 include:
                   - plone-version: 'Plone52'
                     python-version: 3.8
                 include:
                   - plone-version: 'Plone60'
-                    python-version: [3.9, 3.10]
+                    python-version: 3.9
+                include:
+                  - plone-version: 'Plone60'
+                    python-version: 3.10
         steps:
             - uses: actions/setup-python@v4
               with:
