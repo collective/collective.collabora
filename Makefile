@@ -22,7 +22,7 @@ dev60/bin/instance: dev60
 	./dev60/bin/buildout -c ./dev_plone60.cfg buildout:directory=$(CURDIR)/dev60 buildout:develop=$(CURDIR) buildout:update-versions-file=$(CURDIR)/dev_plone60.cfg install
 
 dev60:
-	tox --devenv ./dev60 -e py310-Plone60
+	tox --devenv ./dev60 -e py311-Plone60
 
 start52: dev52/bin/instance
 	./dev52/bin/instance fg

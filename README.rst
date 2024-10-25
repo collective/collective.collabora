@@ -31,7 +31,9 @@
 collective.collabora
 ====================
 
-Collabora Online integration for Quaive, Plone6 and Plone4
+Collabora Online integration for Plone.
+
+This README will be updated when development has reached some meaningful goals.
 
 Features
 --------
