@@ -67,8 +67,6 @@ jobs:
                   tox -r
               env:
                 PLONEVERSION: ${{ matrix.plone-version }}
-              with:
-                  python-version: ${{ matrix.python-version }}
 
             - name: "Upload coverage to Codecov"
               uses: "codecov/codecov-action@v3"
