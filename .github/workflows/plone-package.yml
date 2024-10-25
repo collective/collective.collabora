@@ -16,7 +16,7 @@ jobs:
             fail-fast: false
             matrix:
               python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
-              action-version: 'lint'
+              platform: ['lint']
         steps:
             - name: Git checkout
               uses: actions/checkout@v4
@@ -38,6 +38,8 @@ jobs:
             - name: Lint with tox
               run: |
                   tox -r
+              env:
+                - PLATFORM: 'lint'
 
     build_and_test:
         runs-on: ubuntu-latest
