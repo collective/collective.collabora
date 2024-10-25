@@ -62,13 +62,13 @@ jobs:
               run: |
                   tox -r -e black-check
 
-            - name: Lint with tox
-              run: |
-                  tox -r -e ${{ matrix.python-version }}-lint
-
             - name: Test with tox
               run: |
-                  tox -r -e ${{ matrix.python-version }}-${{ matrix.plone-version }}
+                  tox -r
+              env:
+                PLONEVERSION: ${{ matrix.plone-version }}
+              with:
+                  python-version: ${{ matrix.python-version }}
 
             - name: "Upload coverage to Codecov"
               uses: "codecov/codecov-action@v3"
