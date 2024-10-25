@@ -74,12 +74,12 @@ jobs:
               run: |
                   tox -r
               env:
-                MATCH_ACTION_ENV: ${{ matrix.python-version }} lint
+                MATCH_ACTION_ENV: lint
 
             - name: Test with tox
               run: |
                   tox -r
               env:
-                MATCH_ACTION_ENV: ${{ matrix.python-version }} ${{ matrix.plone-version }}
+                MATCH_ACTION_ENV: ${{ matrix.plone-version }}
 
 # To add coverage, see  https://hynek.me/articles/ditch-codecov-python/
