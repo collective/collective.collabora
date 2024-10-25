@@ -16,7 +16,11 @@ jobs:
             fail-fast: true
             matrix:
                 plone-version: ['Plone52', 'Plone60']
-                python-version: ['py38', 'py39', 'py310']
+                include:
+                  - plone-version: 'Plone52'
+                    python-version: 'py38'
+                  - plone-version: 'Plone60'
+                    python-version: 'py39'
 
         steps:
             - uses: actions/setup-python@v4
