@@ -4,4 +4,6 @@ include *.rst
 exclude tox.ini
 exclude *.txt
 exclude .gitlab-ci.yml
+exclude Makefile
+exclude .pre-commit-config.yaml
 global-exclude *.pyc
