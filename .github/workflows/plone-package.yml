@@ -38,7 +38,7 @@ jobs:
               run: |
                   tox -r
               env:
-                - PLATFORM: lint
+                PLATFORM: lint
 
     build_and_test:
         runs-on: ubuntu-latest
