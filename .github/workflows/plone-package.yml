@@ -68,8 +68,4 @@ jobs:
               env:
                 PLONEVERSION: ${{ matrix.plone-version }}
 
-            # - name: "Upload coverage to Codecov"
-            #   uses: "codecov/codecov-action@v3"
-            #   with:
-            #     fail_ci_if_error: true
-            #   if: matrix.python-version == '3.10'
+# To add coverage, see  https://hynek.me/articles/ditch-codecov-python/
