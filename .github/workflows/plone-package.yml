@@ -20,7 +20,7 @@ jobs:
                   - plone-version: 'Plone52'
                     python-version: 'py38'
                   - plone-version: 'Plone60'
-                    python-version: 'py39'
+                    python-version: ['py39', 'py310']
 
         steps:
             - uses: actions/setup-python@v4
