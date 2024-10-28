@@ -3,6 +3,14 @@
           i18n:domain="collective.collabora"
 >
 
-  <!-- -*- extra stuff goes here -*- -->
-
+  <record name="collective.collabora.server_url">
+    <field type="plone.registry.field.TextLine">
+      <title>URL of the LibreOffice / Collabora server</title>
+      <description>
+        The URL of the LibreOffice / Collabora server, e.g. "http://localhost:9980".
+      </description>
+      <required>True</required>
+    </field>
+    <value purge="false" />
+  </record>
 </registry>

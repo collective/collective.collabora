@@ -22,4 +22,13 @@
       type="plone"
       />
 
+  <browser:page
+      name="editor"
+      for="plone.app.contenttypes.interfaces.IFile"
+      class=".editor.EditorView"
+      template="editor.pt"
+      permission="zope2.View"
+      layer="collective.collabora.interfaces.ICollectiveCollaboraLayer"
+      />
+
 </configure>

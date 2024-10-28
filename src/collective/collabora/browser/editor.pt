@@ -1,0 +1,38 @@
+<tal:def define="
+           wopi_url view/wopi_url;
+         ">
+
+  <a class="pat-button icon-external"
+     href="${wopi_url}&amp;access_token=${view/jwt_token}"
+     target="_blank"
+     title="Edit"
+     tal:condition="wopi_url"
+     i18n:attributes="title"
+     i18n:domain="ploneintranet"
+     i18n:translate=""
+  >Edit</a>
+
+  <tal:if condition="nothing">
+    <form action="${wopi_url}"
+          enctype="multipart/form-data"
+          method="post"
+          tal:condition="wopi_url"
+    >
+      <input name="access_token"
+             type="hidden"
+             value="${view/jwt_token}"
+      />
+      <button class="pat-button icon-external"
+              title="Edit"
+              type="submit"
+              i18n:attributes="title"
+              i18n:domain="ploneintranet"
+              i18n:translate=""
+      >Edit</button>
+    </form>
+
+    <div tal:condition="not: wopi_url">
+      <h2 i18n:translate="libreoffice__could_no_load_editor">Could not load the LibreOffice / Collabora editor.</h2>
+    </div>
+  </tal:if>
+</tal:def>
