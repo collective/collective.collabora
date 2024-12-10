@@ -1,9 +1,10 @@
 graft src/collective
 graft docs
 include *.rst
-exclude tox.ini
 exclude *.txt
 exclude .gitlab-ci.yml
-exclude Makefile
 exclude .pre-commit-config.yaml
+exclude Makefile
+exclude docker-compose.yaml
+exclude tox.ini
 global-exclude *.pyc

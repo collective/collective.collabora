@@ -1,0 +1,78 @@
+# quaive.app.libreoffice docker-compose file
+# ==========================================
+
+# Have Docker installed:
+# https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+#
+# https://stackoverflow.com/questions/48957195/how-to-fix-docker-got-permission-denied-issue
+# $ sudo groupadd docker
+# $ sudo usermod -aG docker $USER
+
+# Run:
+# docker compose up
+# or:
+# docker compose start
+
+# Using a .env file
+# -----------------
+#
+# NOTE: Never check a `.env` file in into a repository!
+#
+# Use a .env file to set some parameters for production use.
+# The available environment variables are:
+# SERVER_PORT:     The port you want to expose the LibreOffice / Collabora
+#                  server to the Docker host.
+#                  Default: `9980`.
+# ADMIN_USER:      The username for the LibreOffice / Collabora admin interface.
+#                  Default: `admin`
+# ADMIN_PASS:      The password for the LibreOffice / Collabora admin interface.
+#                  Default: `admin`
+# SSL_TERMINATION: Enable SSL termination by the LibreOffice / Collabora server
+#                  when proxied by another SSL proxy, like nginx. Should be set
+#                  to `true` in production environments.
+#                  Default: `false`.
+#
+# This is an example `.env` file:
+# ```
+# ADMIN_USER=admin
+# ADMIN_PASS=supersecret
+# SSL_TERMINATION=true
+# SERVER_PORT=9980
+# ```
+
+# Service URLs
+# ------------
+#
+# https://host.docker.internal:9980/hosting/discovery
+# https://host.docker.internal:9980/hosting/capabilities
+# https://host.docker.internal:9980/browser/dist/admin/admin.html
+
+# References
+# ----------
+#
+# - https://hub.docker.com/r/collabora/code/tags
+# - https://sdk.collaboraonline.com/docs/installation/CODE_Docker_image.html
+# - https://sdk.collaboraonline.com/docs/installation/Configuration.html
+
+version: "3"
+services:
+
+  collabora:
+    image: collabora/code:latest
+    # image: collabora/code:22.05.9.2.1
+    container_name: collabora
+    expose:
+      - 9980
+    ports:
+      - "${SERVER_PORT:-9980}:9980"
+    extra_hosts:
+      # For DEVELOPMENT
+      # host.docker.internal points to the IP of the host and can be used by
+      # other docker containers, to reach collabora via the host. This is
+      # necessary if you're also running Plone as a docker container.
+      - "host.docker.internal:host-gateway"
+    environment:
+      - username=${ADMIN_USER:-admin}
+      - password=${ADMIN_PASS:-admin}
+      - extra_params=--o:ssl.enable=false --o:ssl.termination=${SSL_TERMINATION:-false}
+    restart: always
