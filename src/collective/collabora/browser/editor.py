@@ -43,6 +43,7 @@ class EditorView(BrowserView):
             and name == "contents"
         ):
             self.wopi_mode = "contents"
+        logger.debug("WOPI mode: %s", self.wopi_mode)
         return self
 
     def __call__(self):
@@ -87,8 +88,15 @@ class EditorView(BrowserView):
 
         file = self.context.file
         user = api.user.get_current()
+        user_id = user.getId()
         can_edit = api.user.has_permission(
             "Modify portal content", user=user, obj=self.context
+        )
+        logger.debug(
+            "File info: User: <%s> URL: <%s>.",
+            user_id,
+            can_edit and "Can edit" or "Can not edit",
+            self.context.absolute_url(),
         )
 
         return json.dumps(
@@ -96,7 +104,7 @@ class EditorView(BrowserView):
                 "BaseFileName": file.filename,
                 "Size": file.getSize(),
                 "OwnerId": self.context.getOwner().getId(),
-                "UserId": user.getId(),
+                "UserId": user_id,
                 "UserCanWrite": can_edit,
                 "UserFriendlyName": user.getProperty("fullname"),
                 "UserCanNotWriteRelative": True,  # No "Save As" button
@@ -138,6 +146,12 @@ class EditorView(BrowserView):
             context_dt = datetime.fromisoformat(context_timestamp)
 
             if context_dt > user_dt:
+                logger.debug(
+                    "User changes are outdated. User: <%s>. URL: <%s>.",
+                    api.user.get_current().getId(),
+                    self.context.absolute_url(),
+                )
+
                 self.request.response.setStatus(409)
                 return json.dumps({"COOLStatusCode": 1010})
 
@@ -166,6 +180,12 @@ class EditorView(BrowserView):
         return json.dumps({})
 
     @property
+    def server_url(self):
+        return api.portal.get_registry_record(
+            "collective.collabora.server_url", default=None
+        )
+
+    @property
     def wopi_url(self):
         """Return the URL to load the document in LibreOffice / Collabora."""
         editor_url = self.editor_url
@@ -182,18 +202,14 @@ class EditorView(BrowserView):
         - Call wopi_discovery.
         - Get the right URL depending on the file extension from the XML
         """
-        server_url = api.portal.get_registry_record(
-            "collective.collabora.server_url", default=None
-        )
-        if not server_url:
+        if not self.server_url:
+            logger.error("collective.collabora.server_url is not configured.")
             return None
-
-        # TODO: some error handling in case server is not reachable.
         try:
-            xml = requests.get(f"{server_url}/hosting/discovery").text
+            xml = requests.get(f"{self.server_url}/hosting/discovery").text
         except requests.exceptions.RequestException as e:
             logger.error(e)
-            raise e
+            return None
         parser = etree.XMLParser()
         tree = etree.fromstring(xml, parser=parser)
         # ext = self.context.file.filename.split(".")[-1]
@@ -217,5 +233,9 @@ class EditorView(BrowserView):
         plugins = filter(
             lambda it: it[1].meta_type == "JWT Authentication Plugin", plugins
         )
-        jwt_plugin = next(plugins)[1]
+        try:
+            jwt_plugin = next(plugins)[1]
+        except StopIteration:
+            logger.error("JWT Authentication Plugin not found.")
+            return None
         return jwt_plugin.create_token(api.user.get_current().getId())

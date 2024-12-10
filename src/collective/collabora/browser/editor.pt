@@ -1,38 +1,65 @@
 <tal:def define="
+           server_url view/server_url;
            wopi_url view/wopi_url;
+           connection_error python: server_url and not wopi_url;
+           jwt_token view/jwt_token;
          ">
 
-  <a class="pat-button icon-external"
-     href="${wopi_url}&amp;access_token=${view/jwt_token}"
-     target="_blank"
-     title="Edit"
-     tal:condition="wopi_url"
-     i18n:attributes="title"
-     i18n:domain="ploneintranet"
-     i18n:translate=""
-  >Edit</a>
+  <div tal:condition="not:server_url">
+    <h2 i18n:translate="error_server_url_short">Error: Collabora server URL not configured.</h2>
+    <p i18n:translate="error_server_url_long">
+      The registry record
+      <code>collective.collabora.server_url</code>
+       should point at your Collabora server.
+    </p>
+  </div>
 
-  <tal:if condition="nothing">
-    <form action="${wopi_url}"
-          enctype="multipart/form-data"
-          method="post"
-          tal:condition="wopi_url"
-    >
-      <input name="access_token"
-             type="hidden"
-             value="${view/jwt_token}"
-      />
-      <button class="pat-button icon-external"
-              title="Edit"
-              type="submit"
-              i18n:attributes="title"
-              i18n:domain="ploneintranet"
-              i18n:translate=""
-      >Edit</button>
-    </form>
+  <div tal:condition="connection_error">
+    <h2 i18n:translate="error_connection_short">Error: Collabora server cannot edit document.</h2>
+    <p i18n:translate="error_connection_long">
+      The Collabora server at
+      <a href="${server_url}">${server_url}</a>
+       cannot be reached,
+      or does not support editing this document's mimetype
+      <code>${context/file/contentType}</code>.
+    </p>
+  </div>
 
-    <div tal:condition="not: wopi_url">
-      <h2 i18n:translate="libreoffice__could_no_load_editor">Could not load the LibreOffice / Collabora editor.</h2>
-    </div>
-  </tal:if>
+  <div tal:condition="not:jwt_token">
+    <h2 i18n:translate="error_jwt_short">Error: JWT Authentication Plugin not found.</h2>
+    <p i18n:translate="error_jwt_long">
+      Please ask your server administrator to investigate.
+    </p>
+  </div>
+
+  <div tal:condition="python: wopi_url and jwt_token">
+
+    <a class="pat-button icon-external"
+       href="${wopi_url}&amp;access_token=${view/jwt_token}"
+       target="_blank"
+       title="Edit"
+       i18n:attributes="title"
+       i18n:translate=""
+    >Edit</a>
+
+    <tal:if condition="nothing">
+      <form action="${wopi_url}"
+            enctype="multipart/form-data"
+            method="post"
+            tal:condition="wopi_url"
+      >
+        <input name="access_token"
+               type="hidden"
+               value="${view/jwt_token}"
+        />
+        <button class="pat-button icon-external"
+                title="Edit"
+                type="submit"
+                i18n:attributes="title"
+                i18n:domain="ploneintranet"
+                i18n:translate=""
+        >Edit</button>
+      </form>
+    </tal:if>
+  </div>
 </tal:def>
