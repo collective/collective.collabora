@@ -155,13 +155,10 @@ class EditorView(BrowserView):
                 data=data, filename=filename, contentType=content_type
             )
 
-            # TODO: change back to logger.debug when we get a feeling on the
-            #       update frequency.
-            logger.info(
-                f"""File updated.
-                    User: {api.user.get_current().getId()},
-                    URL: {self.context.absolute_url()}
-                """
+            logger.debug(
+                "File updated. User: <%s>. URL: <%s>.",
+                api.user.get_current().getId(),
+                self.context.absolute_url(),
             )
 
         # Success.
