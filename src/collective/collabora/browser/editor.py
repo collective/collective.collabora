@@ -1,3 +1,4 @@
+from collective.collabora import _
 from datetime import datetime
 from logging import getLogger
 from lxml import etree
@@ -23,6 +24,7 @@ class EditorView(BrowserView):
     """LibreOffice / Collabora editor view."""
 
     wopi_mode = None
+    error = None
 
     def publishTraverse(self, request, name, *args, **kwargs):
         """Provide the WOPI endpoints:
@@ -203,11 +205,18 @@ class EditorView(BrowserView):
         - Get the right URL depending on the file extension from the XML
         """
         if not self.server_url:
+            self.error = _(
+                "error_server_url",
+                default="collective.collabora.server_url is not configured.",
+            )
             logger.error("collective.collabora.server_url is not configured.")
             return None
         try:
             xml = requests.get(f"{self.server_url}/hosting/discovery").text
         except requests.exceptions.RequestException as e:
+            self.error = _(
+                "error_server_discovery", default="Collabora server is not responding."
+            )
             logger.error(e)
             return None
         parser = etree.XMLParser()
@@ -218,6 +227,12 @@ class EditorView(BrowserView):
         action = tree.xpath(f"//app[@name='{mime_type}']/action")
         action = action[0] if len(action) else None
         if action is None:
+            self.error = _(
+                "error_editor_mimetype",
+                default="Collabora does not support mimetype ${mimetype}.",
+                mapping={"mimetype": mime_type},
+            )
+            logger.error("Collabora does not support mimetype %s.", mime_type)
             return None
         return action.get("urlsrc")
 
@@ -236,6 +251,9 @@ class EditorView(BrowserView):
         try:
             jwt_plugin = next(plugins)[1]
         except StopIteration:
+            self.error = _(
+                "error_jwt_plugin", default="JWT Authentication Plugin not found."
+            )
             logger.error("JWT Authentication Plugin not found.")
             return None
         return jwt_plugin.create_token(api.user.get_current().getId())
