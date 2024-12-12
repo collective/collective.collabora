@@ -1,6 +1,4 @@
 <tal:def define="
-           wopi_url view/wopi_url;
-           jwt_token view/jwt_token;
            error view/error;
          ">
 
@@ -9,34 +7,28 @@
     <p i18n:translate="error">${error}</p>
   </div>
 
-  <div tal:condition="python: wopi_url and jwt_token and not error">
+  <div tal:condition="python: not error">
+    <p>
+      <a href="${context/absolute_url}/view"
+         i18n:translate=""
+      >Close editor</a>
+      |
+      <a href="${view/wopi_url}&amp;access_token=${view/jwt_token}"
+         target="_blank"
+         i18n:translate=""
+      >Open editor without iframe fin new tab</a>
+    </p>
+    <!--
+         Iframe loads menu but does not show the actual document yet.
+         For possible fix, seehttps://forum.collaboraonline.com/t/cross-origin-frame-problems/3099
+    -->
 
-    <a class="pat-button icon-external"
-       href="${wopi_url}&amp;access_token=${view/jwt_token}"
-       target="_blank"
-       title="Edit"
-       i18n:attributes="title"
-       i18n:translate=""
-    >Edit</a>
-
-    <tal:if condition="nothing">
-      <form action="${wopi_url}"
-            enctype="multipart/form-data"
-            method="post"
-            tal:condition="wopi_url"
-      >
-        <input name="access_token"
-               type="hidden"
-               value="${view/jwt_token}"
-        />
-        <button class="pat-button icon-external"
-                title="Edit"
-                type="submit"
-                i18n:attributes="title"
-                i18n:domain="ploneintranet"
-                i18n:translate=""
-        >Edit</button>
-      </form>
-    </tal:if>
+    <iframe allowfullscreen="true"
+            frameborder="1"
+            height="100%"
+            scrolling="no"
+            src="${view/wopi_url}&amp;access_token=${view/jwt_token}"
+            width="100%"
+    ></iframe>
   </div>
 </tal:def>
