@@ -16,19 +16,47 @@
       <a href="${view/wopi_url}&amp;access_token=${view/jwt_token}"
          target="_blank"
          i18n:translate=""
-      >Open editor without iframe fin new tab</a>
+      >Open editor without iframe in new tab</a>
     </p>
-    <!--
-         Iframe loads menu but does not show the actual document yet.
-         For possible fix, seehttps://forum.collaboraonline.com/t/cross-origin-frame-problems/3099
-    -->
-
-    <iframe allowfullscreen="true"
-            frameborder="1"
-            height="100%"
-            scrolling="no"
-            src="${view/wopi_url}&amp;access_token=${view/jwt_token}"
-            width="100%"
-    ></iframe>
   </div>
+
+  <!-- to remove: frameborder for debugging -->
+  <iframe tal:condition="python: not error"
+          allowfullscreen="true"
+          id="collabora_iframe"
+          frameborder="1"
+          height="100%"
+          scrolling="no"
+          src="${view/wopi_url}&amp;access_token=${view/jwt_token}"
+          width="100%"
+    ></iframe>
+
+    <script type="text/javascript">
+     function handlePostMessage(e) {
+         // The actual message is contained in the data property of the event.
+         var msg = JSON.parse(e.data);
+
+         // The message ID is now a property of the message object.
+         var msgId = msg.MessageId;
+
+         // The message parameters themselves are in the Values
+         // parameter on the message object.
+         var msgData = msg.Values;
+
+         // Do something with the message here.
+         console.log('Received message: ' + msgId);
+         console.log(msgData);
+
+         if (msgData.Status == 'Document_Loaded') {
+             console.log("Resizing iframe on document loaded");
+             var iframe = document.getElementById("collabora_iframe");
+             var offset = iframe.offsetTop + 5;
+             iframe.style.height = 'calc(100vh - ' + offset  + 'px)';
+         }
+
+     }
+
+     window.addEventListener('message', handlePostMessage, false);
+    </script>
+
 </tal:def>

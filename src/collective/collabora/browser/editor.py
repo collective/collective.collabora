@@ -119,6 +119,7 @@ class EditorView(BrowserView):
             "UserFriendlyName": user.getProperty("fullname") or user_id,
             "UserCanNotWriteRelative": True,  # No "Save As" button
             "LastModifiedTime": self.context.modified().ISO8601(),
+            "PostMessageOrigin": self.context.absolute_url(),
         }
         logger.debug(
             "file_info: %s %s %s: %s",
