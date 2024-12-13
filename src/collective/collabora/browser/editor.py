@@ -14,6 +14,7 @@ from zope.publisher.interfaces import IPublishTraverse
 
 import json
 import requests
+import urllib.parse
 
 
 logger = getLogger(__name__)
@@ -217,7 +218,8 @@ class EditorView(BrowserView):
             return None
         document_url = self.context.absolute_url()
         uuid = IUUID(self.context)
-        return f"{editor_url}?WOPISrc={document_url}/@@editor/wopi/files/{uuid}"
+        wopi_src = urllib.parse.quote(f"{document_url}/@@editor/wopi/files/{uuid}")
+        return f"{editor_url}WOPISrc={wopi_src}"
 
     @property
     def editor_url(self):
