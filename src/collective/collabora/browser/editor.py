@@ -34,8 +34,14 @@ class EditorView(BrowserView):
 
         or fall back to the default view.
         """
+        logger.debug(
+            "publishTraverse(): %s, %s, %s (url=%s)",
+            name,
+            args,
+            kwargs,
+            request.environ["REQUEST_URI"],
+        )
         parts = request.environ["REQUEST_URI"].split("/")
-
         if parts[-3] == "wopi" and parts[-2] == "files" and name == IUUID(self.context):
             self.wopi_mode = "file_info"
         elif (
@@ -45,18 +51,26 @@ class EditorView(BrowserView):
             and name == "contents"
         ):
             self.wopi_mode = "contents"
-        logger.debug("WOPI mode: %s", self.wopi_mode)
+        if self.wopi_mode:
+            logger.debug("WOPI mode: %s %s", self.request.method, self.wopi_mode)
         return self
 
     def __call__(self):
-        if self.wopi_mode == "file_info":
+        logger.debug(
+            "EditorView(): %s %s",
+            self.request.method,
+            self.request.environ["REQUEST_URI"],
+        )
+        if not self.server_url:
+            # just checking it activates the error message
+            pass
+        elif self.wopi_mode == "file_info":
             return self.wopi_check_file_info()
-        if self.wopi_mode == "contents":
+        elif self.wopi_mode == "contents":
             if self.request.method == "GET":
                 return self.wopi_get_file()
             elif self.request.method == "POST":
                 return self.wopi_put_file()
-
         return super().__call__()
 
     def wopi_get_file(self):
@@ -64,7 +78,7 @@ class EditorView(BrowserView):
 
         Return the file content.
         """
-
+        logger.debug("wopi_get_file: %s", self.context.absolute_url())
         # TODO: CORS header actually not needed.
         self.request.response.setHeader("Access-Control-Allow-Origin", "*")
 
@@ -75,6 +89,7 @@ class EditorView(BrowserView):
 
         Return the file information.
         """
+        logger.debug("wopi_check_file_info: %s", self.context.absolute_url())
         # TODO: CORS header actually not needed.
         self.request.response.setHeader("Access-Control-Allow-Origin", "*")
         self.request.response.setHeader("Content-Type", "application/json")
@@ -94,31 +109,31 @@ class EditorView(BrowserView):
         can_edit = api.user.has_permission(
             "Modify portal content", user=user, obj=self.context
         )
+        file_info = {
+            "BaseFileName": file.filename,
+            "Size": file.getSize(),
+            "OwnerId": self.context.getOwner().getId(),
+            "UserId": user_id,
+            "UserCanWrite": can_edit,
+            "UserFriendlyName": user.getProperty("fullname") or user_id,
+            "UserCanNotWriteRelative": True,  # No "Save As" button
+            "LastModifiedTime": self.context.modified().ISO8601(),
+        }
         logger.debug(
-            "File info: User: <%s> URL: <%s>.",
+            "file_info: %s %s %s: %s",
             user_id,
-            can_edit and "Can edit" or "Can not edit",
+            can_edit and "can edit" or "can not edit",
             self.context.absolute_url(),
+            file_info,
         )
-
-        return json.dumps(
-            {
-                "BaseFileName": file.filename,
-                "Size": file.getSize(),
-                "OwnerId": self.context.getOwner().getId(),
-                "UserId": user_id,
-                "UserCanWrite": can_edit,
-                "UserFriendlyName": user.getProperty("fullname"),
-                "UserCanNotWriteRelative": True,  # No "Save As" button
-                "LastModifiedTime": self.context.modified().ISO8601(),
-            }
-        )
+        return json.dumps(file_info)
 
     def wopi_put_file(self):
         """WOPI PutFile endpoint.
 
         Update the file content.
         """
+        logger.debug("wopi_put_file: %s", self.context.absolute_url())
         self.request.response.setHeader("Content-Type", "application/json")
 
         # TODO:
@@ -183,9 +198,16 @@ class EditorView(BrowserView):
 
     @property
     def server_url(self):
-        return api.portal.get_registry_record(
+        server_url = api.portal.get_registry_record(
             "collective.collabora.server_url", default=None
         )
+        if not server_url:
+            self.error = _(
+                "error_server_url",
+                default="collective.collabora.server_url is not configured.",
+            )
+            logger.error("collective.collabora.server_url is not configured.")
+        return server_url
 
     @property
     def wopi_url(self):
@@ -205,11 +227,6 @@ class EditorView(BrowserView):
         - Get the right URL depending on the file extension from the XML
         """
         if not self.server_url:
-            self.error = _(
-                "error_server_url",
-                default="collective.collabora.server_url is not configured.",
-            )
-            logger.error("collective.collabora.server_url is not configured.")
             return None
         try:
             xml = requests.get(f"{self.server_url}/hosting/discovery").text
