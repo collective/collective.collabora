@@ -252,7 +252,8 @@ class EditorView(BrowserView):
             jwt_plugin = next(plugins)[1]
         except StopIteration:
             self.error = _(
-                "error_jwt_plugin", default="JWT Authentication Plugin not found."
+                "error_jwt_plugin",
+                default="JWT Authentication Plugin not found. Is plone.restapi installed?",
             )
             logger.error("JWT Authentication Plugin not found.")
             return None
