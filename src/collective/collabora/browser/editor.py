@@ -3,10 +3,11 @@ from datetime import datetime
 from logging import getLogger
 from lxml import etree
 from plone import api
+from plone.app.contenttypes.browser.file import FileView
+from plone.memoize.view import memoize
 from plone.namedfile.file import NamedBlobFile
 from plone.protect.interfaces import IDisableCSRFProtection
 from plone.uuid.interfaces import IUUID
-from Products.Five import BrowserView
 from Products.PluggableAuthService.interfaces.plugins import IAuthenticationPlugin
 from zope.interface import alsoProvides
 from zope.interface import implementer
@@ -21,7 +22,7 @@ logger = getLogger(__name__)
 
 
 @implementer(IPublishTraverse)
-class EditorView(BrowserView):
+class EditorView(FileView):
     """LibreOffice / Collabora editor view."""
 
     wopi_mode = None
@@ -30,8 +31,8 @@ class EditorView(BrowserView):
     def publishTraverse(self, request, name, *args, **kwargs):
         """Provide the WOPI endpoints:
 
-            - @editor/wopi/files/<id>
-            - @editor/wopi/files/<id>/contents
+            - @collabora/wopi/files/<id>
+            - @collabora/wopi/files/<id>/contents
 
         or fall back to the default view.
         """
@@ -74,6 +75,13 @@ class EditorView(BrowserView):
                 return self.wopi_put_file()
         return super().__call__()
 
+    @property
+    @memoize
+    def can_edit(self):
+        return api.user.has_permission(
+            "Modify portal content", user=api.user.get_current(), obj=self.context
+        )
+
     def wopi_get_file(self):
         """WOPI GetFile endpoint.
 
@@ -107,15 +115,12 @@ class EditorView(BrowserView):
         file = self.context.file
         user = api.user.get_current()
         user_id = user.getId()
-        can_edit = api.user.has_permission(
-            "Modify portal content", user=user, obj=self.context
-        )
         file_info = {
             "BaseFileName": file.filename,
             "Size": file.getSize(),
             "OwnerId": self.context.getOwner().getId(),
             "UserId": user_id,
-            "UserCanWrite": can_edit,
+            "UserCanWrite": self.can_edit,
             "UserFriendlyName": user.getProperty("fullname") or user_id,
             "UserCanNotWriteRelative": True,  # No "Save As" button
             "LastModifiedTime": self.context.modified().ISO8601(),
@@ -124,7 +129,7 @@ class EditorView(BrowserView):
         logger.debug(
             "file_info: %s %s %s: %s",
             user_id,
-            can_edit and "can edit" or "can not edit",
+            self.can_edit and "can edit" or "can not edit",
             self.context.absolute_url(),
             file_info,
         )
@@ -219,7 +224,7 @@ class EditorView(BrowserView):
             return None
         document_url = self.context.absolute_url()
         uuid = IUUID(self.context)
-        wopi_src = urllib.parse.quote(f"{document_url}/@@editor/wopi/files/{uuid}")
+        wopi_src = urllib.parse.quote(f"{document_url}/@@collabora/wopi/files/{uuid}")
         return f"{editor_url}WOPISrc={wopi_src}"
 
     @property

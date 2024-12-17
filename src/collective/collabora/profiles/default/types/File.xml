@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+        meta_type="Dexterity FTI"
+        name="File"
+        i18n:domain="plone"
+>
+
+
+  <!-- override id="edit" because that id is sorted up high in toolbar -->
+  <action action_id="edit"
+          category="object"
+          condition_expr=""
+          icon_expr="string:toolbar-action/edit"
+          title="Open"
+          url_expr="string:${object_url}/@@collabora"
+          visible="True"
+          i18n:attributes="title"
+  >
+    <permission value="View" />
+  </action>
+  <action action_id="edit-metadata"
+          category="object"
+          condition_expr=""
+          icon_expr="string:toolbar-action/edit"
+          title="Edit metadata"
+          url_expr="string:${object_url}/edit"
+          visible="True"
+          i18n:attributes="title"
+  >
+    <permission value="Manage portal content" />
+  </action>
+</object>

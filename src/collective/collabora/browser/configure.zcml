@@ -23,7 +23,7 @@
       />
 
   <browser:page
-      name="editor"
+      name="collabora"
       for="plone.app.contenttypes.interfaces.IFile"
       class=".editor.EditorView"
       template="editor.pt"

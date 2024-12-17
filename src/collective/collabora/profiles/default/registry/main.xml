@@ -7,10 +7,10 @@
     <field type="plone.registry.field.TextLine">
       <title>URL of the LibreOffice / Collabora server</title>
       <description>
-        The URL of the LibreOffice / Collabora server, e.g. "http://localhost:9980".
+        The URL of the LibreOffice / Collabora server, e.g. "http://host.docker.internal:9980".
       </description>
       <required>True</required>
     </field>
-    <value purge="false" />
+    <value purge="false">http://host.docker.internal:9980</value>
   </record>
 </registry>

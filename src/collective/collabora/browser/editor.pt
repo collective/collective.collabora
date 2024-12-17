@@ -1,62 +1,120 @@
-<tal:def define="
-           error view/error;
-         ">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      lang="en"
+      metal:use-macro="context/@@main_template/macros/master"
+      xml:lang="en"
+      i18n:domain="plone"
+>
+  <body>
 
-  <div tal:condition="error">
-    <h2 i18n:translate="label_error">Error</h2>
-    <p i18n:translate="error">${error}</p>
-  </div>
+    <metal:main fill-slot="main">
+      <metal:block define-macro="main"
+                   tal:define="
+                     file python:context.file;
+                   "
+                   tal:on-error="nothing"
+      >
 
-  <div tal:condition="python: not error">
-    <p>
-      <a href="${context/absolute_url}/view"
-         i18n:translate=""
-      >Close editor</a>
-      |
-      <a href="${view/wopi_url}&amp;access_token=${view/jwt_token}"
-         target="_blank"
-         i18n:translate=""
-      >Open editor without iframe in new tab</a>
-    </p>
-  </div>
+        <!-- FIXME: factor css out -->
+        <style type="text/css">
+         .section-collabora-actions { text-align: right; background-color: #d6d6d6; margin-bottom: 0; padding: 0.5rem; }
+         .section-collabora-actions .btn { font-size: 0.9rem; }
+         .section-collabora-actions .fullscreen { float: left; }
+        </style>
 
-  <!-- to remove: frameborder for debugging -->
-  <iframe tal:condition="python: not error"
-          allowfullscreen="true"
-          id="collabora_iframe"
-          frameborder="1"
-          height="100%"
-          scrolling="no"
-          src="${view/wopi_url}&amp;access_token=${view/jwt_token}"
-          width="100%"
-    ></iframe>
+        <tal:has_file condition="python:file">
+          <tal:block tal:define="
+                       filename python: file.filename;
+                       download_url python: '{}/@@download/file/{}'.format(context.absolute_url(), filename);
+                     ">
 
-    <script type="text/javascript">
-     function handlePostMessage(e) {
-         // The actual message is contained in the data property of the event.
-         var msg = JSON.parse(e.data);
+            <section class="section section-collabora-actions">
+              <a class="btn btn-secondary fullscreen"
+                 href="javascript:alert('Not implemented yet')"
+                 i18n:translate=""
+              >Fullscreen</a>
+              <a class="btn btn-secondary download"
+                 href="${python:download_url}"
+              ><span i18n:translate="">Download</span>
+                <span i18n:ignore="">(${python: view.human_readable_size()})</span></a>
+              <a class="btn btn-secondary edit"
+                 href="${python:context.absolute_url()}/@@edit"
+                 tal:condition="view/can_edit"
+                 i18n:translate=""
+              >Edit metadata</a>
+              <a class="btn btn-primary"
+                 href="javascript:alert('Not implemented yet')"
+                 tal:condition="view/can_edit"
+                 i18n:translate=""
+              >Save & Close</a>
+            </section>
 
-         // The message ID is now a property of the message object.
-         var msgId = msg.MessageId;
+            <section class="section section-collabora-main">
 
-         // The message parameters themselves are in the Values
-         // parameter on the message object.
-         var msgData = msg.Values;
+              <tal:def define="
+                         error view/error;
+                       ">
 
-         // Do something with the message here.
-         console.log('Received message: ' + msgId);
-         console.log(msgData);
+                <div tal:condition="error">
+                  <h2 i18n:translate="label_error">Error</h2>
+                  <p i18n:translate="error">${error}</p>
+                </div>
 
-         if (msgData.Status == 'Document_Loaded') {
-             console.log("Resizing iframe on document loaded");
-             var iframe = document.getElementById("collabora_iframe");
-             var offset = iframe.offsetTop + 5;
-             iframe.style.height = 'calc(100vh - ' + offset  + 'px)';
-         }
 
-     }
+                <iframe id="collabora_iframe"
+                        allowfullscreen="true"
+                        height="100%"
+                        scrolling="no"
+                        src="${view/wopi_url}&amp;access_token=${view/jwt_token}"
+                        width="100%"
+                        tal:condition="python: not error"
+                ></iframe>
 
-     window.addEventListener('message', handlePostMessage, false);
-    </script>
+                <script type="text/javascript">
+   function handlePostMessage(e) {
+       // The actual message is contained in the data property of the event.
+       var msg = JSON.parse(e.data);
 
-</tal:def>
+       // The message ID is now a property of the message object.
+       var msgId = msg.MessageId;
+
+       // The message parameters themselves are in the Values
+       // parameter on the message object.
+       var msgData = msg.Values;
+
+       // Do something with the message here.
+       console.log('Received message: ' + msgId);
+       console.log(msgData);
+
+       if (msgData.Status == 'Document_Loaded') {
+           console.log("Resizing iframe on document loaded");
+           var iframe = document.getElementById("collabora_iframe");
+           var offset = iframe.offsetTop + 5;
+           iframe.style.height = 'calc(100vh - ' + offset  + 'px)';
+       }
+
+   }
+
+   window.addEventListener('message', handlePostMessage, false);
+                </script>
+
+              </tal:def>
+
+            </section>
+
+          </tal:block>
+        </tal:has_file>
+
+        <tal:has_file condition="python:not file">
+          <p i18n:translate="">
+            There is no file uploaded.
+          </p>
+        </tal:has_file>
+
+      </metal:block>
+    </metal:main>
+
+  </body>
+</html>
