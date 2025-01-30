@@ -54,7 +54,6 @@
 # - https://sdk.collaboraonline.com/docs/installation/CODE_Docker_image.html
 # - https://sdk.collaboraonline.com/docs/installation/Configuration.html
 
-version: "3"
 services:
 
   collabora:
