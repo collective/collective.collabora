@@ -22,7 +22,7 @@ logger = getLogger(__name__)
 
 
 @implementer(IPublishTraverse)
-class EditorView(FileView):
+class CoolEditorView(FileView):
     """LibreOffice / Collabora editor view."""
 
     wopi_mode = None
@@ -31,8 +31,8 @@ class EditorView(FileView):
     def publishTraverse(self, request, name, *args, **kwargs):
         """Provide the WOPI endpoints:
 
-            - @collabora/wopi/files/<id>
-            - @collabora/wopi/files/<id>/contents
+            - @@cool_editor/wopi/files/<id>
+            - @@cool_editor/wopi/files/<id>/contents
 
         or fall back to the default view.
         """
@@ -228,7 +228,7 @@ class EditorView(FileView):
             return None
         document_url = self.context.absolute_url()
         uuid = IUUID(self.context)
-        wopi_src = urllib.parse.quote(f"{document_url}/@@collabora/wopi/files/{uuid}")
+        wopi_src = urllib.parse.quote(f"{document_url}/@@cool_editor/wopi/files/{uuid}")
         return f"{editor_url}WOPISrc={wopi_src}"
 
     @property

@@ -68,7 +68,7 @@
                 </div>
 
 
-                <iframe id="collabora_iframe"
+                <iframe id="cool_iframe"
                         allowfullscreen="true"
                         height="100%"
                         scrolling="no"
@@ -83,7 +83,7 @@
                         "
                 >
                  var targetOrigin = "${server_url}";
-                 var iframe = document.getElementById("collabora_iframe")
+                 var iframe = document.getElementById("cool_iframe")
 
                  function collabora_postMessage(message_id, values={}) {
                      var msg = {

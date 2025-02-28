@@ -6,10 +6,10 @@
     >
 
   <browser:page
-      name="collabora"
+      name="cool_editor"
       for="plone.app.contenttypes.interfaces.IFile"
-      class=".editor.EditorView"
-      template="editor.pt"
+      class=".cool_editor.CoolEditorView"
+      template="cool_editor.pt"
       permission="zope2.View"
       layer="collective.collabora.interfaces.ICollectiveCollaboraLayer"
       />
