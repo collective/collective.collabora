@@ -109,15 +109,6 @@ class CoolEditorView(FileView):
         self.request.response.setHeader("Access-Control-Allow-Origin", "*")
         self.request.response.setHeader("Content-Type", "application/json")
 
-        # NOTE / TODO:
-        # There is a difference between different dates of the document:
-        # (Pdb++) self.context.modified()
-        # DateTime('2021/07/23 00:59:23.820897 GMT+2')
-        # (Pdb++) self.context.modified().ISO8601()
-        # '2021-07-23T00:59:23+02:00'
-        # (Pdb++) self.context.ModificationDate()
-        # '2021-07-22T23:59:23+01:00'
-
         file = self.context.file
         user = api.user.get_current()
         user_id = user.getId()
