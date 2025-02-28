@@ -204,6 +204,10 @@ class EditorView(FileView):
         return json.dumps({})
 
     @property
+    def portal_url(self):
+        return api.portal.get().absolute_url()
+
+    @property
     def server_url(self):
         server_url = api.portal.get_registry_record(
             "collective.collabora.server_url", default=None
