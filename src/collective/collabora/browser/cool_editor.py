@@ -226,6 +226,17 @@ class CoolEditorView(FileView):
         return portal_url
 
     @property
+    def download_url(self):
+        return "/".join(
+            (
+                self.context.absolute_url(),
+                "@@download",
+                "file",
+                self.context.file.filename,
+            )
+        )
+
+    @property
     def server_url(self):
         server_url = api.portal.get_registry_record(
             "collective.collabora.server_url", default=None

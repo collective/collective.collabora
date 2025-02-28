@@ -12,158 +12,144 @@
     <metal:main fill-slot="main">
       <metal:block define-macro="main"
                    tal:define="
-                     file python:context.file;
-                     wopi_url view/wopi_url;
                      error_msg view/error_msg;
                    "
-                   tal:on-error="nothing"
       >
+        <div tal:condition="error_msg">
+          <h2 i18n:translate="label_error">Error</h2>
+          <p class="alert alert-warning"
+             i18n:translate="error_msg"
+          >${error_msg}</p>
+        </div>
 
-        <!-- FIXME: factor css out -->
+        <section class="section section-collabora-actions"
+                 tal:condition="not: view/error_msg"
+        >
+          <a class="btn btn-secondary fullscreen"
+             onclick="javascript:collabora_action_fullscreen(); return false;"
+             i18n:translate=""
+          >Fullscreen</a>
+          <a class="btn btn-secondary download"
+             href="${view/download_url}"
+          >
+            <span i18n:translate="">Download</span>
+            <span i18n:ignore="">(${python: view.human_readable_size()})</span>
+          </a>
+          <a class="btn btn-secondary edit"
+             href="${python:context.absolute_url()}/@@edit"
+             tal:condition="view/can_edit"
+             i18n:translate=""
+          >Edit metadata</a>
+          <a class="btn btn-primary"
+             href="${python:context.absolute_url()}/view"
+             onclick="javascript:collabora_action_save_and_close(); return true;"
+             tal:condition="view/can_edit"
+             i18n:translate=""
+          >Save & Close</a>
+          <a class="btn btn-primary"
+             href="${python:context.absolute_url()}/view"
+             onclick="javascript:collabora_action_close(); return true;"
+             tal:condition="not:view/can_edit"
+             i18n:translate=""
+          >Close</a>
+        </section>
+
+        <section class="section section-collabora-main"
+                 tal:condition="not: view/error_msg"
+        >
+          <iframe id="cool_iframe"
+                  allowfullscreen="true"
+                  height="100%"
+                  scrolling="no"
+                  src="${view/wopi_url}"
+                  width="100%"
+          ></iframe>
+        </section>
+
         <style type="text/css">
          .section-collabora-actions { text-align: right; background-color: #d6d6d6; margin-bottom: 0; padding: 0.5rem; }
          .section-collabora-actions .btn { font-size: 0.9rem; }
          .section-collabora-actions .fullscreen { float: left; }
         </style>
 
-        <tal:has_file condition="python:file">
-          <tal:block tal:define="
-                       filename python: file.filename;
-                       download_url python: '{}/@@download/file/{}'.format(context.absolute_url(), filename);
-                     ">
+        <script type="text/javascript"
+                tal:define="
+                  server_url view/server_url;
+                "
+        >
 
-            <section class="section section-collabora-actions"
-                     tal:condition="not: error_msg"
-            >
-              <a class="btn btn-secondary fullscreen"
-                 onclick="javascript:collabora_action_fullscreen(); return false;"
-                 i18n:translate=""
-              >Fullscreen</a>
-              <a class="btn btn-secondary download"
-                 href="${python:download_url}"
-              ><span i18n:translate="">Download</span>
-                <span i18n:ignore="">(${python: view.human_readable_size()})</span></a>
-              <a class="btn btn-secondary edit"
-                 href="${python:context.absolute_url()}/@@edit"
-                 tal:condition="view/can_edit"
-                 i18n:translate=""
-              >Edit metadata</a>
-              <a class="btn btn-primary"
-                 href="javascript:collabora_action_save_and_close()"
-                 tal:condition="view/can_edit"
-                 i18n:translate=""
-              >Save & Close</a>
-              <a class="btn btn-primary"
-                 href="javascript:collabora_action_close()"
-                 tal:condition="not:view/can_edit"
-                 i18n:translate=""
-              >Close</a>
-            </section>
+         //
+         // --- host to collabora ---
+         //
 
-            <section class="section section-collabora-main">
+         var targetOrigin = "${server_url}";
+         var iframe = document.getElementById("cool_iframe")
 
-              <div tal:condition="error_msg">
-                <h2 i18n:translate="label_error">Error</h2>
-                <p i18n:translate="error_msg">${error_msg}</p>
-              </div>
+         function collabora_postMessage(message_id, values={}) {
+             var msg = {
+                 "MessageId": message_id,
+                 "SendTime": Date.now(),
+                 "Values": values
+             }
+             console.log(msg);
+             window.frames[0].postMessage(JSON.stringify(msg), targetOrigin);
+         }
 
 
-              <iframe id="cool_iframe"
-                      allowfullscreen="true"
-                      height="100%"
-                      scrolling="no"
-                      src="${wopi_url}"
-                      width="100%"
-                      tal:condition="python: not error_msg"
-              ></iframe>
+         function collabora_action_fullscreen() {
+             collabora_postMessage("Action_Fullscreen");
+             // https://stackoverflow.com/questions/9454125/javascript-request-fullscreen-is-unreliable
+             alert("This breaks on security protections, see console log.")
+         }
 
-              <script type="text/javascript"
-                      tal:define="
-                        server_url view/server_url;
-                      "
-              >
-                 var targetOrigin = "${server_url}";
-                 var iframe = document.getElementById("cool_iframe")
+         function collabora_action_close() {
+             collabora_postMessage("Action_Close");
 
-                 function collabora_postMessage(message_id, values={}) {
-                     var msg = {
-                         "MessageId": message_id,
-                         "SendTime": Date.now(),
-                         "Values": values
-                     }
-                     console.log(msg);
-                     window.frames[0].postMessage(JSON.stringify(msg), targetOrigin);
-                 }
+         }
 
-                 function isValidJSON(text) {
-                     try {
-                         JSON.parse(text);
-                         return true;
-                     } catch {
-                         return false;
-                     }
-                 }
+         function collabora_action_save_and_close() {
+             collabora_postMessage("Action_Save", {"DontSaveIfUnmodified": "true"});
+             collabora_action_close();
+         }
 
+         //
+         // --- collabora to host ---
+         //
 
-                 // https://sdk.collaboraonline.com/docs/postmessage_api.html
-                 function handlePostMessage(e) {
-                     // The actual message is contained in the data property of the event.
-                     if (! isValidJSON(e.data)) {
-                         return;
-                     }
-                     var msg = JSON.parse(e.data);
-                     var msgId = msg.MessageId;
-                     var msgData = msg.Values;
-                     console.log('Received message: ' + msgId);
-                     console.log(msgData);
+         function isValidJSON(text) {
+             try {
+                 JSON.parse(text);
+                 return true;
+             } catch {
+                 return false;
+             }
+         }
 
-                     if (msgData.Status == 'Frame_Ready') {
-                         collabora_postMessage("Host_PostmessageReady");
+         // https://sdk.collaboraonline.com/docs/postmessage_api.html
+         function handlePostMessage(e) {
+             // The actual message is contained in the data property of the event.
+             if (! isValidJSON(e.data)) {
+                 return;
+             }
+             var msg = JSON.parse(e.data);
+             var msgId = msg.MessageId;
+             var msgData = msg.Values;
+             console.log('Received message: ' + msgId);
+             console.log(msgData);
 
-                     }
-                     if (msgData.Status == 'Document_Loaded') {
-                        console.log("Resizing iframe on document loaded");
-                        var offset = iframe.offsetTop + 5;
-                        iframe.style.height = 'calc(100vh - ' + offset  + 'px)';
+             if (msgData.Status == 'Frame_Ready') {
+                 collabora_postMessage("Host_PostmessageReady");
 
-                        // We'd like to hide the COOL development edition button.
-                        // iframe.contentWindow.getElementById("document-header").style.display = "none";
-                        // but...
-                        // Permission denied to access property "getElementById" on cross-origin object
-                        // ...
-                        // And this button does not have an id that can be removed via postMessage
+             }
+             if (msgData.Status == 'Document_Loaded') {
+                 console.log("Resizing iframe on document loaded");
+                 var offset = iframe.offsetTop + 5;
+                 iframe.style.height = 'calc(100vh - ' + offset  + 'px)';
+             }
 
-                     }
-
-                 }
-                 window.addEventListener('message', handlePostMessage, false);
-
-                 function collabora_action_fullscreen() {
-                     collabora_postMessage("Action_Fullscreen");
-                     // https://stackoverflow.com/questions/9454125/javascript-request-fullscreen-is-unreliable
-                     alert("This breaks on security protections, see console log.")
-                 }
-
-                 function collabora_action_close() {
-                     collabora_postMessage("Action_Close");
-
-                 }
-
-                 function collabora_action_save_and_close() {
-                     collabora_postMessage("Action_Save", {"DontSaveIfUnmodified": "true"});
-                     collabora_action_close();
-                 }
-              </script>
-            </section>
-
-          </tal:block>
-        </tal:has_file>
-
-        <tal:has_file condition="python:not file">
-          <p i18n:translate="">
-            There is no file uploaded.
-          </p>
-        </tal:has_file>
+         }
+         window.addEventListener('message', handlePostMessage, false);
+        </script>
 
       </metal:block>
     </metal:main>
