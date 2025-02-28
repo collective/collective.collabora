@@ -65,7 +65,7 @@ class CoolEditorView(FileView):
             self.request.method,
             self.request.environ["REQUEST_URI"],
         )
-        if not self.server_url:
+        if not self.server_url or not self.portal_url:
             # just checking it activates the error_msg
             pass
         elif self.wopi_mode == "file_info":
@@ -211,7 +211,19 @@ class CoolEditorView(FileView):
 
     @property
     def portal_url(self):
-        return api.portal.get().absolute_url()
+        portal_url = api.portal.get().absolute_url()
+        parts = urllib.parse.urlparse(portal_url)
+        if parts.hostname in ("localhost", "127.0.0.1"):
+            self.error_msg = _(
+                "error_portal_url",
+                default=(
+                    "When Plone runs on localhost, Collabora cannot call back. "
+                    "Use host.docker.internal or a public FQDN instead."
+                ),
+            )
+            logger.error("When Plone runs on localhost, Collabora cannot call back.")
+            return None
+        return portal_url
 
     @property
     def server_url(self):

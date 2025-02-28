@@ -135,10 +135,6 @@
 
                      }
 
-                     if (msgData.errorType == "websocketunauthorized") {
-                         alert("Unauthorized WOPI host. If you accessing a docker service on localhost, use host.docker.internal instead.")
-                     }
-
                  }
                  window.addEventListener('message', handlePostMessage, false);
 
