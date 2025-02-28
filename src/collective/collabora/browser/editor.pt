@@ -32,7 +32,7 @@
 
             <section class="section section-collabora-actions">
               <a class="btn btn-secondary fullscreen"
-                 href="javascript:alert('Not implemented yet')"
+                 onclick="javascript:collabora_action_fullscreen(); return false;"
                  i18n:translate=""
               >Fullscreen</a>
               <a class="btn btn-secondary download"
@@ -45,10 +45,15 @@
                  i18n:translate=""
               >Edit metadata</a>
               <a class="btn btn-primary"
-                 href="javascript:alert('Not implemented yet')"
+                 href="javascript:collabora_action_save_and_close()"
                  tal:condition="view/can_edit"
                  i18n:translate=""
               >Save & Close</a>
+              <a class="btn btn-primary"
+                 href="javascript:collabora_action_close()"
+                 tal:condition="not:view/can_edit"
+                 i18n:translate=""
+              >Close</a>
             </section>
 
             <section class="section section-collabora-main">
@@ -72,32 +77,82 @@
                         tal:condition="python: not error"
                 ></iframe>
 
-                <script type="text/javascript">
-   function handlePostMessage(e) {
-       // The actual message is contained in the data property of the event.
-       var msg = JSON.parse(e.data);
+                <script type="text/javascript"
+                        tal:define="
+                          server_url view/server_url;
+                        "
+                >
+                 var targetOrigin = "${server_url}";
+                 var iframe = document.getElementById("collabora_iframe")
 
-       // The message ID is now a property of the message object.
-       var msgId = msg.MessageId;
+                 function collabora_postMessage(message_id, values={}) {
+                     var msg = {
+                         "MessageId": message_id,
+                         "SendTime": Date.now(),
+                         "Values": values
+                     }
+                     console.log(msg);
+                     window.frames[0].postMessage(JSON.stringify(msg), '*');
+                 }
 
-       // The message parameters themselves are in the Values
-       // parameter on the message object.
-       var msgData = msg.Values;
+                 function isValidJSON(text) {
+                     try {
+                         JSON.parse(text);
+                         return true;
+                     } catch {
+                         return false;
+                     }
+                 }
 
-       // Do something with the message here.
-       console.log('Received message: ' + msgId);
-       console.log(msgData);
 
-       if (msgData.Status == 'Document_Loaded') {
-           console.log("Resizing iframe on document loaded");
-           var iframe = document.getElementById("collabora_iframe");
-           var offset = iframe.offsetTop + 5;
-           iframe.style.height = 'calc(100vh - ' + offset  + 'px)';
-       }
+                 // https://sdk.collaboraonline.com/docs/postmessage_api.html
+                 function handlePostMessage(e) {
+                     // The actual message is contained in the data property of the event.
+                     if (! isValidJSON(e.data)) {
+                         return;
+                     }
+                     var msg = JSON.parse(e.data);
+                     var msgId = msg.MessageId;
+                     var msgData = msg.Values;
+                     console.log('Received message: ' + msgId);
+                     console.log(msgData);
 
-   }
+                     if (msgData.Status == 'Frame_Ready') {
+                         collabora_postMessage("Host_PostmessageReady");
 
-   window.addEventListener('message', handlePostMessage, false);
+                     }
+                     if (msgData.Status == 'Document_Loaded') {
+                        console.log("Resizing iframe on document loaded");
+                        var offset = iframe.offsetTop + 5;
+                        iframe.style.height = 'calc(100vh - ' + offset  + 'px)';
+
+                        // We'd like to hide the COOL development edition button.
+                        // iframe.contentWindow.getElementById("document-header").style.display = "none";
+                        // but...
+                        // Permission denied to access property "getElementById" on cross-origin object
+                        // ...
+                        // And this button does not have an id that can be removed via postMessage
+
+                     }
+
+                 }
+                 window.addEventListener('message', handlePostMessage, false);
+
+                 function collabora_action_fullscreen() {
+                     collabora_postMessage("Action_Fullscreen");
+                     // https://stackoverflow.com/questions/9454125/javascript-request-fullscreen-is-unreliable
+                     alert("This breaks on security protections, see console log.")
+                 }
+
+                 function collabora_action_close() {
+                     collabora_postMessage("Action_Close");
+
+                 }
+
+                 function collabora_action_save_and_close() {
+                     collabora_postMessage("Action_Save", {"DontSaveIfUnmodified": "true"});
+                     collabora_action_close();
+                 }
                 </script>
 
               </tal:def>
