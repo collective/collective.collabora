@@ -25,8 +25,10 @@ logger = getLogger(__name__)
 class CoolEditorView(FileView):
     """LibreOffice / Collabora editor view."""
 
-    wopi_mode = None
-    error = None
+    def __init__(self, context, request):
+        super().__init__(context, request)
+        self.wopi_mode = None
+        self.error_msg = None
 
     def publishTraverse(self, request, name, *args, **kwargs):
         """Provide the WOPI endpoints:
@@ -64,7 +66,7 @@ class CoolEditorView(FileView):
             self.request.environ["REQUEST_URI"],
         )
         if not self.server_url:
-            # just checking it activates the error message
+            # just checking it activates the error_msg
             pass
         elif self.wopi_mode == "file_info":
             return self.wopi_check_file_info()
@@ -73,6 +75,10 @@ class CoolEditorView(FileView):
                 return self.wopi_get_file()
             elif self.request.method == "POST":
                 return self.wopi_put_file()
+        elif not self.wopi_url:
+            # just calling this ensures error_msg is initialized
+            # if needed
+            pass
         return super().__call__()
 
     @property
@@ -213,7 +219,7 @@ class CoolEditorView(FileView):
             "collective.collabora.server_url", default=None
         )
         if not server_url:
-            self.error = _(
+            self.error_msg = _(
                 "error_server_url",
                 default="collective.collabora.server_url is not configured.",
             )
@@ -228,8 +234,12 @@ class CoolEditorView(FileView):
             return None
         document_url = self.context.absolute_url()
         uuid = IUUID(self.context)
-        wopi_src = urllib.parse.quote(f"{document_url}/@@cool_editor/wopi/files/{uuid}")
-        return f"{editor_url}WOPISrc={wopi_src}"
+        args = dict(
+            WOPISrc=f"{document_url}/@@cool_editor/wopi/files/{uuid}",
+            access_token=self.jwt_token,
+        )
+        quoted_args = urllib.parse.urlencode(args)
+        return f"{editor_url}{quoted_args}"
 
     @property
     def editor_url(self):
@@ -243,7 +253,7 @@ class CoolEditorView(FileView):
         try:
             xml = requests.get(f"{self.server_url}/hosting/discovery").text
         except requests.exceptions.RequestException as e:
-            self.error = _(
+            self.error_msg = _(
                 "error_server_discovery", default="Collabora server is not responding."
             )
             logger.error(e)
@@ -256,14 +266,20 @@ class CoolEditorView(FileView):
         action = tree.xpath(f"//app[@name='{mime_type}']/action")
         action = action[0] if len(action) else None
         if action is None:
-            self.error = _(
+            self.error_msg = _(
                 "error_editor_mimetype",
                 default="Collabora does not support mimetype ${mimetype}.",
                 mapping={"mimetype": mime_type},
             )
             logger.error("Collabora does not support mimetype %s.", mime_type)
             return None
-        return action.get("urlsrc")
+        urlsrc = action.get("urlsrc")
+        if not urlsrc:
+            self.error_msg = _(
+                "error_editor_urlsrc", default="Cannot extract url source from action"
+            )
+            logger.error("Cannot extract urlsrc from action %r", action)
+        return urlsrc
 
     @property
     def jwt_token(self):
@@ -280,7 +296,7 @@ class CoolEditorView(FileView):
         try:
             jwt_plugin = next(plugins)[1]
         except StopIteration:
-            self.error = _(
+            self.error_msg = _(
                 "error_jwt_plugin",
                 default="JWT Authentication Plugin not found. Is plone.restapi installed?",
             )

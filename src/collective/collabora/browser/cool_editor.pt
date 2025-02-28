@@ -13,6 +13,8 @@
       <metal:block define-macro="main"
                    tal:define="
                      file python:context.file;
+                     wopi_url view/wopi_url;
+                     error_msg view/error_msg;
                    "
                    tal:on-error="nothing"
       >
@@ -30,7 +32,9 @@
                        download_url python: '{}/@@download/file/{}'.format(context.absolute_url(), filename);
                      ">
 
-            <section class="section section-collabora-actions">
+            <section class="section section-collabora-actions"
+                     tal:condition="not: error_msg"
+            >
               <a class="btn btn-secondary fullscreen"
                  onclick="javascript:collabora_action_fullscreen(); return false;"
                  i18n:translate=""
@@ -58,30 +62,26 @@
 
             <section class="section section-collabora-main">
 
-              <tal:def define="
-                         error view/error;
-                       ">
-
-                <div tal:condition="error">
-                  <h2 i18n:translate="label_error">Error</h2>
-                  <p i18n:translate="error">${error}</p>
-                </div>
+              <div tal:condition="error_msg">
+                <h2 i18n:translate="label_error">Error</h2>
+                <p i18n:translate="error_msg">${error_msg}</p>
+              </div>
 
 
-                <iframe id="cool_iframe"
-                        allowfullscreen="true"
-                        height="100%"
-                        scrolling="no"
-                        src="${view/wopi_url}&amp;access_token=${view/jwt_token}"
-                        width="100%"
-                        tal:condition="python: not error"
-                ></iframe>
+              <iframe id="cool_iframe"
+                      allowfullscreen="true"
+                      height="100%"
+                      scrolling="no"
+                      src="${wopi_url}"
+                      width="100%"
+                      tal:condition="python: not error_msg"
+              ></iframe>
 
-                <script type="text/javascript"
-                        tal:define="
-                          server_url view/server_url;
-                        "
-                >
+              <script type="text/javascript"
+                      tal:define="
+                        server_url view/server_url;
+                      "
+              >
                  var targetOrigin = "${server_url}";
                  var iframe = document.getElementById("cool_iframe")
 
@@ -92,7 +92,7 @@
                          "Values": values
                      }
                      console.log(msg);
-                     window.frames[0].postMessage(JSON.stringify(msg), '*');
+                     window.frames[0].postMessage(JSON.stringify(msg), targetOrigin);
                  }
 
                  function isValidJSON(text) {
@@ -135,6 +135,10 @@
 
                      }
 
+                     if (msgData.errorType == "websocketunauthorized") {
+                         alert("Unauthorized WOPI host. If you accessing a docker service on localhost, use host.docker.internal instead.")
+                     }
+
                  }
                  window.addEventListener('message', handlePostMessage, false);
 
@@ -153,10 +157,7 @@
                      collabora_postMessage("Action_Save", {"DontSaveIfUnmodified": "true"});
                      collabora_action_close();
                  }
-                </script>
-
-              </tal:def>
-
+              </script>
             </section>
 
           </tal:block>
