@@ -8,7 +8,6 @@ from collective.collabora.testing import TESTDATA_PATH
 from plone import api
 from plone.app.testing import logout
 
-import requests
 import unittest
 import unittest.mock
 

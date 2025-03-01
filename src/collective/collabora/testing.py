@@ -39,7 +39,7 @@ class CollectiveCollaboraLayer(PloneSandboxLayer):
             file_data = fh.read()
         roles_before = api.user.get_roles(TEST_USER_ID)
         setRoles(portal, TEST_USER_ID, ["Manager"])
-        testfile = api.content.create(
+        api.content.create(
             portal,
             type="File",
             id="testfile",
