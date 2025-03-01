@@ -114,7 +114,7 @@ class CoolEditView(FileView):
                 default="Collabora does not support mimetype ${mimetype}.",
                 mapping={"mimetype": mime_type},
             )
-            logger.error("Collabora does not support mimetype %s.", mime_type)
+            logger.error("Collabora does not support mimetype %r.", mime_type)
             return
         urlsrc = action.get("urlsrc")
         if not urlsrc:

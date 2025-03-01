@@ -42,7 +42,7 @@ class CoolWOPIView(BrowserView):
             assert parts[-2] == IUUID(self.context)
             self.wopi_mode = "contents"
         logger.debug(
-            "publishTraverse(): %s, %s, %s (path=%s): wopi_mode = %s",
+            "publishTraverse(): %r, %r, %r (path=%r): wopi_mode = %r",
             name,
             args,
             kwargs,
@@ -53,7 +53,7 @@ class CoolWOPIView(BrowserView):
 
     def __call__(self):
         logger.debug(
-            "%s: %s %s: wopi_mode = %s",
+            "%r: %r %r: wopi_mode = %r",
             self.__class__.__name__,
             self.request.method,
             self.request.get("PATH_INFO"),
@@ -79,7 +79,7 @@ class CoolWOPIView(BrowserView):
 
         Return the file information.
         """
-        logger.debug("wopi_check_file_info: %s", self.context.absolute_url())
+        logger.debug("wopi_check_file_info: %r", self.context.absolute_url())
         # TODO: CORS header actually not needed.
         self.request.response.setHeader("Access-Control-Allow-Origin", "*")
         self.request.response.setHeader("Content-Type", "application/json")
@@ -99,7 +99,7 @@ class CoolWOPIView(BrowserView):
             "PostMessageOrigin": self.context.absolute_url(),
         }
         logger.debug(
-            "file_info: %s %s %s: %s",
+            "file_info: %r %r %r: %r",
             user_id,
             self.can_edit and "can edit" or "can not edit",
             self.context.absolute_url(),
@@ -112,7 +112,7 @@ class CoolWOPIView(BrowserView):
 
         Return the file content.
         """
-        logger.debug("wopi_get_file: %s", self.context.absolute_url())
+        logger.debug("wopi_get_file: %r", self.context.absolute_url())
         # TODO: CORS header actually not needed.
         self.request.response.setHeader("Access-Control-Allow-Origin", "*")
 
@@ -123,7 +123,7 @@ class CoolWOPIView(BrowserView):
 
         Update the file content.
         """
-        logger.debug("wopi_put_file: %s", self.context.absolute_url())
+        logger.debug("wopi_put_file: %r", self.context.absolute_url())
         self.request.response.setHeader("Content-Type", "application/json")
 
         if not self.can_edit:
@@ -159,7 +159,7 @@ class CoolWOPIView(BrowserView):
             user_dt = datetime.fromisoformat(user_timestamp)
             if pydt(self.context.modified()) > user_dt:
                 logger.debug(
-                    "User changes are outdated. User: <%s>. URL: <%s>.",
+                    "User changes are outdated. User: <%r>. URL: <%r>.",
                     api.user.get_current().getId(),
                     self.context.absolute_url(),
                 )
@@ -182,7 +182,7 @@ class CoolWOPIView(BrowserView):
             )
 
             logger.debug(
-                "File updated. User: <%s>. URL: <%s>.",
+                "File updated. User: <%r>. URL: <%r>.",
                 api.user.get_current().getId(),
                 self.context.absolute_url(),
             )
