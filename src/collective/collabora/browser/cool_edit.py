@@ -60,7 +60,7 @@ class CoolEditView(FileView):
                 ),
             )
             logger.error("When Plone runs on localhost, Collabora cannot call back.")
-            return None
+            return
         return portal_url
 
     @property
@@ -79,24 +79,30 @@ class CoolEditView(FileView):
 
     @property
     @memoize
+    def server_discovery_xml(self):
+        if not self.server_url:
+            return
+        try:
+            return requests.get(f"{self.server_url}/hosting/discovery").text
+        except requests.exceptions.RequestException as e:
+            self.error_msg = _(
+                "error_server_discovery", default="Collabora server is not responding."
+            )
+            logger.error(e)
+            return
+
+    @property
+    @memoize
     def editor_url(self):
         """Return the URL of the LibreOffice / Collabora editor.
 
         - Call wopi_discovery.
         - Get the right URL depending on the file extension from the XML
         """
-        if not self.server_url:
-            return None
-        try:
-            xml = requests.get(f"{self.server_url}/hosting/discovery").text
-        except requests.exceptions.RequestException as e:
-            self.error_msg = _(
-                "error_server_discovery", default="Collabora server is not responding."
-            )
-            logger.error(e)
-            return None
+        if not self.server_discovery_xml:
+            return
         parser = etree.XMLParser()
-        tree = etree.fromstring(xml, parser=parser)
+        tree = etree.fromstring(self.server_discovery_xml, parser=parser)
         # ext = self.context.file.filename.split(".")[-1]
         # action = tree.xpath("//action[@ext='odt']")
         mime_type = self.context.file.contentType
@@ -109,7 +115,7 @@ class CoolEditView(FileView):
                 mapping={"mimetype": mime_type},
             )
             logger.error("Collabora does not support mimetype %s.", mime_type)
-            return None
+            return
         urlsrc = action.get("urlsrc")
         if not urlsrc:
             self.error_msg = _(
@@ -139,7 +145,7 @@ class CoolEditView(FileView):
                 default="JWT Authentication Plugin not found. Is plone.restapi installed?",
             )
             logger.error("JWT Authentication Plugin not found.")
-            return None
+            return
         return jwt_plugin.create_token(api.user.get_current().getId())
 
     @property
@@ -147,7 +153,7 @@ class CoolEditView(FileView):
     def wopi_url(self):
         """Return the URL to load the document in LibreOffice / Collabora."""
         if not self.editor_url or not self.jwt_token:
-            return None
+            return
         document_url = self.context.absolute_url()
         uuid = IUUID(self.context)
         args = dict(

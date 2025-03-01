@@ -3,7 +3,7 @@
 from collective.collabora.testing import (  # noqa: E501
     COLLECTIVE_COLLABORA_INTEGRATION_TESTING,
 )
-from collective.collabora.testing import testfile_path
+from collective.collabora.testing import TESTDATA_PATH
 from plone import api
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
@@ -77,8 +77,9 @@ class TestFixture(unittest.TestCase):
         self.portal = self.layer["portal"]
 
     def test_testfile_created(self):
-        with open(testfile_path, "br") as fh:
+        with open(TESTDATA_PATH / "testfile.docx", "br") as fh:
             file_data = fh.read()
 
         self.assertEqual(self.portal.testfile.title, "My test file")
-        self.assertEqual(self.portal.testfile.file, file_data)
+        self.assertEqual(self.portal.testfile.file.data, file_data)
+        self.assertEqual(self.portal.testfile.file.filename, "testfile.docx")
