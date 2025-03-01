@@ -3,6 +3,7 @@
 from collective.collabora.testing import (  # noqa: E501
     COLLECTIVE_COLLABORA_INTEGRATION_TESTING,
 )
+from collective.collabora.testing import testfile_path
 from plone import api
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
@@ -66,3 +67,18 @@ class TestUninstall(unittest.TestCase):
         from plone.browserlayer import utils
 
         self.assertNotIn(ICollectiveCollaboraLayer, utils.registered_layers())
+
+
+class TestFixture(unittest.TestCase):
+
+    layer = COLLECTIVE_COLLABORA_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer["portal"]
+
+    def test_testfile_created(self):
+        with open(testfile_path, "br") as fh:
+            file_data = fh.read()
+
+        self.assertEqual(self.portal.testfile.title, "My test file")
+        self.assertEqual(self.portal.testfile.file, file_data)

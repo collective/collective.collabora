@@ -1,13 +1,21 @@
 # -*- coding: utf-8 -*-
+from plone import api
 from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.app.testing import applyProfile
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
 from plone.testing import z2
 
 import collective.collabora
+import os
+import pathlib
+
+
+testfile_path = pathlib.Path(os.path.dirname(__file__)) / "testdata" / "testfile.docx"
 
 
 class CollectiveCollaboraLayer(PloneSandboxLayer):
@@ -25,6 +33,14 @@ class CollectiveCollaboraLayer(PloneSandboxLayer):
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, "collective.collabora:default")
+        with open(testfile_path, "br") as fh:
+            file_data = fh.read()
+        roles_before = api.user.get_roles(TEST_USER_ID)
+        setRoles(portal, TEST_USER_ID, ["Manager"])
+        api.content.create(
+            portal, type="File", id="testfile", title="My test file", file=file_data
+        )
+        setRoles(portal, TEST_USER_ID, roles_before)
 
 
 COLLECTIVE_COLLABORA_FIXTURE = CollectiveCollaboraLayer()
