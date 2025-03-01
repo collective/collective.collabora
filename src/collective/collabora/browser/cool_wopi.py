@@ -4,10 +4,9 @@ from plone import api
 from plone.event.utils import pydt
 from plone.memoize.view import memoize
 from plone.namedfile.file import NamedBlobFile
-from plone.protect.interfaces import IDisableCSRFProtection
+from plone.protect.utils import safeWrite
 from plone.uuid.interfaces import IUUID
 from Products.Five.browser import BrowserView
-from zope.interface import alsoProvides
 from zope.interface import implementer
 from zope.publisher.interfaces import IPublishTraverse
 
@@ -167,9 +166,12 @@ class CoolWOPIView(BrowserView):
 
         if self.request.get("HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER", False):
             # Save changes back, if document was modified.
-
-            # TODO, maybe do not disable CSRF protection here?
-            alsoProvides(self.request, IDisableCSRFProtection)
+            #
+            # While this is a POST, the request comes from COOL and lacks an
+            # authenticator token. Instead of passing that around, using
+            # safeWrite is the more convenient way of satisfying plone.protect,
+            # and more targeted than IDisableCSRFProtection.
+            safeWrite(self.context)
 
             file = self.context.file
             filename = file.filename
@@ -185,6 +187,5 @@ class CoolWOPIView(BrowserView):
                 self.context.absolute_url(),
             )
 
-        # Success.
         self.request.response.setStatus(200)
         return json.dumps({})
