@@ -9,7 +9,7 @@
       name="cool_edit"
       for="plone.app.contenttypes.interfaces.IFile"
       class=".cool_edit.CoolEditView"
-      template="cool_edit.pt"
+      template="templates/cool_edit.pt"
       permission="zope2.View"
       layer="collective.collabora.interfaces.ICollectiveCollaboraLayer"
       />
