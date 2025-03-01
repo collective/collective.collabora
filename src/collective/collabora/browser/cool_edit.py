@@ -14,7 +14,7 @@ import urllib.parse
 logger = getLogger(__name__)
 
 
-class CoolEditorView(FileView):
+class CoolEditView(FileView):
     """User interface for interacting with Collabora Online."""
 
     def __init__(self, context, request):
