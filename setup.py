@@ -21,7 +21,7 @@ setup(
     long_description=long_description,
     # Get more from https://pypi.org/classifiers/
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
         "Environment :: Web Environment",
         "Framework :: Plone",
         "Framework :: Plone :: Addon",
@@ -48,6 +48,7 @@ setup(
     },
     license="GPL version 2",
     packages=find_packages("src", exclude=["ez_setup"]),
+    # keep deprecated namespace_packages for backward compatibility
     namespace_packages=["collective"],
     package_dir={"": "src"},
     include_package_data=True,
@@ -57,6 +58,7 @@ setup(
         "setuptools",
         # -*- Extra requirements: -*-
         "plone.api>=1.8.4",
+        "plone.app.contenttypes",
         "plone.restapi",
     ],
     extras_require={
@@ -66,7 +68,6 @@ setup(
             # Remove if your package shall be part of coredev.
             # plone_coredev tests as of 2016-04-01.
             "plone.testing>=5.0.0",
-            "plone.app.contenttypes",
             "plone.app.robotframework[debug]",
         ],
     },
