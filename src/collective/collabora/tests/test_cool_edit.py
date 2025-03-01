@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Setup tests for this package."""
+"""UI tests for this package."""
 from collective.collabora.testing import (  # noqa: E501
     COLLECTIVE_COLLABORA_INTEGRATION_TESTING,
 )
