@@ -75,10 +75,7 @@ class CoolWOPIView(BrowserView):
         )
 
     def wopi_check_file_info(self):
-        """WOPI CheckFileInfo endpoint.
-
-        Return the file information.
-        """
+        """WOPI CheckFileInfo endpoint. Return the file information."""
         logger.debug("wopi_check_file_info: %r", self.context.absolute_url())
         # TODO: CORS header actually not needed.
         self.request.response.setHeader("Access-Control-Allow-Origin", "*")
@@ -108,10 +105,7 @@ class CoolWOPIView(BrowserView):
         return json.dumps(file_info)
 
     def wopi_get_file(self):
-        """WOPI GetFile endpoint.
-
-        Return the file content.
-        """
+        """WOPI GetFile endpoint. Return the file content."""
         logger.debug("wopi_get_file: %r", self.context.absolute_url())
         # TODO: CORS header actually not needed.
         self.request.response.setHeader("Access-Control-Allow-Origin", "*")
@@ -119,9 +113,13 @@ class CoolWOPIView(BrowserView):
         return self.context.file.data
 
     def wopi_put_file(self):
-        """WOPI PutFile endpoint.
+        """WOPI PutFile endpoint. Update the file content.
 
-        Update the file content.
+        In addition to the base permission zope2.View, that applies to the
+        browser view as a whole, this method performs a write and requires the
+        ModifyPortalContent permission on the context object. We use a homegrown
+        check for that, since ClassSecurityInfo declarations are suitable to
+        protect content object methods, not for browser view methods.
         """
         logger.debug("wopi_put_file: %r", self.context.absolute_url())
         self.request.response.setHeader("Content-Type", "application/json")
