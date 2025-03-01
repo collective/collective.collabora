@@ -169,9 +169,19 @@ class TestCoolWOPI(unittest.TestCase):
         request.set("HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER", "true")
         view = api.content.get_view("cool_wopi", self.portal.testfile, request)
         payload = view.wopi_put_file()
-        self.assertDictEqual(
-            json.loads(payload),
-            {"Status": 403, "Message": "User is not authorized to edit"},
-        )
+        self.assertDictEqual(json.loads(payload), {})
         self.assertEqual(view.request.response.status, 403)
+        self.assertEqual(self.portal.testfile.file.data, old_data)
+
+    def test_wopi_put_file_fallthrough(self):
+        new_data_io = io.BytesIO(b"Really Fake Byte Payload")
+        old_data = self.portal.testfile.file.data
+
+        request = self.request.clone()
+        request._file = new_data_io
+
+        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        payload = view.wopi_put_file()
+        self.assertDictEqual(json.loads(payload), {})
+        self.assertEqual(view.request.response.status, 400)
         self.assertEqual(self.portal.testfile.file.data, old_data)

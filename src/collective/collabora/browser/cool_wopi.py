@@ -120,15 +120,17 @@ class CoolWOPIView(BrowserView):
         check for that, since ClassSecurityInfo declarations are suitable to
         protect content object methods, not for browser view methods.
         """
-        logger.debug("wopi_put_file: %r", self.context.absolute_url())
+        logger.debug(
+            "wopi_put_file: %r %r",
+            self.context.absolute_url(),
+            {k: v for k, v in self.request.items() if "WOPI" in k},
+        )
         self.request.response.setHeader("Content-Type", "application/json")
 
         if not self.can_edit:
             self.request.response.setStatus(403)
             # This is not a COOL status message. Just catching that edge case
-            return json.dumps(
-                {"Status": 403, "Message": "User is not authorized to edit"}
-            )
+            return json.dumps({})
 
         # TODO:
         # - Check locking (see ploneintranet.workspace.basecontent.baseviews.BaseView)
@@ -187,5 +189,12 @@ class CoolWOPIView(BrowserView):
                 self.context.absolute_url(),
             )
 
-        self.request.response.setStatus(200)
+            self.request.response.setStatus(200)
+            return json.dumps({})
+
+        logger.warn(
+            "Unhandled wopi_put_file request: %r",
+            {k: v for k, v in self.request.items() if "WOPI" in k},
+        )
+        self.request.response.setStatus(400)
         return json.dumps({})
