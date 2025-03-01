@@ -50,8 +50,8 @@ class TestCoolEdit(unittest.TestCase):
 
     def test_portal_url_default(self):
         view = self.view
+        self.assertIsNone(view.error_msg, view.error_msg)
         self.assertEqual(view.portal_url, "http://nohost/plone")
-        self.assertIsNone(view.error_msg)
 
     def test_portal_url_error(self):
         view = self.view
@@ -65,8 +65,9 @@ class TestCoolEdit(unittest.TestCase):
 
     def test_server_url_default(self):
         view = self.view
-        self.assertEqual(view.server_url, "http://host.docker.internal:9980")
-        self.assertIsNone(view.error_msg)
+        self.assertIsNone(view.error_msg, view.error_msg)
+        # This is the fake server_url in tests, not the actual :default value
+        self.assertEqual(view.server_url, "http://host.docker.internal:7777")
 
     def test_server_url_error(self):
         view = self.view
@@ -78,6 +79,8 @@ class TestCoolEdit(unittest.TestCase):
     def test_editor_url_default(self, requests_get):
         requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
         view = self.view
+        self.assertIsNone(view.error_msg, view.error_msg)
+        self.assertIsNotNone(view.editor_url)
         self.assertEqual(
             view.editor_url,
             "http://host.docker.internal:9980/browser/55317ef/cool.html?",
@@ -103,8 +106,9 @@ class TestCoolEdit(unittest.TestCase):
 
     def test_jwt_token_default(self):
         view = self.view
+        self.assertIsNone(view.error_msg, view.error_msg)
+        self.assertIsNotNone(view.jwt_token)
         self.assertTrue(len(view.jwt_token) > 80)  # 133 actually, but be flexible
-        self.assertIsNone(view.error_msg)
 
     def test_jwt_token_error(self):
         view = self.view
@@ -114,32 +118,37 @@ class TestCoolEdit(unittest.TestCase):
             self.assertIsNone(view.jwt_token)
         self.assertEqual(view.error_msg, "error_jwt_plugin")
 
-    def test_wopi_url_default(self):
+    @unittest.mock.patch("requests.get")
+    def test_wopi_url_default(self, requests_get):
         from plone.uuid.interfaces import IUUID
 
+        requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
         view = self.view
+        self.assertIsNone(view.error_msg, view.error_msg)
+        self.assertIsNotNone(view.wopi_url)
         self.assertIn("cool.html", view.wopi_url)
         self.assertIn("WOPISrc=", view.wopi_url)
         self.assertIn("testfile", view.wopi_url)
         self.assertIn("%40%40cool_wopi%2Ffiles", view.wopi_url)
         self.assertIn(IUUID(self.portal.testfile), view.wopi_url)
         self.assertIn("access_token=", view.wopi_url)
-        self.assertIsNone(view.error_msg)
 
     @unittest.mock.patch("requests.get")
     def test__call__render(self, requests_get):
         requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
         view = self.view
         html = view()
+        self.assertIsNone(view.error_msg, view.error_msg)
         self.assertIn("Edit metadata", html)
         self.assertIn("<iframe", html)
-        self.assertIsNone(view.error_msg)
 
     #
     # ensure __call__ sets error_msg for use in template
     #
 
-    def test__call__portal_url_error(self):
+    @unittest.mock.patch("requests.get")
+    def test__call__portal_url_error(self, requests_get):
+        requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
         view = self.view
         with unittest.mock.patch.object(
             self.portal,
@@ -157,7 +166,9 @@ class TestCoolEdit(unittest.TestCase):
         view()
         self.assertEqual(view.error_msg, "error_editor_mimetype")
 
-    def test__call__jwt_token_error(self):
+    @unittest.mock.patch("requests.get")
+    def test__call__jwt_token_error(self, requests_get):
+        requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
         view = self.view
         with unittest.mock.patch.object(
             self.portal.acl_users.plugins, "listPlugins", return_value=[]
