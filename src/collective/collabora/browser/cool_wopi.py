@@ -1,12 +1,12 @@
 from datetime import datetime
 from logging import getLogger
 from plone import api
+from plone.event.utils import pydt
 from plone.memoize.view import memoize
 from plone.namedfile.file import NamedBlobFile
 from plone.protect.interfaces import IDisableCSRFProtection
 from plone.uuid.interfaces import IUUID
 from Products.Five.browser import BrowserView
-from urllib.parse import urlparse
 from zope.interface import alsoProvides
 from zope.interface import implementer
 from zope.publisher.interfaces import IPublishTraverse
@@ -31,20 +31,22 @@ class CoolWOPIView(BrowserView):
         - @@cool_wopi/files/<uid>
         - @@cool_wopi/files/<uid>/contents
         """
-        parts = urlparse(request.environ["REQUEST_URI"]).path.split("/")
+        parts = request.get("PATH_INFO").split("/")
         # This is traversed for each part of the URL. Make sure to catch only
         # the "last" traversal, by checking the position of "@@cool_wopi".
         if parts[-3] == "@@cool_wopi" and name == IUUID(self.context):
+            assert parts[-2] == "files"
             self.wopi_mode = "file_info"
         elif parts[-4] == "@@cool_wopi" and name == "contents":
-            self.wopi_mode = "contents"
+            assert parts[-3] == "files"
             assert parts[-2] == IUUID(self.context)
+            self.wopi_mode = "contents"
         logger.debug(
-            "publishTraverse(): %s, %s, %s (url=%s): wopi_mode = %s",
+            "publishTraverse(): %s, %s, %s (path=%s): wopi_mode = %s",
             name,
             args,
             kwargs,
-            request.environ["REQUEST_URI"],
+            request.get("PATH_INFO"),
             self.wopi_mode,
         )
         return self
@@ -54,7 +56,7 @@ class CoolWOPIView(BrowserView):
             "%s: %s %s: wopi_mode = %s",
             self.__class__.__name__,
             self.request.method,
-            self.request.environ["REQUEST_URI"],
+            self.request.get("PATH_INFO"),
             self.wopi_mode,
         )
         if self.wopi_mode == "file_info":
@@ -124,6 +126,13 @@ class CoolWOPIView(BrowserView):
         logger.debug("wopi_put_file: %s", self.context.absolute_url())
         self.request.response.setHeader("Content-Type", "application/json")
 
+        if not self.can_edit:
+            self.request.response.setStatus(403)
+            # This is not a COOL status message. Just catching that edge case
+            return json.dumps(
+                {"Status": 403, "Message": "User is not authorized to edit"}
+            )
+
         # TODO:
         # - Check locking (see ploneintranet.workspace.basecontent.baseviews.BaseView)
         # - Check autosave (see same)
@@ -136,6 +145,7 @@ class CoolWOPIView(BrowserView):
         # - HTTP_X_COOL_WOPI_ISEXITSAVE
         # - HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER
         # - HTTP_X_COOL_WOPI_TIMESTAMP
+
         user_timestamp = self.request.get("HTTP_X_COOL_WOPI_TIMESTAMP", None)
         if user_timestamp:
             # Document modified by another user. Return and let LibreOffice /
@@ -147,10 +157,7 @@ class CoolWOPIView(BrowserView):
             # https://sdk.collaboraonline.com/docs/advanced_integration.html#detecting-external-document-change  # noqa: E501
             #
             user_dt = datetime.fromisoformat(user_timestamp)
-            context_timestamp = self.context.modified().ISO8601()
-            context_dt = datetime.fromisoformat(context_timestamp)
-
-            if context_dt > user_dt:
+            if pydt(self.context.modified()) > user_dt:
                 logger.debug(
                     "User changes are outdated. User: <%s>. URL: <%s>.",
                     api.user.get_current().getId(),
