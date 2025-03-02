@@ -124,7 +124,7 @@ jobs:
     coverage:
         name: Combine & check coverage
         if: always()
-        needs: tests
+        needs: build_and_test
         runs-on: ubuntu-latest
 
         steps:
