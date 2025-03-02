@@ -164,14 +164,14 @@ jobs:
             if: ${{ failure() }}
 
           - name: "Make badge"
-              uses: schneegans/dynamic-badges-action@v1.4.0
-              with:
-                # COVERAGE_GIST_SECRET is a GitHub personal access token with scope "gist".
-                auth: ${{ secrets.COVERAGE_GIST_SECRET }}
-                gistID: 2a12a9fe2dbca0d4337ca96603bd58d7
-                filename: covbadge.json
-                label: Coverage
-                message: ${{ env.total }}%
-                minColorRange: 50
-                maxColorRange: 90
-                valColorRange: ${{ env.total }}
+            uses: schneegans/dynamic-badges-action@v1.4.0
+            with:
+              # COVERAGE_GIST_SECRET is a GitHub personal access token with scope "gist".
+              auth: ${{ secrets.COVERAGE_GIST_SECRET }}
+              gistID: 2a12a9fe2dbca0d4337ca96603bd58d7
+              filename: covbadge.json
+              label: Coverage
+              message: ${{ env.total }}%
+              minColorRange: 50
+              maxColorRange: 90
+              valColorRange: ${{ env.total }}
