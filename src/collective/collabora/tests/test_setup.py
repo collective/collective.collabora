@@ -42,8 +42,12 @@ class TestSetup(unittest.TestCase):
         self.assertIn(ICollectiveCollaboraLayer, utils.registered_layers())
 
     def test_hidden_profiles(self):
-        from plone.base.interfaces import INonInstallable
         from zope.component import getAllUtilitiesRegisteredFor
+
+        try:
+            from plone.base.interfaces import INonInstallable
+        except ImportError:
+            from Products.CMFPlone.interfaces import INonInstallable
 
         utils = getAllUtilitiesRegisteredFor(INonInstallable)
         my_utils = [x for x in utils if "collective.collabora" in repr(x)]
