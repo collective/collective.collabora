@@ -1,5 +1,0 @@
-====================
-collective.collabora
-====================
-
-User documentation
