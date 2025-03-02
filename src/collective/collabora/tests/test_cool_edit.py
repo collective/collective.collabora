@@ -75,6 +75,17 @@ class TestCoolEdit(unittest.TestCase):
             self.assertEqual(view.server_url, "")
         self.assertEqual(view.error_msg, "error_server_url")
 
+    def test_editor_url_server_discovery_xml_error_no_server_url(self):
+        view = self.view
+        with temporary_registry_record("collective.collabora.server_url", ""):
+            self.assertIsNone(view.editor_url)
+        self.assertEqual(view.error_msg, "error_server_url")
+
+    def test_editor_url_server_discovery_xml_error_unreachable_server_url(self):
+        view = self.view
+        self.assertIsNone(view.editor_url)
+        self.assertEqual(view.error_msg, "error_server_discovery")
+
     @unittest.mock.patch("requests.get")
     def test_editor_url_default(self, requests_get):
         requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))

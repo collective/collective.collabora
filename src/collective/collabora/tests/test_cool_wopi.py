@@ -225,3 +225,26 @@ class TestCoolWOPI(unittest.TestCase):
 
         self.assertDictEqual(json.loads(payload), {})
         self.assertEqual(view.request.response.status, 200)
+
+    def test__call__wopi_check_file_info(self):
+        request = self.request.clone()
+        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        view.wopi_mode = "file_info"
+        payload = json.loads(view())
+        self.assertEqual(payload.get("Size"), self.portal.testfile.file.getSize())
+
+    def test__call__wopi_get_file(self):
+        request = self.request.clone()
+        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        view.wopi_mode = "contents"
+        payload = view()
+        self.assertEqual(payload, self.portal.testfile.file.data)
+
+    def test__call__wopi_put_file(self):
+        request = self.request.clone()
+        request.set("method", "POST")
+        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        view.wopi_mode = "contents"
+        view.wopi_put_file = unittest.mock.MagicMock()
+        view()
+        view.wopi_put_file.assert_called()

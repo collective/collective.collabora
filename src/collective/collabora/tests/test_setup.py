@@ -41,6 +41,21 @@ class TestSetup(unittest.TestCase):
 
         self.assertIn(ICollectiveCollaboraLayer, utils.registered_layers())
 
+    def test_hidden_profiles(self):
+        from plone.base.interfaces import INonInstallable
+        from zope.component import getAllUtilitiesRegisteredFor
+
+        utils = getAllUtilitiesRegisteredFor(INonInstallable)
+        my_utils = [x for x in utils if "collective.collabora" in repr(x)]
+        self.assertEqual(len(my_utils), 1)
+        my_hidden = my_utils[0]
+        self.assertEqual(
+            my_hidden.getNonInstallableProducts(), ["collective.collabora.upgrades"]
+        )
+        self.assertEqual(
+            my_hidden.getNonInstallableProfiles(), ["collective.collabora:uninstall"]
+        )
+
 
 class TestUninstall(unittest.TestCase):
 
