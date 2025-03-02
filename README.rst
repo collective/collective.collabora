@@ -9,9 +9,6 @@
     :target: https://coveralls.io/github/collective/collective.collabora?branch=main
     :alt: Coveralls
 
-.. image:: https://codecov.io/gh/collective/collective.collabora/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/collective/collective.collabora
-
 .. image:: https://img.shields.io/pypi/v/collective.collabora.svg
     :target: https://pypi.python.org/pypi/collective.collabora/
     :alt: Latest Version
