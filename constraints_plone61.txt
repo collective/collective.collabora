@@ -1,0 +1,6 @@
+-c https://dist.plone.org/release/6.1-latest/constraints.txt
+
+tox==4.3.5
+isort>=5
+black==22.8.0
+flake8==5.0.4

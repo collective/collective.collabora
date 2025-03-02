@@ -11,7 +11,21 @@ test:
 	@echo "You may need to run 'tox -r' to recreate the test environments."
 
 clean:
-	rm -rf dev60 dev52
+	rm -rf dev61 dev60 dev52
+
+start61: dev61/bin/instance
+	./dev61/bin/instance fg
+
+build61: dev61/bin/instance
+	./dev61/bin/buildout -c ./dev_plone61.cfg buildout:directory=$(CURDIR)/dev61 buildout:develop=$(CURDIR) buildout:update-versions-file=$(CURDIR)/dev_plone61.cfg install
+
+dev61/bin/instance: dev61
+	./dev61/bin/pip install -r requirements_plone61.txt
+	./dev61/bin/buildout -c ./dev_plone61.cfg buildout:directory=$(CURDIR)/dev61 buildout:develop=$(CURDIR) buildout:update-versions-file=$(CURDIR)/dev_plone61.cfg bootstrap
+	./dev61/bin/buildout -c ./dev_plone61.cfg buildout:directory=$(CURDIR)/dev61 buildout:develop=$(CURDIR) buildout:update-versions-file=$(CURDIR)/dev_plone61.cfg install
+
+dev61:
+	tox --devenv ./dev61 -e py312-Plone61
 
 start60: dev60/bin/instance
 	./dev60/bin/instance fg
