@@ -110,6 +110,8 @@ jobs:
               env:
                 PLONE_VERSION: ${{ matrix.plone-version }}
 
+            # Coverage, based on https://hynek.me/articles/ditch-codecov-python/
+
             - name: Upload coverage data
               uses: actions/upload-artifact@v4
               with:
@@ -118,4 +120,41 @@ jobs:
                 include-hidden-files: true
                 if-no-files-found: ignore
 
-# To add coverage, see  https://hynek.me/articles/ditch-codecov-python/
+
+    coverage:
+        name: Combine & check coverage
+        if: always()
+        needs: tests
+        runs-on: ubuntu-latest
+
+        steps:
+          - uses: actions/checkout@v4
+          - uses: actions/setup-python@v5
+            with:
+              # Use latest Python, so it understands all syntax.
+              python-version: "3.12"
+
+          - uses: actions/download-artifact@v4
+            with:
+              pattern: coverage-data-*
+              merge-multiple: true
+
+          - name: Combine coverage & fail if it's <100%
+            run: |
+              python -Im pip install --upgrade coverage[toml]
+
+              python -Im coverage combine
+              python -Im coverage html --skip-covered --skip-empty
+
+              # Report and write to summary.
+              python -Im coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+
+              # Report again and fail if under 100%.
+              python -Im coverage report --fail-under=100
+
+          - name: Upload HTML report if check failed
+            uses: actions/upload-artifact@v4
+            with:
+              name: html-report
+              path: htmlcov
+            if: ${{ failure() }}
