@@ -7,7 +7,9 @@ from plone.namedfile.file import NamedBlobFile
 from plone.protect.utils import safeWrite
 from plone.uuid.interfaces import IUUID
 from Products.Five.browser import BrowserView
+from zope.event import notify
 from zope.interface import implementer
+from zope.lifecycleevent import ObjectModifiedEvent
 from zope.publisher.interfaces import IPublishTraverse
 
 import json
@@ -179,6 +181,7 @@ class CoolWOPIView(BrowserView):
             self.context.file = NamedBlobFile(
                 data=data, filename=filename, contentType=content_type
             )
+            notify(ObjectModifiedEvent(self.context))
 
             logger.debug(
                 "File updated. User: <%r>. URL: <%r>.",

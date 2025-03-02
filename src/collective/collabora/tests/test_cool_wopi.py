@@ -185,3 +185,43 @@ class TestCoolWOPI(unittest.TestCase):
         self.assertDictEqual(json.loads(payload), {})
         self.assertEqual(view.request.response.status, 400)
         self.assertEqual(self.portal.testfile.file.data, old_data)
+
+    def test_wopi_put_file_write_notifies_ObjectModifiedEvent(self):
+        from plone.app.contenttypes.interfaces import IFile
+
+        import zope.component
+        import zope.lifecycleevent
+
+        new_data_io = io.BytesIO(b"Really Fake Byte Payload")
+        new_data = new_data_io.read()
+        new_data_io.seek(0)
+        self.assertNotEqual(self.portal.testfile.file.data, new_data)
+
+        request = self.request.clone()
+        request._file = new_data_io
+
+        request.set("HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER", "true")
+        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+
+        event_handler = unittest.mock.MagicMock()
+        gsm = zope.component.getGlobalSiteManager()
+        gsm.registerHandler(
+            event_handler, (IFile, zope.lifecycleevent.IObjectModifiedEvent)
+        )
+        try:
+            payload = view.wopi_put_file()
+        finally:
+            gsm.unregisterHandler(
+                event_handler, (IFile, zope.lifecycleevent.IObjectModifiedEvent)
+            )
+
+        event_handler.assert_called_once()
+        self.assertEqual(len(event_handler.call_args[0]), 2)
+        _object, _event = event_handler.call_args[0]
+        self.assertEqual(_object, self.portal.testfile)
+        self.assertEqual(_object.file.data, new_data)
+        self.assertEqual(_event.object, self.portal.testfile)
+        self.assertEqual(_event.object.file.data, new_data)
+
+        self.assertDictEqual(json.loads(payload), {})
+        self.assertEqual(view.request.response.status, 200)
