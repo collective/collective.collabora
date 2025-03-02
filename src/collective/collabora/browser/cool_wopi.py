@@ -73,19 +73,15 @@ class CoolWOPIView(BrowserView):
             "Modify portal content", user=api.user.get_current(), obj=self.context
         )
 
-    def wopi_check_file_info(self):
-        """WOPI CheckFileInfo endpoint. Return the file information."""
-        logger.debug("wopi_check_file_info: %r", self.context.absolute_url())
-        # TODO: CORS header actually not needed.
-        self.request.response.setHeader("Access-Control-Allow-Origin", "*")
-        self.request.response.setHeader("Content-Type", "application/json")
-
-        file = self.context.file
+    @property
+    @memoize
+    def file_info(self):
+        """Extension/customization flex point for CheckFileInfo"""
         user = api.user.get_current()
         user_id = user.getId()
-        file_info = {
-            "BaseFileName": file.filename,
-            "Size": file.getSize(),
+        return {
+            "BaseFileName": self.context.file.filename,
+            "Size": self.context.file.getSize(),
             "OwnerId": self.context.getOwner().getId(),
             "UserId": user_id,
             "UserCanWrite": self.can_edit,
@@ -94,14 +90,15 @@ class CoolWOPIView(BrowserView):
             "LastModifiedTime": self.context.modified().ISO8601(),
             "PostMessageOrigin": self.context.absolute_url(),
         }
-        logger.debug(
-            "file_info: %r %r %r: %r",
-            user_id,
-            self.can_edit and "can edit" or "can not edit",
-            self.context.absolute_url(),
-            file_info,
-        )
-        return json.dumps(file_info)
+
+    def wopi_check_file_info(self):
+        """WOPI CheckFileInfo endpoint. Return the file information."""
+        logger.debug("wopi_check_file_info: %r", self.context.absolute_url())
+        # TODO: CORS header actually not needed.
+        self.request.response.setHeader("Access-Control-Allow-Origin", "*")
+        self.request.response.setHeader("Content-Type", "application/json")
+        logger.debug("file_info: %r", self.file_info)
+        return json.dumps(self.file_info)
 
     def wopi_get_file(self):
         """WOPI GetFile endpoint. Return the file content."""
