@@ -5,6 +5,9 @@
 .. image:: https://github.com/collective/collective.collabora/actions/workflows/plone-package.yml/badge.svg
     :target: https://github.com/collective/collective.collabora/actions/workflows/plone-package.yml
 
+.. image:: https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/YOUR_GITHUB_NAME/123abc456def789/raw/covbadge.json
+    :alt: Coverage
+
 .. image:: https://coveralls.io/repos/github/collective/collective.collabora/badge.svg?branch=main
     :target: https://coveralls.io/github/collective/collective.collabora?branch=main
     :alt: Coveralls

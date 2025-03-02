@@ -149,6 +149,10 @@ jobs:
               # Report and write to summary.
               python -Im coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
 
+              # export to env for badge
+              export TOTAL=$(python -c "import json;print(json.load(open('coverage.json'))['totals']['percent_covered_display'])")
+              echo "total=$TOTAL" >> $GITHUB_ENV
+
               # Report again and fail if under 100%.
               python -Im coverage report --fail-under=100
 
@@ -158,3 +162,16 @@ jobs:
               name: html-report
               path: htmlcov
             if: ${{ failure() }}
+
+          - name: "Make badge"
+              uses: schneegans/dynamic-badges-action@v1.4.0
+              with:
+                # COVERAGE_GIST_SECRET is a GitHub personal access token with scope "gist".
+                auth: ${{ secrets.COVERAGE_GIST_SECRET }}
+                gistID: 2a12a9fe2dbca0d4337ca96603bd58d7
+                filename: covbadge.json
+                label: Coverage
+                message: ${{ env.total }}%
+                minColorRange: 50
+                maxColorRange: 90
+                valColorRange: ${{ env.total }}
