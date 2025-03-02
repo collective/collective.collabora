@@ -53,8 +53,6 @@ Development alpha, not suitable for production use yet.
 
 Things that need to implemented/improved/tested:
 
-- Event handling, specifically ObjectModified
-
 - Locking and lock stealing, especially when files are modified Plone-side
 
 - Multihost/multisite: multiple Plones talking to the same Collabora server
