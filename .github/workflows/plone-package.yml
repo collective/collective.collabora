@@ -110,4 +110,12 @@ jobs:
               env:
                 PLONE_VERSION: ${{ matrix.plone-version }}
 
+            - name: Upload coverage data
+              uses: actions/upload-artifact@v4
+              with:
+                name: coverage-data-${{ matrix.python-version }}-{{ matrix.plone-version }}
+                path: .coverage.*
+                include-hidden-files: true
+                if-no-files-found: ignore
+
 # To add coverage, see  https://hynek.me/articles/ditch-codecov-python/
