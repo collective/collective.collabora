@@ -136,9 +136,14 @@ jobs:
               uses: actions/checkout@v4
 
             - name: Set up Python ${{ matrix.python-version }}
-              uses: actions/setup-python@v5
+              # uses: actions/setup-python@v5
+              # https://github.com/xenserver-next/python-libs/commit/a0b8a36a214dfadd428eed3e39d75622c77d75ca
+              uses: MatteoH2O1999/setup-python@v1
               with:
                   python-version: ${{ matrix.python-version }}
+                  allow-build: info
+                  cache-build: true
+                  cache: pip
 
             - name: Cache hash ${{ matrix.python-version }} - ${{ matrix.plone-version }}
               uses: actions/cache@v4
