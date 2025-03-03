@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from collective.collabora import _
+from importlib import import_module
 from logging import getLogger
 from lxml import etree
 from plone import api
@@ -27,6 +28,16 @@ class CoolEditView(FileView):
             # accessing those detects errors and sets self.error_msg
             pass
         return super().__call__()
+
+    @property
+    @memoize
+    def plone_version(self):
+        """Get the major version we're running in."""
+        if getattr(import_module("Products.CMFPlone.factory"), "PLONE60MARKER", False):
+            return "plone6"
+        if getattr(import_module("Products.CMFPlone.factory"), "PLONE52MARKER", False):
+            return "plone5"
+        return "plone4"
 
     @property
     @memoize
