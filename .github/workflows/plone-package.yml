@@ -36,7 +36,7 @@ jobs:
 
             - name: Lint with tox
               run: |
-                  tox -r -e ${{ matrix.python-version }}-lint
+                  tox -r -e py${{ matrix.python-version }}-lint
               env:
                 PLATFORM: lint
 
@@ -106,7 +106,7 @@ jobs:
 
             - name: Test with tox
               run: |
-                  tox -r -e ${{ matrix.python-version }}-${{ matrix.plone-version }}
+                  tox -r -e py${{ matrix.python-version }}-${{ matrix.plone-version }}
               env:
                 PLONE_VERSION: ${{ matrix.plone-version }}
 
