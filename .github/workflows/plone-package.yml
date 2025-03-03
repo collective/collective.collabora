@@ -168,10 +168,6 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install tox tox-gh-actions
 
-            # Unfortunately, this is always also run against python3.10 in
-            # addition to the specified python factor, if the plone version is
-            # supported on 3.10. Apparently that (base?) version is always
-            # available.
             - name: Test with tox
               run: |
                   tox -r
