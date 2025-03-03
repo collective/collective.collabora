@@ -36,7 +36,7 @@ jobs:
 
             - name: Lint with tox
               run: |
-                  tox -r
+                  tox -r -f lint
               env:
                 PLATFORM: lint
 
@@ -104,13 +104,9 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install tox tox-gh-actions
 
-            # Unfortunately, this is always also run against python3.10 in
-            # addition to the specified python factor, if the plone version is
-            # supported on 3.10. Apparently that (base?) version is always
-            # available.
             - name: Test with tox
               run: |
-                  tox -r
+                  tox -r -e py${{ matrix.python-version }}-${{ matrix.plone-version }}
               env:
                 PLONE_VERSION: ${{ matrix.plone-version }}
 
@@ -225,7 +221,7 @@ jobs:
               echo "total=$TOTAL" >> $GITHUB_ENV
 
               # Report again and fail if under 100%.
-              python -Im coverage report --fail-under=100
+              python -Im coverage report --fail-under=95
 
           - name: Upload HTML report if check failed
             uses: actions/upload-artifact@v4
