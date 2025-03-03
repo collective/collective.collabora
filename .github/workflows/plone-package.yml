@@ -150,7 +150,7 @@ jobs:
               python -Im coverage html --skip-covered --skip-empty
 
               # Report and write to summary.
-              python -Im coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+              python -Im coverage json >> $GITHUB_STEP_SUMMARY
 
               # export to env for badge
               export TOTAL=$(python -c "import json;print(json.load(open('coverage.json'))['totals']['percent_covered_display'])")

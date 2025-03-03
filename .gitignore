@@ -24,7 +24,7 @@ var/
 # files
 .installed.cfg
 .mr.developer.cfg
-coverage.xml
+coverage.*
 lib64
 local.cfg
 log.html
