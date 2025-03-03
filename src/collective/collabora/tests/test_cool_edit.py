@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 """UI tests for this package."""
+from __future__ import unicode_literals
+
+from builtins import dict
+from builtins import open
+from future import standard_library
+
+
+standard_library.install_aliases()
 from collective.collabora.testing import (  # noqa: E501
     COLLECTIVE_COLLABORA_INTEGRATION_TESTING,
 )
@@ -8,8 +16,8 @@ from collective.collabora.testing import TESTDATA_PATH
 from plone import api
 from plone.app.testing import logout
 
+import mock  # unittest.mock backport for both py27 and >= py36
 import unittest
-import unittest.mock
 
 
 class TestCoolEdit(unittest.TestCase):
@@ -21,7 +29,8 @@ class TestCoolEdit(unittest.TestCase):
         """Custom shared utility setup for tests."""
         self.portal = self.layer["portal"]
         self.request = self.layer["request"]
-        with open(TESTDATA_PATH / "server_discovery_xml") as fh:
+        # py27: TypeError: invalid file: PosixPath('/collective.coll...
+        with open(str(TESTDATA_PATH / "server_discovery_xml")) as fh:
             self.server_discovery_xml = fh.read()
 
     @property
@@ -55,7 +64,7 @@ class TestCoolEdit(unittest.TestCase):
 
     def test_portal_url_error(self):
         view = self.view
-        with unittest.mock.patch.object(
+        with mock.patch.object(
             self.portal,
             "absolute_url",
             return_value="http://localhost:8080/plone",
@@ -86,7 +95,7 @@ class TestCoolEdit(unittest.TestCase):
         self.assertIsNone(view.editor_url)
         self.assertEqual(view.error_msg, "error_server_discovery")
 
-    @unittest.mock.patch("requests.get")
+    @mock.patch("requests.get")
     def test_editor_url_default(self, requests_get):
         requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
         view = self.view
@@ -98,7 +107,7 @@ class TestCoolEdit(unittest.TestCase):
         )
         self.assertIsNone(view.error_msg)
 
-    @unittest.mock.patch("requests.get")
+    @mock.patch("requests.get")
     def test_editor_url_invalid_mimetype(self, requests_get):
         requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
         self.portal.testfile.file.contentType = "invalid/mimetype"
@@ -106,7 +115,7 @@ class TestCoolEdit(unittest.TestCase):
         self.assertIsNone(view.editor_url)
         self.assertEqual(view.error_msg, "error_editor_mimetype")
 
-    @unittest.mock.patch("requests.get")
+    @mock.patch("requests.get")
     def test_editor_url_invalid_urlsrc(self, requests_get):
         requests_get.return_value.configure_mock(
             **dict(text=self.server_discovery_xml.replace("urlsrc", "no_urlsrc"))
@@ -123,13 +132,13 @@ class TestCoolEdit(unittest.TestCase):
 
     def test_jwt_token_error(self):
         view = self.view
-        with unittest.mock.patch.object(
+        with mock.patch.object(
             self.portal.acl_users.plugins, "listPlugins", return_value=[]
         ):
             self.assertIsNone(view.jwt_token)
         self.assertEqual(view.error_msg, "error_jwt_plugin")
 
-    @unittest.mock.patch("requests.get")
+    @mock.patch("requests.get")
     def test_wopi_url_default(self, requests_get):
         from plone.uuid.interfaces import IUUID
 
@@ -144,7 +153,7 @@ class TestCoolEdit(unittest.TestCase):
         self.assertIn(IUUID(self.portal.testfile), view.wopi_url)
         self.assertIn("access_token=", view.wopi_url)
 
-    @unittest.mock.patch("requests.get")
+    @mock.patch("requests.get")
     def test__call__render(self, requests_get):
         requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
         view = self.view
@@ -157,11 +166,11 @@ class TestCoolEdit(unittest.TestCase):
     # ensure __call__ sets error_msg for use in template
     #
 
-    @unittest.mock.patch("requests.get")
+    @mock.patch("requests.get")
     def test__call__portal_url_error(self, requests_get):
         requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
         view = self.view
-        with unittest.mock.patch.object(
+        with mock.patch.object(
             self.portal,
             "absolute_url",
             return_value="http://localhost:8080/plone",
@@ -169,7 +178,7 @@ class TestCoolEdit(unittest.TestCase):
             view()
         self.assertEqual(view.error_msg, "error_portal_url")
 
-    @unittest.mock.patch("requests.get")
+    @mock.patch("requests.get")
     def test__call__editor_url_invalid_mimetype(self, requests_get):
         requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
         self.portal.testfile.file.contentType = "invalid/mimetype"
@@ -177,11 +186,11 @@ class TestCoolEdit(unittest.TestCase):
         view()
         self.assertEqual(view.error_msg, "error_editor_mimetype")
 
-    @unittest.mock.patch("requests.get")
+    @mock.patch("requests.get")
     def test__call__jwt_token_error(self, requests_get):
         requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
         view = self.view
-        with unittest.mock.patch.object(
+        with mock.patch.object(
             self.portal.acl_users.plugins, "listPlugins", return_value=[]
         ):
             view()

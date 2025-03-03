@@ -7,6 +7,12 @@ included: trying to implement those breaks on a
 ZODB.POSException.ConnectionStateError. Let's simply trust the plone.restapi JWT
 token authentication, and verify permission checks by directly logging in here.
 """
+from __future__ import unicode_literals
+
+from future import standard_library
+
+
+standard_library.install_aliases()
 from collective.collabora.testing import (  # noqa: E501
     COLLECTIVE_COLLABORA_INTEGRATION_TESTING,
 )
@@ -18,6 +24,7 @@ from plone.uuid.interfaces import IUUID
 import datetime
 import io
 import json
+import mock  # unittest.mock backport for both py27 and >= py36
 import unittest
 
 
@@ -35,7 +42,7 @@ class TestCoolWOPI(unittest.TestCase):
 
     def test_publishTraverse_wopi_mode_file_info(self):
         request = self.request.clone()
-        request.set("PATH_INFO", f"/plone/testfile/@@cool_wopi/files/{self.uid}")
+        request.set("PATH_INFO", "/plone/testfile/@@cool_wopi/files/%s" % self.uid)
         view = api.content.get_view("cool_wopi", self.portal.testfile, request)
         view.publishTraverse(request, self.uid)
         self.assertEqual(view.wopi_mode, "file_info")
@@ -43,7 +50,7 @@ class TestCoolWOPI(unittest.TestCase):
     def test_publishTraverse_wopi_mode_contents(self):
         request = self.request.clone()
         request.set(
-            "PATH_INFO", f"/plone/testfile/@@cool_wopi/files/{self.uid}/contents"
+            "PATH_INFO", "/plone/testfile/@@cool_wopi/files/%s/contents" % self.uid
         )
         view = api.content.get_view("cool_wopi", self.portal.testfile, request)
         view.publishTraverse(request, "contents")
@@ -52,7 +59,7 @@ class TestCoolWOPI(unittest.TestCase):
     def test_publishTraverse_invalid_uid_base(self):
         request = self.request.clone()
         uid = "some-invalid-uid"
-        request.set("PATH_INFO", f"/plone/testfile/@@cool_wopi/files/{uid}")
+        request.set("PATH_INFO", "/plone/testfile/@@cool_wopi/files/%s" % uid)
         view = api.content.get_view("cool_wopi", self.portal.testfile, request)
         view.publishTraverse(request, uid)
         self.assertIsNone(view.wopi_mode)
@@ -60,7 +67,7 @@ class TestCoolWOPI(unittest.TestCase):
     def test_publishTraverse_invalid_uid_contents(self):
         request = self.request.clone()
         uid = "some-invalid-uid"
-        request.set("PATH_INFO", f"/plone/testfile/@@cool_wopi/files/{uid}/contents")
+        request.set("PATH_INFO", "/plone/testfile/@@cool_wopi/files/%s/contents" % uid)
         view = api.content.get_view("cool_wopi", self.portal.testfile, request)
         with self.assertRaises(AssertionError):
             view.publishTraverse(request, "contents")
@@ -68,14 +75,14 @@ class TestCoolWOPI(unittest.TestCase):
 
     def test_publishTraverse_missing_files_base(self):
         request = self.request.clone()
-        request.set("PATH_INFO", f"/plone/testfile/@@cool_wopi/{self.uid}")
+        request.set("PATH_INFO", "/plone/testfile/@@cool_wopi/%s" % self.uid)
         view = api.content.get_view("cool_wopi", self.portal.testfile, request)
         view.publishTraverse(request, self.uid)
         self.assertIsNone(view.wopi_mode)
 
     def test_publishTraverse_missing_files_contents(self):
         request = self.request.clone()
-        request.set("PATH_INFO", f"/plone/testfile/@@cool_wopi/{self.uid}/contents")
+        request.set("PATH_INFO", "/plone/testfile/@@cool_wopi/%s/contents" % self.uid)
         view = api.content.get_view("cool_wopi", self.portal.testfile, request)
         view.publishTraverse(request, "contents")
         self.assertIsNone(view.wopi_mode)
@@ -203,7 +210,7 @@ class TestCoolWOPI(unittest.TestCase):
         request.set("HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER", "true")
         view = api.content.get_view("cool_wopi", self.portal.testfile, request)
 
-        event_handler = unittest.mock.MagicMock()
+        event_handler = mock.MagicMock()
         gsm = zope.component.getGlobalSiteManager()
         gsm.registerHandler(
             event_handler, (IFile, zope.lifecycleevent.IObjectModifiedEvent)
@@ -245,6 +252,6 @@ class TestCoolWOPI(unittest.TestCase):
         request.set("method", "POST")
         view = api.content.get_view("cool_wopi", self.portal.testfile, request)
         view.wopi_mode = "contents"
-        view.wopi_put_file = unittest.mock.MagicMock()
+        view.wopi_put_file = mock.MagicMock()
         view()
         view.wopi_put_file.assert_called()

@@ -15,7 +15,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-              python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
+              python-version: ['2.7', '3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
         steps:
             - name: Git checkout
               uses: actions/checkout@v4
@@ -45,13 +45,17 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-              python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
+              python-version: ['2.7', '3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
               plone-version: ['Plone52', 'Plone60', 'Plone61']
               # While tox skips invalid matrix combinations, Github actions does
               # schedule and fail jobs for these. So exclude them. We could also
               # use include instead, but then the job names do not contain the
               # Plone version.
               exclude:
+                - python-version: '2.7'
+                  plone-version: 'Plone60'
+                - python-version: '2.7'
+                  plone-version: 'Plone61'
                 - python-version: '3.8'
                   plone-version: 'Plone60'
                 - python-version: '3.8'

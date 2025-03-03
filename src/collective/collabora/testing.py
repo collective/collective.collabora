@@ -1,4 +1,14 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from builtins import open
+from future import standard_library
+
+# plone.api.portal.set_registry_record expects a native string in py27
+from future.utils import bytes_to_native_str as n
+
+
+standard_library.install_aliases()
 from contextlib import contextmanager
 from plone import api
 from plone.app.testing import applyProfile
@@ -33,7 +43,8 @@ class CollectiveCollaboraLayer(PloneSandboxLayer):
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, "collective.collabora:default")
-        with open(TESTDATA_PATH / "testfile.docx", "br") as fh:
+        # py27: TypeError: invalid file: PosixPath('/collective.coll...
+        with open(str(TESTDATA_PATH / "testfile.docx"), "br") as fh:
             file_data = fh.read()
         roles_before = api.user.get_roles(TEST_USER_ID)
         setRoles(portal, TEST_USER_ID, ["Manager"])
@@ -48,7 +59,7 @@ class CollectiveCollaboraLayer(PloneSandboxLayer):
         # the tests against an active server in development - and then getting
         # breakage on CI where no such service is running.
         api.portal.set_registry_record(
-            "collective.collabora.server_url", "http://host.docker.internal:7777"
+            n(b"collective.collabora.server_url"), "http://host.docker.internal:7777"
         )
         setRoles(portal, TEST_USER_ID, roles_before)
 

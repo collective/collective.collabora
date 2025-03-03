@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+from __future__ import unicode_literals
+
+from builtins import super
+from future import standard_library
+
+
+standard_library.install_aliases()
 from logging import getLogger
 from plone import api
 from plone.event.utils import pydt
@@ -13,6 +19,8 @@ from zope.interface import implementer
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.publisher.interfaces import IPublishTraverse
 
+# datetime.datetime.fromisotime() is not available in py27
+import dateutil.parser
 import json
 
 
@@ -24,7 +32,8 @@ class CoolWOPIView(BrowserView):
     """Callback view used by Collabora Online to talk to Plone"""
 
     def __init__(self, context, request):
-        super().__init__(context, request)
+        # newsuper throws an infinite loop in py27
+        super(BrowserView, self).__init__(context, request)
         self.wopi_mode = None
 
     def publishTraverse(self, request, name, *args, **kwargs):
@@ -155,7 +164,7 @@ class CoolWOPIView(BrowserView):
             # See:
             # https://sdk.collaboraonline.com/docs/advanced_integration.html#detecting-external-document-change  # noqa: E501
             #
-            user_dt = datetime.fromisoformat(user_timestamp)
+            user_dt = dateutil.parser.isoparse(user_timestamp)
             if pydt(self.context.modified()) > user_dt:
                 logger.debug(
                     "User changes are outdated. User: <%r>. URL: <%r>.",
