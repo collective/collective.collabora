@@ -40,11 +40,15 @@ Introduction
 Features
 --------
 
+See https://www.collaboraonline.com/.
+
 - Real-time collaborative document editing of office-type documents: Word
   documents, spreadsheets, etc.
 
-See https://www.collaboraonline.com/
+- Reading Office files and PDFs in your browser in a Plone page, with comments,
+  even if you do not have edit rights.
 
+- Wide compatibility of this add-on across Plone and Python versions.
 
 Status: alpha
 -------------
@@ -59,11 +63,9 @@ Things that need to implemented/improved/tested:
 
 - Exposing/tweaking the COOL configuration
 
-- Full security audit
-
 - Translations
 
-- Plone4 / python2.7 backport
+- Plone4 backport
 
 - Overall testing and UI polishing
 
