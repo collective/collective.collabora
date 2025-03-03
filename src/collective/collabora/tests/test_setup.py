@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """Setup tests for this package."""
+from __future__ import unicode_literals
+
+from builtins import open
+from future import standard_library
+
+
+standard_library.install_aliases()
 from collective.collabora.testing import (  # noqa: E501
     COLLECTIVE_COLLABORA_INTEGRATION_TESTING,
 )
@@ -96,7 +103,8 @@ class TestFixture(unittest.TestCase):
         self.portal = self.layer["portal"]
 
     def test_testfile_created(self):
-        with open(TESTDATA_PATH / "testfile.docx", "br") as fh:
+        # py27: TypeError: invalid file: PosixPath('/collective.coll...
+        with open(str(TESTDATA_PATH / "testfile.docx"), "br") as fh:
             file_data = fh.read()
 
         self.assertEqual(self.portal.testfile.title, "My test file")
