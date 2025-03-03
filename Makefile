@@ -7,11 +7,11 @@ all: dev test
 dev: dev60/bin/instance dev52/bin/instance
 
 test:
-	tox
+	tox -p
 	@echo "You may need to run 'tox -r' to recreate the test environments."
 
 clean:
-	rm -rf dev61 dev60 dev52
+	rm -rf dev61 dev60 dev3852
 
 start61: dev61/bin/instance
 	./dev61/bin/instance fg
@@ -41,15 +41,17 @@ dev60/bin/instance: dev60
 dev60:
 	tox --devenv ./dev60 -e py311-Plone60
 
-start52: dev52/bin/instance
-	./dev52/bin/instance fg
+start3852: dev3852/bin/instance
+	./dev3852/bin/instance fg
 
-build52: dev52/bin/instance
-	./dev52/bin/buildout -c ./dev_plone52.cfg buildout:directory=$(CURDIR)/dev52 buildout:develop=$(CURDIR) buildout:update-versions-file=$(CURDIR)/dev_plone52.cfg install
+build3852: dev3852/bin/instance
+	./dev3852/bin/buildout -c ./dev38_plone52.cfg buildout:directory=$(CURDIR)/dev3852 buildout:develop=$(CURDIR) buildout:update-versions-file=$(CURDIR)/dev38_plone52.cfg install
 
-dev52/bin/instance: dev52
-	./dev52/bin/pip install -r requirements_plone52.txt
-	./dev52/bin/buildout -c ./dev_plone52.cfg buildout:directory=$(CURDIR)/dev52 buildout:develop=$(CURDIR) buildout:update-versions-file=$(CURDIR)/dev_plone52.cfg bootstrap
+dev3852/bin/instance: dev3852
+	./dev3852/bin/pip install -r requirements_plone52.txt
+	./dev3852/bin/buildout -c ./dev38_plone52.cfg buildout:directory=$(CURDIR)/dev3852 buildout:develop=$(CURDIR) buildout:update-versions-file=$(CURDIR)/dev38_plone52.cfg bootstrap
+	./dev3852/bin/buildout -c ./dev38_plone52.cfg buildout:directory=$(CURDIR)/dev3852 buildout:develop=$(CURDIR) buildout:update-versions-file=$(CURDIR)/dev38_plone52.cfg install
 
-dev52:
-	tox --devenv ./dev52 -e py38-Plone52
+dev3852:
+	tox --devenv ./dev3852 -e py38-Plone52
+

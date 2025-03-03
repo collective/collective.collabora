@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from collective.collabora import _
 from logging import getLogger
 from lxml import etree
@@ -142,7 +143,10 @@ class CoolEditView(FileView):
         except StopIteration:
             self.error_msg = _(
                 "error_jwt_plugin",
-                default="JWT Authentication Plugin not found. Is plone.restapi installed?",
+                default=(
+                    "JWT Authentication Plugin not found. "
+                    "Is plone.restapi installed?"
+                ),
             )
             logger.error("JWT Authentication Plugin not found.")
             return

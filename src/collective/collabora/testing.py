@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from contextlib import contextmanager
 from plone import api
-from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.app.testing import applyProfile
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
@@ -10,7 +9,6 @@ from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.namedfile.file import NamedBlobFile
-from plone.testing import z2
 
 import collective.collabora
 import os
@@ -67,16 +65,6 @@ COLLECTIVE_COLLABORA_INTEGRATION_TESTING = IntegrationTesting(
 COLLECTIVE_COLLABORA_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(COLLECTIVE_COLLABORA_FIXTURE,),
     name="CollectiveCollaboraLayer:FunctionalTesting",
-)
-
-
-COLLECTIVE_COLLABORA_ACCEPTANCE_TESTING = FunctionalTesting(
-    bases=(
-        COLLECTIVE_COLLABORA_FIXTURE,
-        REMOTE_LIBRARY_BUNDLE_FIXTURE,
-        z2.ZSERVER_FIXTURE,
-    ),
-    name="CollectiveCollaboraLayer:AcceptanceTesting",
 )
 
 

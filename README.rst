@@ -269,9 +269,13 @@ To run all tests for only that environment::
 
   tox -e py312-Plone60
 
-To run a single test in a single environment::
+To run a single test in a single environment and spawn a debugger::
 
-  tox -e py312-Plone60 -- -t your_test_substring
+  tox -e py312-Plone60 -- -t your_test_substring -D -x
+
+To run all linters in parallel::
+
+  tox -p -f lint
 
 Github CI testing is configured in::
 

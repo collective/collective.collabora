@@ -15,7 +15,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-              python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+              python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
         steps:
             - name: Git checkout
               uses: actions/checkout@v4
@@ -45,7 +45,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-              python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+              python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
               plone-version: ['Plone52', 'Plone60', 'Plone61']
               # While tox skips invalid matrix combinations, Github actions does
               # schedule and fail jobs for these. So exclude them. We could also
@@ -66,6 +66,10 @@ jobs:
                   plone-version: 'Plone52'
                 - python-version: '3.12'
                   plone-version: 'Plone52'
+                - python-version: '3.13'
+                  plone-version: 'Plone52'
+                - python-version: '3.13'
+                  plone-version: 'Plone60'
 
         steps:
             - name: Git checkout
@@ -120,7 +124,6 @@ jobs:
                 include-hidden-files: true
                 if-no-files-found: ignore
 
-
     coverage:
         name: Combine & check coverage
         if: always()
@@ -128,13 +131,17 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-          - uses: actions/checkout@v4
-          - uses: actions/setup-python@v5
+          - name: Git checkout
+            uses: actions/checkout@v4
+
+          - name: Setup Python 3.12
+            uses: actions/setup-python@v5
             with:
               # Use latest Python, so it understands all syntax.
               python-version: "3.12"
 
-          - uses: actions/download-artifact@v4
+          - name: Download coverage data
+            uses: actions/download-artifact@v4
             with:
               pattern: coverage-data-*
               merge-multiple: true

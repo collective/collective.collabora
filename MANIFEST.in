@@ -3,7 +3,6 @@ graft docs
 include *.rst
 exclude *.txt
 exclude .github
-exclude .gitlab-ci.yml
 exclude .pre-commit-config.yaml
 exclude Makefile
 exclude docker-compose.yaml
