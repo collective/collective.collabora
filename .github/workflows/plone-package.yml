@@ -36,7 +36,7 @@ jobs:
 
             - name: Lint with tox
               run: |
-                  tox -r -e py${{ matrix.python-version }}-lint
+                  tox -r
               env:
                 PLATFORM: lint
 
