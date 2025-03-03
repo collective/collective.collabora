@@ -123,8 +123,6 @@ jobs:
     # https://github.com/actions/setup-python/issues/672#issuecomment-1589120020
     build_and_test_py2:
         runs-on: ubuntu-20.04
-        container:
-          image: python:2.7.18-buster
         strategy:
             fail-fast: false
             matrix:
