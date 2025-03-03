@@ -123,6 +123,8 @@ jobs:
     # https://github.com/actions/setup-python/issues/672#issuecomment-1589120020
     build_and_test_py2:
         runs-on: ubuntu-20.04
+        container:
+          image: python:2.7.18-buster
         strategy:
             fail-fast: false
             matrix:
@@ -132,17 +134,6 @@ jobs:
         steps:
             - name: Git checkout
               uses: actions/checkout@v4
-
-            - name: Set up Python ${{ matrix.python-version }}
-              # uses: actions/setup-python@v5
-              # instead: https://github.com/MatteoH2O1999/setup-python
-              # https://github.com/xenserver-next/python-libs/commit/a0b8a36a214dfadd428eed3e39d75622c77d75ca
-              uses: MatteoH2O1999/setup-python@v1
-              with:
-                  python-version: ${{ matrix.python-version }}
-                  allow-build: info
-                  cache-build: true
-                  # cache: pip
 
             - name: Cache hash ${{ matrix.python-version }} - ${{ matrix.plone-version }}
               uses: actions/cache@v4
