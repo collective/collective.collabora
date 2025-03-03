@@ -36,7 +36,7 @@ jobs:
 
             - name: Lint with tox
               run: |
-                  tox -r
+                  tox -r -f lint
               env:
                 PLATFORM: lint
 
