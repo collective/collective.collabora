@@ -55,16 +55,6 @@ class CoolEditView(FileView):
 
     @property
     @memoize
-    def plone_version(self):
-        """Get the major version we're running in."""
-        if getattr(import_module("Products.CMFPlone.factory"), "PLONE60MARKER", False):
-            return "plone6"
-        if getattr(import_module("Products.CMFPlone.factory"), "PLONE52MARKER", False):
-            return "plone5"
-        return "plone4"
-
-    @property
-    @memoize
     def can_edit(self):
         return api.user.has_permission(
             "Modify portal content", user=api.user.get_current(), obj=self.context
