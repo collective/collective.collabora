@@ -170,7 +170,7 @@ jobs:
 
             - name: Test with tox
               run: |
-                  tox -r -e py${{ matrix.python-version }}-${{ matrix.plone-version }}
+                  tox -r -f ${{ matrix.plone-version }}
               env:
                 PLONE_VERSION: ${{ matrix.plone-version }}
 
