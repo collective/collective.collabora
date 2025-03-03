@@ -15,7 +15,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-              python-version: ['2.7', '3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
+              python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
         steps:
             - name: Git checkout
               uses: actions/checkout@v4
@@ -40,22 +40,18 @@ jobs:
               env:
                 PLATFORM: lint
 
-    build_and_test:
+    build_and_test_py3:
         runs-on: ubuntu-latest
         strategy:
             fail-fast: false
             matrix:
-              python-version: ['2.7', '3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
+              python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
               plone-version: ['Plone52', 'Plone60', 'Plone61']
               # While tox skips invalid matrix combinations, Github actions does
               # schedule and fail jobs for these. So exclude them. We could also
               # use include instead, but then the job names do not contain the
               # Plone version.
               exclude:
-                - python-version: '2.7'
-                  plone-version: 'Plone60'
-                - python-version: '2.7'
-                  plone-version: 'Plone61'
                 - python-version: '3.8'
                   plone-version: 'Plone60'
                 - python-version: '3.8'
@@ -128,10 +124,74 @@ jobs:
                 include-hidden-files: true
                 if-no-files-found: ignore
 
+    # https://github.com/actions/setup-python/issues/672#issuecomment-1589120020
+    build_and_test_py2:
+        runs-on: ubuntu-20.04
+        container:
+          image: python:2.7.18-buster
+        strategy:
+            fail-fast: false
+            matrix:
+              python-version: ['2.7']
+              plone-version: ['Plone52']
+
+        steps:
+            - name: Git checkout
+              uses: actions/checkout@v4
+
+            - name: Set up Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ matrix.python-version }}
+
+            - name: Cache hash ${{ matrix.python-version }} - ${{ matrix.plone-version }}
+              uses: actions/cache@v4
+              with:
+                  path: |
+                    ~/.cache/pip
+                    ~/buildout-cache
+                    ~/extends
+                  key: ${{ runner.os }}-tox-${{ matrix.python-version }}-${{ matrix.plone-version }}-${{ hashFiles('**/setup.py') }}-${{ hashFiles('**/requirements.txt') }}-${{ hashFiles('**/*.cfg') }}-${{ hashFiles('**/constraints.txt') }}-${{ hashFiles('**/tox.ini') }}
+                  #restore-keys: |
+                  #  ${{ runner.os }}-tox-
+
+            - name: Cache configure
+              run: |
+                  mkdir -p ~/buildout-cache/{eggs,downloads}
+                  mkdir ~/.buildout
+                  echo "[buildout]" > $HOME/.buildout/default.cfg
+                  echo "download-cache = $HOME/buildout-cache/downloads" >> $HOME/.buildout/default.cfg
+                  echo "eggs-directory = $HOME/buildout-cache/eggs" >> $HOME/.buildout/default.cfg
+
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install tox tox-gh-actions
+
+            # Unfortunately, this is always also run against python3.10 in
+            # addition to the specified python factor, if the plone version is
+            # supported on 3.10. Apparently that (base?) version is always
+            # available.
+            - name: Test with tox
+              run: |
+                  tox -r
+              env:
+                PLONE_VERSION: ${{ matrix.plone-version }}
+
+            # Coverage, based on https://hynek.me/articles/ditch-codecov-python/
+
+            - name: Upload coverage data
+              uses: actions/upload-artifact@v4
+              with:
+                name: coverage-data-${{ matrix.python-version }}-${{ matrix.plone-version }}
+                path: .coverage.*
+                include-hidden-files: true
+                if-no-files-found: ignore
+
     coverage:
         name: Combine & check coverage
         if: always()
-        needs: build_and_test
+        needs: build_and_test_py3
         runs-on: ubuntu-latest
 
         steps:
