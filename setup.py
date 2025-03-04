@@ -28,6 +28,7 @@ setup(
         "Framework :: Plone :: 6.0",
         "Framework :: Plone :: 6.1",
         "Programming Language :: Python",
+        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
@@ -54,21 +55,22 @@ setup(
     package_dir={"": "src"},
     include_package_data=True,
     zip_safe=False,
-    python_requires=">=3.8",
+    # python_requires comma sep functions as an AND.
+    # So to express ==2.7 OR >= 3.8, we have to write it as follows:
+    python_requires=">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,!=3.7.*",  # noqa: E501
     install_requires=[
         "setuptools",
-        # -*- Extra requirements: -*-
-        "plone.api>=1.8.4",
+        "future",
+        "plone.api",
         "plone.app.contenttypes",
         "plone.restapi",
+        "python-dateutil",
     ],
     extras_require={
         "test": [
+            "mock",
             "plone.app.testing",
-            # Plone KGS does not use this version, because it would break
-            # Remove if your package shall be part of coredev.
-            # plone_coredev tests as of 2016-04-01.
-            "plone.testing>=5.0.0",
+            "plone.testing",
         ],
     },
     entry_points="""

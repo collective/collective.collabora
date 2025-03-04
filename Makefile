@@ -11,7 +11,7 @@ test:
 	@echo "You may need to run 'tox -r' to recreate the test environments."
 
 clean:
-	rm -rf dev61 dev60 dev3852
+	rm -rf dev61 dev60 dev3852 dev2752
 
 start61: dev61/bin/instance
 	./dev61/bin/instance fg
@@ -55,3 +55,16 @@ dev3852/bin/instance: dev3852
 dev3852:
 	tox --devenv ./dev3852 -e py38-Plone52
 
+start2752: dev2752/bin/instance
+	./dev2752/bin/instance fg
+
+build2752: dev2752/bin/instance
+	./dev2752/bin/buildout -c ./dev27_plone52.cfg buildout:directory=$(CURDIR)/dev2752 buildout:develop=$(CURDIR) buildout:update-versions-file=$(CURDIR)/dev27_plone52.cfg install
+
+dev2752/bin/instance: dev2752
+	./dev2752/bin/pip install -r requirements_plone52.txt
+	./dev2752/bin/buildout -c ./dev27_plone52.cfg buildout:directory=$(CURDIR)/dev2752 buildout:develop=$(CURDIR) buildout:update-versions-file=$(CURDIR)/dev27_plone52.cfg bootstrap
+	./dev2752/bin/buildout -c ./dev27_plone52.cfg buildout:directory=$(CURDIR)/dev2752 buildout:develop=$(CURDIR) buildout:update-versions-file=$(CURDIR)/dev27_plone52.cfg install
+
+dev2752:
+	tox --devenv ./dev2752 -e py27-Plone52

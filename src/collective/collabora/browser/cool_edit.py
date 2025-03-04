@@ -1,4 +1,17 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from builtins import dict
+from builtins import filter
+from builtins import next
+from builtins import super
+from future import standard_library
+
+# plone.api.portal.get_registry_record expects a native string in py27
+from future.utils import bytes_to_native_str as n
+
+
+standard_library.install_aliases()
 from collective.collabora import _
 from importlib import import_module
 from logging import getLogger
@@ -20,14 +33,15 @@ class CoolEditView(FileView):
     """User interface for interacting with Collabora Online."""
 
     def __init__(self, context, request):
-        super().__init__(context, request)
+        # newsuper throws an infinite loop in py27
+        super(FileView, self).__init__(context, request)
         self.error_msg = None
 
     def __call__(self):
         if not all([self.portal_url, self.server_url, self.wopi_url]):
             # accessing those detects errors and sets self.error_msg
             pass
-        return super().__call__()
+        return super(FileView, self).__call__()
 
     @property
     @memoize
@@ -79,7 +93,7 @@ class CoolEditView(FileView):
     @memoize
     def server_url(self):
         server_url = api.portal.get_registry_record(
-            "collective.collabora.server_url", default=None
+            n(b"collective.collabora.server_url"), default=None
         )
         if not server_url:
             self.error_msg = _(
@@ -95,7 +109,7 @@ class CoolEditView(FileView):
         if not self.server_url:
             return
         try:
-            return requests.get(f"{self.server_url}/hosting/discovery").text
+            return requests.get("%s/hosting/discovery" % self.server_url).text
         except requests.exceptions.RequestException as e:
             self.error_msg = _(
                 "error_server_discovery", default="Collabora server is not responding."
@@ -118,7 +132,7 @@ class CoolEditView(FileView):
         # ext = self.context.file.filename.split(".")[-1]
         # action = tree.xpath("//action[@ext='odt']")
         mime_type = self.context.file.contentType
-        action = tree.xpath(f"//app[@name='{mime_type}']/action")
+        action = tree.xpath("//app[@name='%s']/action" % mime_type)
         action = action[0] if len(action) else None
         if action is None:
             self.error_msg = _(
@@ -172,8 +186,8 @@ class CoolEditView(FileView):
         document_url = self.context.absolute_url()
         uuid = IUUID(self.context)
         args = dict(
-            WOPISrc=f"{document_url}/@@cool_wopi/files/{uuid}",
+            WOPISrc="%s/@@cool_wopi/files/%s" % (document_url, uuid),
             access_token=self.jwt_token,
         )
         quoted_args = urllib.parse.urlencode(args)
-        return f"{self.editor_url}{quoted_args}"
+        return "%s%s" % (self.editor_url, quoted_args)

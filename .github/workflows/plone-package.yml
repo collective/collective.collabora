@@ -40,7 +40,7 @@ jobs:
               env:
                 PLATFORM: lint
 
-    build_and_test:
+    build_and_test_py3:
         runs-on: ubuntu-latest
         strategy:
             fail-fast: false
@@ -120,10 +120,15 @@ jobs:
                 include-hidden-files: true
                 if-no-files-found: ignore
 
+    # Give up on Github Actions for Python2.7.
+    # None of the workarounds described here work:
+    # https://github.com/actions/setup-python/issues/672#issuecomment-1589120020
+    # Instead: run tox locally: we do have the full matrix active locally.
+
     coverage:
         name: Combine & check coverage
         if: always()
-        needs: build_and_test
+        needs: build_and_test_py3
         runs-on: ubuntu-latest
 
         steps:
