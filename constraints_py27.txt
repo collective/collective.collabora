@@ -1,0 +1,6 @@
+setuptools==42.0.2
+zc.buildout==2.13.8
+future==0.18.2
+
+coverage==5.5
+mock==3.0.5

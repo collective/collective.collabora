@@ -3,7 +3,7 @@
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       lang="en"
-      metal:use-macro="context/@@main_template/macros/master"
+      metal:use-macro="context/main_template/macros/master"
       xml:lang="en"
       i18n:domain="plone"
 >
@@ -18,75 +18,99 @@
         <div tal:condition="error_msg">
           <h2 i18n:translate="label_error">Error</h2>
           <p class="alert alert-warning"
-             i18n:translate="error_msg"
-          >${error_msg}</p>
+             tal:content="error_msg"
+          >error_msg</p>
         </div>
 
-        <section class="section section-collabora-actions ${view/plone_version}"
-                 tal:condition="not: view/error_msg"
+        <section tal:condition="not: view/error_msg"
+                 tal:attributes="
+                   class python:'section section-collabora-actions ' + view.plone_version;
+                 "
         >
           <a class="btn btn-secondary standalone fullscreen"
              onclick="javascript:collabora_action_fullscreen(); return false;"
              i18n:translate=""
           >Fullscreen</a>
           <a class="btn btn-secondary standalone download"
-             href="${view/download_url}"
+             tal:attributes="
+               href view/download_url;
+             "
           >
             <span i18n:translate="">Download</span>
-            <span i18n:ignore="">(${python: view.human_readable_size()})</span>
+            <span tal:content="python: view.human_readable_size()"
+                  i18n:ignore=""
+            >size</span>
           </a>
           <a class="btn btn-secondary standalone edit"
-             href="${python:context.absolute_url()}/@@edit"
              tal:condition="view/can_edit"
+             tal:attributes="
+               href python:context.absolute_url() + '/@@edit';
+             "
              i18n:translate=""
           >Edit metadata</a>
           <a class="btn btn-primary context"
-             href="${python:context.absolute_url()}/view"
              onclick="javascript:collabora_action_save_and_close(); return true;"
              tal:condition="view/can_edit"
+             tal:attributes="
+               href python:context.absolute_url() + '/view';
+             "
              i18n:translate=""
           >Save & Close</a>
           <a class="btn btn-primary context"
-             href="${python:context.absolute_url()}/view"
              onclick="javascript:collabora_action_close(); return true;"
              tal:condition="not:view/can_edit"
+             tal:attributes="
+               href python:context.absolute_url() + '/view';
+             "
              i18n:translate=""
           >Close</a>
         </section>
 
-        <section class="section section-collabora-main ${view/plone_version}"
-                 tal:condition="not: view/error_msg"
+        <section tal:condition="not: view/error_msg"
+                 tal:attributes="
+                   class python:'section section-collabora-main ' + view.plone_version;
+                 "
         >
           <iframe id="cool_iframe"
                   allowfullscreen="true"
                   height="100%"
                   scrolling="no"
-                  src="${view/wopi_url}"
                   width="100%"
+                  tal:attributes="
+                    src view/wopi_url;
+                  "
           ></iframe>
         </section>
 
         <style type="text/css">
          .section-collabora-actions { text-align: right; background-color: #d6d6d6; margin-bottom: 0; padding: 0.5rem; }
          .section-collabora-actions.plone6 .btn { font-size: 0.9rem; }
+         .section-collabora-actions.plone4 { display: flex; justify-content: flex-end; }
+         #content .section-collabora-actions.plone4 a.btn {
+             font-size: 0.9rem; margin: 0 0.5rem; padding: 0.25rem 0.5rem; border-radius: 0.25rem; background-color: #6c757d; color:white;
+         }
+         #content .section-collabora-actions.plone4 a.btn:hover { background-color: #555; }
+         #content .section-collabora-actions.plone4 a.btn.fullscreen { margin-right: auto; }
          .section-collabora-actions .fullscreen { float: left; }
          .section-collabora-main iframe { border: 0 }
         </style>
 
         <script type="text/javascript"
-                tal:define="
+                tal:attributes="
+                  id string:cool_js;
                   server_url view/server_url;
                   plone_version view/plone_version;
                 "
         >
 
-         //
-         // --- host to collabora ---
-         //
+          //
+          // --- host to collabora ---
+          //
 
-         var targetOrigin = "${server_url}";
-         var plone_version = "${plone_version}";
-         var iframe = document.getElementById("cool_iframe")
+          var cool_js = document.getElementById("cool_js");
+          var targetOrigin = cool_js.getAttribute("server_url");
+          var plone_version = cool_js.getAttribute("plone_version")
+          var iframe = document.getElementById("cool_iframe")
 
          function collabora_postMessage(message_id, values={}) {
              var msg = {
@@ -148,9 +172,10 @@
                  console.log("Resizing iframe on document loaded");
                  if (plone_version == "plone6") {
                      var offset = iframe.offsetTop + 5;
-                 } else {
-                     // TO BE TESTED FOR PLONE4
+                 } else if (plone_version == "plone5") {
                      var offset = window.document.getElementById("main-container").offsetTop + 55;
+                 } else {
+                     var offset = window.document.getElementById("content").offsetTop + 210;
                  }
                  iframe.style.height = 'calc(100vh - ' + offset  + 'px)';
              }
