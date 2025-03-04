@@ -11,7 +11,6 @@ from plone import api
 from plone.event.utils import pydt
 from plone.memoize.view import memoize
 from plone.namedfile.file import NamedBlobFile
-from plone.protect.utils import safeWrite
 from plone.uuid.interfaces import IUUID
 from Products.Five.browser import BrowserView
 from zope.event import notify
@@ -22,6 +21,12 @@ from zope.publisher.interfaces import IPublishTraverse
 # datetime.datetime.fromisotime() is not available in py27
 import dateutil.parser
 import json
+
+
+try:
+    from plone.protect.utils import safeWrite
+except ImportError:
+    from collective.collabora.monkey_plone43.plone_protect_utils import safeWrite
 
 
 logger = getLogger(__name__)
