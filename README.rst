@@ -226,19 +226,28 @@ can be further anonymized, see ``anonymize_user_data`` in the Collabora
 ``coolwsd.xml`` configuration file.
 
 The collective.collabora ``@@cool_edit`` view passes a authentication token to
-the Collabora Online server. That Collabora Online server uses that
+the Collabora Online server. The Collabora Online server uses that
 authentication token, to retrieve information from Plone via the
-collective.collabora ``@@cool_wopi`` exclusively. The Plone views involved are
-protected with the ``zope2.View`` permission through normal zcml configuration.
-Additionally, performing a document save on ``@@cool_wopi`` is protected with
-the ``ModifyPortalContent`` permission in python.
+collective.collabora ``@@cool_wopi`` view.
 
-Protection at potential session hijacking can be configured by enabling
-`WOPI Proof <https://sdk.collaboraonline.com/docs/advanced_integration.html#wopi-proof>`_ f
+Collabora Online interacts with Plone exclusively though the ``@@cool_wopi``
+view, logged in as the user who opened the ``@@cool_edit`` view. Both those
+Plone views are protected with the ``zope2.View`` permission through normal ZCML
+configuration. Additionally, performing a document save on ``@@cool_wopi`` is
+protected with the ``ModifyPortalContent`` permission in python.
+
+Protection against potential session hijacking can be configured by enabling
+`WOPI Proof <https://sdk.collaboraonline.com/docs/advanced_integration.html#wopi-proof>`_
 in your production deployment of Collabora Online.
 
 Deployment security configuration
 ---------------------------------
+
+You will typically deploy a Collabora Online server behind a reverse proxy,
+and otherwise firewall it from the open internet. Whatever your network topology,
+Collabora Online needs to be able to connect to Plone on the public URL of your
+Plone site. Adding an extra configuration to enable Collabora to talk directly
+to Plone on an internal URL, bypassing your frontend stack, is planned.
 
 For a production deployment, you need to take the following security configurations into account:
 
