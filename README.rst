@@ -86,9 +86,9 @@ If you are having issues, please let us know via the `issue tracker
 <https://github.com/collective/collective.collabora/issues>`_.
 
 This package is part of `Quaive <https://quaive.com>`_ and supported by the
-Quaive partners Cosent, Syslab.com and Imio.
+Quaive partners Cosent, Syslab.com and iMio.
 
-Development of this package was sponsored by `Imio <https://imio.be>`_ and
+Development of this package was sponsored by `iMio <https://imio.be>`_ and
 `Syslab.com <https://syslab.com>`_.
 
 
