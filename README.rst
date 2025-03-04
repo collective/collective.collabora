@@ -30,13 +30,21 @@ collective.collabora
 
 Collabora Online integration for Plone.
 
+
 Introduction
 ============
 
+`Collabora Online <https://www.collaboraonline.com/>`_ provides collaborative open source document editing, controlled by you.
+
+Collective.collabora brings this capability into Plone. It can be used as-is,
+and works out of the box in about any Plone version.
+
+Additionally, collective.collabora provides a building block for integration of
+real-time document collaboration into Plone-based applications like
+`Quaive <https://quaive.com>`_ and `iA.Delib <https://www.imio.be/apps-et-services/ia-delib>`_.
+
 Features
 --------
-
-See https://www.collaboraonline.com/.
 
 - Real-time collaborative document editing of office-type documents: Word
   documents, spreadsheets, etc.
@@ -53,23 +61,15 @@ Development alpha, not suitable for production use yet.
 
 Things that need to implemented/improved/tested:
 
-- Locking and lock stealing, especially when files are modified Plone-side
-
-- Multihost/multisite: multiple Plones talking to the same Collabora server
-
-- Exposing/tweaking the COOL configuration
-
 - Translations
-
 - Plone4 backport
-
 - Overall testing and UI polishing
 
 Authors
 -------
 
-- Johannes Raggam (thet)
-- Guido A.J. Stevens (gyst)
+- Johannes Raggam (thet): initial proof of concept (integration, WOPI implementation).
+- Guido A.J. Stevens (gyst): production quality code (cleanup, tests, CI, documentation, backporting, release).
 
 
 Contribute
@@ -204,6 +204,56 @@ Editing a file and saving changes
    the Collabora iframe via the postMessage API, see:
    https://sdk.collaboraonline.com/docs/postmessage_api.html
 
+Security and production deployment
+==================================
+
+Production configuration
+------------------------
+
+To change the Collabora Online configuration, extract ``/etc/coolwsd/coolwsd.xml`` from the docker container.
+Make changes, then use e.g. a bind mound to map your changed configuration back into the docker container. YMMV.
+
+Session security
+----------------
+
+The Collabora Online `security architecture <https://sdk.collaboraonline.com/docs/architecture.html>`_
+isolates all user document sessions from each other.
+
+The only place where Collabora Online interacts with user data is what it gets
+from ``@@cool_wopi`` (including the document name). The
+`personal data flow within Collabora <https://sdk.collaboraonline.com/docs/personal_data_flow.html>`_
+can be further anonymized, see ``anonymize_user_data`` in the Collabora
+``coolwsd.xml`` configuration file.
+
+The collective.collabora ``@@cool_edit`` view passes a authentication token to
+the Collabora Online server. That Collabora Online server uses that
+authentication token, to retrieve information from Plone via the
+collective.collabora ``@@cool_wopi`` exclusively. The Plone views involved are
+protected with the ``zope2.View`` permission through normal zcml configuration.
+Additionally, performing a document save on ``@@cool_wopi`` is protected with
+the ``ModifyPortalContent`` permission in python.
+
+Protection at potential session hijacking can be configured by enabling
+`WOPI Proof <https://sdk.collaboraonline.com/docs/advanced_integration.html#wopi-proof>`_ f
+in your production deployment of Collabora Online.
+
+Deployment security configuration
+---------------------------------
+
+For a production deployment, you need to take the following security configurations into account:
+
+- `Proxy settings <https://sdk.collaboraonline.com/docs/installation/Proxy_settings.html>`_
+- `SSL configuration <https://sdk.collaboraonline.com/docs/installation/Configuration.html#ssl-configuration>`_
+- `Content Security Policy <https://sdk.collaboraonline.com/docs/advanced_integration.html#content-security-policy>`_
+- Other `security settings <https://sdk.collaboraonline.com/docs/installation/Configuration.html#security-settings>`_
+
+Multihost configuration
+-----------------------
+
+If you want to use the same Collabora server to integrate with multiple sites,
+you will need to configure
+`host allow/deny policies <https://sdk.collaboraonline.com/docs/installation/Configuration.html#multihost-configuration>`_.
+
 
 Development
 ===========
@@ -224,12 +274,6 @@ This package provides a default configuration that is suitable for development:
 - The ``collective.collabora:default`` profile configures the registry record
   ``collective.collabora.server_url`` to point at that CODE server at that URL.
 
-Note that if you're accessing Collabora Online from multiple hostnames/aliases,
-it will bind to the first one by default and disallow any other connections.
-
-See:
-
-- https://sdk.collaboraonline.com/docs/installation/Configuration.html#multihost-configuration
 
 No localhost
 ++++++++++++
