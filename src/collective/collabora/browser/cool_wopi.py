@@ -6,11 +6,11 @@ from future import standard_library
 
 
 standard_library.install_aliases()
+from collective.collabora.adapters import IStoredFile
 from logging import getLogger
 from plone import api
 from plone.event.utils import pydt
 from plone.memoize.view import memoize
-from plone.namedfile.file import NamedBlobFile
 from plone.uuid.interfaces import IUUID
 from Products.Five.browser import BrowserView
 from zope.event import notify
@@ -40,6 +40,7 @@ class CoolWOPIView(BrowserView):
         # newsuper throws an infinite loop in py27
         super(BrowserView, self).__init__(context, request)
         self.wopi_mode = None
+        self.stored_file = IStoredFile(self.context)
 
     def publishTraverse(self, request, name, *args, **kwargs):
         """Provide the WOPI endpoints:
@@ -97,8 +98,8 @@ class CoolWOPIView(BrowserView):
         user = api.user.get_current()
         user_id = user.getId()
         return {
-            "BaseFileName": self.context.file.filename,
-            "Size": self.context.file.getSize(),
+            "BaseFileName": self.stored_file.filename,
+            "Size": self.stored_file.getSize(),
             "OwnerId": self.context.getOwner().getId(),
             "UserId": user_id,
             "UserCanWrite": self.can_edit,
@@ -123,7 +124,7 @@ class CoolWOPIView(BrowserView):
         # TODO: CORS header actually not needed.
         self.request.response.setHeader("Access-Control-Allow-Origin", "*")
 
-        return self.context.file.data
+        return self.stored_file.data
 
     def wopi_put_file(self):
         """WOPI PutFile endpoint. Update the file content.
@@ -188,14 +189,7 @@ class CoolWOPIView(BrowserView):
             # safeWrite is the more convenient way of satisfying plone.protect,
             # and more targeted than IDisableCSRFProtection.
             safeWrite(self.context)
-
-            file = self.context.file
-            filename = file.filename
-            content_type = file.contentType
-            data = self.request._file.read()
-            self.context.file = NamedBlobFile(
-                data=data, filename=filename, contentType=content_type
-            )
+            self.stored_file.data = self.request._file.read()
             notify(ObjectModifiedEvent(self.context))
 
             logger.debug(

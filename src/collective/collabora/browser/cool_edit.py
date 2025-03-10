@@ -13,6 +13,7 @@ from future.utils import bytes_to_native_str as n
 
 standard_library.install_aliases()
 from collective.collabora import _
+from collective.collabora.adapters import IStoredFile
 from importlib import import_module
 from logging import getLogger
 from lxml import etree
@@ -28,6 +29,14 @@ import urllib.parse
 
 logger = getLogger(__name__)
 
+SIZE_CONST = {
+    "KB": 1024,
+    "MB": 1024**2,
+    "GB": 1024**3,
+    "TB": 1024**4,
+    "PB": 1024**5,
+}
+
 
 class CoolEditView(FileView):
     """User interface for interacting with Collabora Online."""
@@ -36,12 +45,34 @@ class CoolEditView(FileView):
         # newsuper throws an infinite loop in py27
         super(FileView, self).__init__(context, request)
         self.error_msg = None
+        self.stored_file = IStoredFile(context)
 
     def __call__(self):
         if not all([self.portal_url, self.server_url, self.wopi_url]):
             # accessing those detects errors and sets self.error_msg
             pass
         return super(FileView, self).__call__()
+
+    def human_readable_size(self):
+        """plone.base is not available in older Plone versions.
+        Reimplement this utility method.
+        """
+        size = self.stored_file.getSize()
+        try:
+            size = int(size)
+        except (ValueError, TypeError):
+            pass
+        if not size:
+            return "0 KB"
+        if not isinstance(size, int):
+            return size
+        if size < 1024:
+            return "1 KB"
+        for c in ("PB", "TB", "GB", "MB", "KB"):
+            if size // SIZE_CONST[c] > 0:
+                break
+        fraction = float(size) / SIZE_CONST[c]
+        return "%.1f %s" % (fraction, c)
 
     @property
     @memoize
@@ -68,7 +99,7 @@ class CoolEditView(FileView):
                 self.context.absolute_url(),
                 "@@download",
                 "file",
-                self.context.file.filename,
+                self.stored_file.filename,
             )
         )
 
@@ -129,9 +160,9 @@ class CoolEditView(FileView):
             return
         parser = etree.XMLParser()
         tree = etree.fromstring(self.server_discovery_xml, parser=parser)
-        # ext = self.context.file.filename.split(".")[-1]
+        # ext = self.stored_file.filename.split(".")[-1]
         # action = tree.xpath("//action[@ext='odt']")
-        mime_type = self.context.file.contentType
+        mime_type = self.stored_file.contentType
         action = tree.xpath("//app[@name='%s']/action" % mime_type)
         action = action[0] if len(action) else None
         if action is None:

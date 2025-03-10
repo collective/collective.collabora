@@ -9,8 +9,10 @@ from future.utils import bytes_to_native_str as n
 
 
 standard_library.install_aliases()
+
 from contextlib import contextmanager
 from plone import api
+from plone.app.contenttypes.interfaces import IFile
 from plone.app.testing import applyProfile
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
@@ -19,10 +21,17 @@ from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.namedfile.file import NamedBlobFile
+from StringIO import StringIO
 
 import collective.collabora
 import os
 import pathlib
+
+
+try:
+    from Products.ATContentTypes.interfaces import IATFile
+except ImportError:
+    from collective.collabora.interfaces import IDummy as IATFile
 
 
 TESTDATA_PATH = pathlib.Path(os.path.dirname(__file__)) / "testdata"
@@ -48,13 +57,22 @@ class CollectiveCollaboraLayer(PloneSandboxLayer):
             file_data = fh.read()
         roles_before = api.user.get_roles(TEST_USER_ID)
         setRoles(portal, TEST_USER_ID, ["Manager"])
-        api.content.create(
+        testfile = api.content.create(
             portal,
             type="File",
             id="testfile",
             title="My test file",
-            file=NamedBlobFile(data=file_data, filename="testfile.docx"),
         )
+        if IATFile.providedBy(testfile):
+            # This follows the README.txt in
+            # https://github.com/plone/plone.app.blob/tree/master/src/plone/app/blob
+            data_wrapper = StringIO(file_data)
+            data_wrapper.filename = "testfile.docx"
+            testfile.setFile(data_wrapper)
+        else:
+            assert IFile.providedBy(testfile)
+            testfile.file = NamedBlobFile(data=file_data, filename="testfile.docx")
+
         # Configure collabora to an unused port, to prevent accidentally running
         # the tests against an active server in development - and then getting
         # breakage on CI where no such service is running.
