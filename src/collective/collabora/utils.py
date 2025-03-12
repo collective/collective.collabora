@@ -3,12 +3,18 @@ from __future__ import division
 from __future__ import unicode_literals
 
 from future import standard_library
+from future.utils import bytes_to_native_str as n
 
 
 standard_library.install_aliases()
 
 from importlib import import_module
+from logging import getLogger
+from plone import api
+from urllib.parse import urlparse
 
+
+logger = getLogger(__name__)
 
 IS_PLONE6 = getattr(import_module("Products.CMFPlone.factory"), "PLONE60MARKER", False)
 IS_PLONE5 = not IS_PLONE6 and getattr(
@@ -50,3 +56,24 @@ def human_readable_size(size):
 def disallow(*args, **kwargs):
     """Block py27-only call flows in py3"""
     raise RuntimeError("This code path should never be executed")
+
+
+def collabora_is_cors():
+    """CORS mode is not recommended."""
+
+    portal_parts = urlparse(api.portal.get().absolute_url())
+    collabora_parts = urlparse(
+        api.portal.get_registry_record(
+            n(b"collective.collabora.collabora_url"), default=None
+        )
+    )
+    if any(
+        [
+            portal_parts.scheme != collabora_parts.scheme,
+            portal_parts.hostname != collabora_parts.hostname,
+            portal_parts.port != collabora_parts.port,
+        ]
+    ):
+        logger.warn("Running the COOL iframe in CORS mode is not recommended.")
+        return True
+    return False

@@ -21,9 +21,10 @@ from plone.app.contenttypes.browser.file import FileView
 from plone.memoize.view import memoize
 from plone.uuid.interfaces import IUUID
 from Products.PluggableAuthService.interfaces.plugins import IAuthenticationPlugin
+from urllib.parse import urlencode
+from urllib.parse import urlparse
 
 import requests
-import urllib.parse
 
 
 logger = getLogger(__name__)
@@ -77,7 +78,7 @@ class CoolEditView(FileView):
     @memoize
     def portal_url(self):
         portal_url = api.portal.get().absolute_url()
-        parts = urllib.parse.urlparse(portal_url)
+        parts = urlparse(portal_url)
         if parts.hostname in ("localhost", "127.0.0.1"):
             self.error_msg = _(
                 "error_portal_url",
@@ -190,7 +191,7 @@ class CoolEditView(FileView):
             WOPISrc="%s/@@cool_wopi/files/%s" % (document_url, uuid),
             access_token=self.jwt_token,
         )
-        quoted_args = urllib.parse.urlencode(args)
+        quoted_args = urlencode(args)
         return "%s%s" % (self.editor_url, quoted_args)
 
     @property
@@ -202,16 +203,4 @@ class CoolEditView(FileView):
         is not in play, i.e. when running COOL via a reverse proxy on the same
         domain and port as Plone itself.
         """
-
-        portal_parts = urllib.parse.urlparse(self.portal_url)
-        server_parts = urllib.parse.urlparse(self.collabora_url)
-        if any(
-            [
-                portal_parts.scheme != server_parts.scheme,
-                portal_parts.hostname != server_parts.hostname,
-                portal_parts.port != server_parts.port,
-            ]
-        ):
-            logger.warn("Running the COOL iframe in CORS mode is not recommended.")
-            return True
-        return False
+        return utils.collabora_is_cors()
