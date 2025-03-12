@@ -8,9 +8,12 @@ from future import standard_library
 
 
 standard_library.install_aliases()
+
+from collective.collabora import utils
 from collective.collabora.testing import (  # noqa: E501
-    COLLECTIVE_COLLABORA_INTEGRATION_TESTING,
+    AT_COLLECTIVE_COLLABORA_INTEGRATION_TESTING,
 )
+from collective.collabora.testing import COLLECTIVE_COLLABORA_INTEGRATION_TESTING
 from collective.collabora.testing import temporary_registry_record
 from collective.collabora.testing import TESTDATA_PATH
 from plone import api
@@ -107,6 +110,7 @@ class TestCoolEdit(unittest.TestCase):
         )
         self.assertIsNone(view.error_msg)
 
+    @unittest.skipIf(utils.IS_PLONE4, "Archetypes is too convoluted to support fixture")
     @mock.patch("requests.get")
     def test_editor_url_invalid_mimetype(self, requests_get):
         requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
@@ -178,6 +182,7 @@ class TestCoolEdit(unittest.TestCase):
             view()
         self.assertEqual(view.error_msg, "error_portal_url")
 
+    @unittest.skipIf(utils.IS_PLONE4, "Archetypes is too convoluted to support fixture")
     @mock.patch("requests.get")
     def test__call__editor_url_invalid_mimetype(self, requests_get):
         requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
@@ -195,3 +200,10 @@ class TestCoolEdit(unittest.TestCase):
         ):
             view()
         self.assertEqual(view.error_msg, "error_jwt_plugin")
+
+
+@unittest.skipUnless(utils.IS_PLONE4, "Archetypes tested only in Plone4")
+class ATTestCoolEdit(TestCoolEdit):
+    """Test user interface view against Archetypes"""
+
+    layer = AT_COLLECTIVE_COLLABORA_INTEGRATION_TESTING

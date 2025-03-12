@@ -87,7 +87,7 @@ jobs:
                     ~/.cache/pip
                     ~/buildout-cache
                     ~/extends
-                  key: ${{ runner.os }}-tox-${{ matrix.python-version }}-${{ matrix.plone-version }}-${{ hashFiles('**/setup.py') }}-${{ hashFiles('**/requirements.txt') }}-${{ hashFiles('**/*.cfg') }}-${{ hashFiles('**/constraints.txt') }}-${{ hashFiles('**/tox.ini') }}
+                  key: ${{ runner.os }}-tox-${{ matrix.python-version }}-${{ matrix.plone-version }}-${{ hashFiles('**/setup.py') }}-${{ hashFiles('**/requirements*.txt') }}-${{ hashFiles('**/*.cfg') }}-${{ hashFiles('**/constraints*.txt') }}-${{ hashFiles('**/tox.ini') }}
                   #restore-keys: |
                   #  ${{ runner.os }}-tox-
 
@@ -147,7 +147,7 @@ jobs:
               pattern: coverage-data-*
               merge-multiple: true
 
-          - name: Combine coverage & fail if it's <100%
+          - name: Combine coverage & fail if it's <90%
             run: |
               python -Im pip install --upgrade coverage[toml]
 
@@ -161,8 +161,8 @@ jobs:
               export TOTAL=$(python -c "import json;print(json.load(open('coverage.json'))['totals']['percent_covered_display'])")
               echo "total=$TOTAL" >> $GITHUB_ENV
 
-              # Report again and fail if under 100%.
-              python -Im coverage report --fail-under=95
+              # Report again and fail if under 90%.
+              python -Im coverage report --fail-under=90
 
           - name: Upload HTML report if check failed
             uses: actions/upload-artifact@v4

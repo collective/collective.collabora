@@ -13,9 +13,11 @@ from future import standard_library
 
 
 standard_library.install_aliases()
-from collective.collabora.testing import (  # noqa: E501
-    COLLECTIVE_COLLABORA_INTEGRATION_TESTING,
-)
+
+from collective.collabora import utils
+from collective.collabora.interfaces import IStoredFile
+from collective.collabora.testing import AT_COLLECTIVE_COLLABORA_INTEGRATION_TESTING
+from collective.collabora.testing import COLLECTIVE_COLLABORA_INTEGRATION_TESTING
 from plone import api
 from plone.app.testing import logout
 from plone.event.utils import pydt
@@ -123,13 +125,13 @@ class TestCoolWOPI(unittest.TestCase):
     def test_wopi_get_file(self):
         view = api.content.get_view("cool_wopi", self.portal.testfile, self.request)
         file_data = view.wopi_get_file()
-        self.assertEqual(file_data, self.portal.testfile.file.data)
+        self.assertEqual(file_data, IStoredFile(self.portal.testfile).data)
 
     def test_wopi_put_file_outdated(self):
         new_data_io = io.BytesIO(b"Really Fake Byte Payload")
         new_data = new_data_io.read()
         new_data_io.seek(0)
-        old_data = self.portal.testfile.file.data
+        old_data = IStoredFile(self.portal.testfile).data
         self.assertNotEqual(old_data, new_data)
 
         request = self.request.clone()
@@ -144,13 +146,13 @@ class TestCoolWOPI(unittest.TestCase):
         payload = view.wopi_put_file()
         self.assertDictEqual(json.loads(payload), {"COOLStatusCode": 1010})
         self.assertEqual(view.request.response.status, 409)
-        self.assertEqual(self.portal.testfile.file.data, old_data)
+        self.assertEqual(IStoredFile(self.portal.testfile).data, old_data)
 
     def test_wopi_put_file_write_member(self):
         new_data_io = io.BytesIO(b"Really Fake Byte Payload")
         new_data = new_data_io.read()
         new_data_io.seek(0)
-        self.assertNotEqual(self.portal.testfile.file.data, new_data)
+        self.assertNotEqual(IStoredFile(self.portal.testfile).data, new_data)
 
         request = self.request.clone()
         request._file = new_data_io
@@ -160,14 +162,14 @@ class TestCoolWOPI(unittest.TestCase):
         payload = view.wopi_put_file()
         self.assertDictEqual(json.loads(payload), {})
         self.assertEqual(view.request.response.status, 200)
-        self.assertEqual(self.portal.testfile.file.data, new_data)
+        self.assertEqual(IStoredFile(self.portal.testfile).data, new_data)
 
     def test_wopi_put_file_write_anon(self):
         new_data_io = io.BytesIO(b"Really Fake Byte Payload")
         new_data = new_data_io.read()
         new_data_io.seek(0)
-        old_data = self.portal.testfile.file.data
-        self.assertNotEqual(self.portal.testfile.file.data, new_data)
+        old_data = IStoredFile(self.portal.testfile).data
+        self.assertNotEqual(IStoredFile(self.portal.testfile).data, new_data)
 
         logout()
         request = self.request.clone()
@@ -178,11 +180,11 @@ class TestCoolWOPI(unittest.TestCase):
         payload = view.wopi_put_file()
         self.assertDictEqual(json.loads(payload), {})
         self.assertEqual(view.request.response.status, 403)
-        self.assertEqual(self.portal.testfile.file.data, old_data)
+        self.assertEqual(IStoredFile(self.portal.testfile).data, old_data)
 
     def test_wopi_put_file_fallthrough(self):
         new_data_io = io.BytesIO(b"Really Fake Byte Payload")
-        old_data = self.portal.testfile.file.data
+        old_data = IStoredFile(self.portal.testfile).data
 
         request = self.request.clone()
         request._file = new_data_io
@@ -191,7 +193,7 @@ class TestCoolWOPI(unittest.TestCase):
         payload = view.wopi_put_file()
         self.assertDictEqual(json.loads(payload), {})
         self.assertEqual(view.request.response.status, 400)
-        self.assertEqual(self.portal.testfile.file.data, old_data)
+        self.assertEqual(IStoredFile(self.portal.testfile).data, old_data)
 
     def test_wopi_put_file_write_notifies_ObjectModifiedEvent(self):
         from plone.app.contenttypes.interfaces import IFile
@@ -202,7 +204,7 @@ class TestCoolWOPI(unittest.TestCase):
         new_data_io = io.BytesIO(b"Really Fake Byte Payload")
         new_data = new_data_io.read()
         new_data_io.seek(0)
-        self.assertNotEqual(self.portal.testfile.file.data, new_data)
+        self.assertNotEqual(IStoredFile(self.portal.testfile).data, new_data)
 
         request = self.request.clone()
         request._file = new_data_io
@@ -212,23 +214,39 @@ class TestCoolWOPI(unittest.TestCase):
 
         event_handler = mock.MagicMock()
         gsm = zope.component.getGlobalSiteManager()
-        gsm.registerHandler(
-            event_handler, (IFile, zope.lifecycleevent.IObjectModifiedEvent)
-        )
-        try:
-            payload = view.wopi_put_file()
-        finally:
-            gsm.unregisterHandler(
+
+        if self.layer.IS_DX:
+            gsm.registerHandler(
                 event_handler, (IFile, zope.lifecycleevent.IObjectModifiedEvent)
             )
+            try:
+                payload = view.wopi_put_file()
+            finally:
+                gsm.unregisterHandler(
+                    event_handler, (IFile, zope.lifecycleevent.IObjectModifiedEvent)
+                )
+
+        else:
+            from Products.ATContentTypes.interfaces import IATFile
+
+            gsm.registerHandler(
+                event_handler, (IATFile, zope.lifecycleevent.IObjectModifiedEvent)
+            )
+            try:
+                payload = view.wopi_put_file()
+            finally:
+                gsm.unregisterHandler(
+                    event_handler, (IATFile, zope.lifecycleevent.IObjectModifiedEvent)
+                )
 
         event_handler.assert_called_once()
+        self.assertIsNotNone(event_handler.call_args)
         self.assertEqual(len(event_handler.call_args[0]), 2)
         _object, _event = event_handler.call_args[0]
         self.assertEqual(_object, self.portal.testfile)
-        self.assertEqual(_object.file.data, new_data)
+        self.assertEqual(IStoredFile(_object).data, new_data)
         self.assertEqual(_event.object, self.portal.testfile)
-        self.assertEqual(_event.object.file.data, new_data)
+        self.assertEqual(IStoredFile(_event.object).data, new_data)
 
         self.assertDictEqual(json.loads(payload), {})
         self.assertEqual(view.request.response.status, 200)
@@ -238,14 +256,16 @@ class TestCoolWOPI(unittest.TestCase):
         view = api.content.get_view("cool_wopi", self.portal.testfile, request)
         view.wopi_mode = "file_info"
         payload = json.loads(view())
-        self.assertEqual(payload.get("Size"), self.portal.testfile.file.getSize())
+        self.assertEqual(
+            payload.get("Size"), IStoredFile(self.portal.testfile).getSize()
+        )
 
     def test__call__wopi_get_file(self):
         request = self.request.clone()
         view = api.content.get_view("cool_wopi", self.portal.testfile, request)
         view.wopi_mode = "contents"
         payload = view()
-        self.assertEqual(payload, self.portal.testfile.file.data)
+        self.assertEqual(payload, IStoredFile(self.portal.testfile).data)
 
     def test__call__wopi_put_file(self):
         request = self.request.clone()
@@ -255,3 +275,10 @@ class TestCoolWOPI(unittest.TestCase):
         view.wopi_put_file = mock.MagicMock()
         view()
         view.wopi_put_file.assert_called()
+
+
+@unittest.skipUnless(utils.IS_PLONE4, "Archetypes tested only in Plone4")
+class TestCoolWopiAT(TestCoolWOPI):
+    """Test user interface view against Archetypes."""
+
+    layer = AT_COLLECTIVE_COLLABORA_INTEGRATION_TESTING
