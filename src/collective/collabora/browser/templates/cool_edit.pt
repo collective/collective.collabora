@@ -28,7 +28,8 @@
                  "
         >
           <a class="btn btn-secondary standalone fullscreen"
-             onclick="javascript:collabora_action_fullscreen(); return false;"
+             onclick="collabora_action_fullscreen(); return false;"
+             tal:condition="not: view/iframe_is_cors"
              i18n:translate=""
           >Fullscreen</a>
           <a class="btn btn-secondary standalone download"
@@ -74,6 +75,7 @@
           <iframe id="cool_iframe"
                   allowfullscreen="true"
                   height="100%"
+                  name="cool_iframe"
                   scrolling="no"
                   width="100%"
                   tal:attributes="
@@ -124,9 +126,13 @@
 
 
          function collabora_action_fullscreen() {
+             // Requesting fullscreen works only when the focus is within the iframe.
+             // But accessing the iframe to set focus is only allowed when CORS protection
+             // is not in play, i.e. when running COOL via a reverse proxy on the same domain
+             // and port as Plone itself.
+             // FIXME test this in a proper reverse proxy setup
+             // window.frames[0].contentWindow.focus();
              collabora_postMessage("Action_Fullscreen");
-             // https://stackoverflow.com/questions/9454125/javascript-request-fullscreen-is-unreliable
-             alert("This breaks on security protections, see console log.")
          }
 
          function collabora_action_close() {

@@ -192,3 +192,26 @@ class CoolEditView(FileView):
         )
         quoted_args = urllib.parse.urlencode(args)
         return "%s%s" % (self.editor_url, quoted_args)
+
+    @property
+    @memoize
+    def iframe_is_cors(self):
+        """Requesting fullscreen works only when the focus is within the iframe.
+
+        Accessing the iframe to set focus is only allowed when CORS protection
+        is not in play, i.e. when running COOL via a reverse proxy on the same
+        domain and port as Plone itself.
+        """
+
+        portal_parts = urllib.parse.urlparse(self.portal_url)
+        server_parts = urllib.parse.urlparse(self.server_url)
+        if any(
+            [
+                portal_parts.scheme != server_parts.scheme,
+                portal_parts.hostname != server_parts.hostname,
+                portal_parts.port != server_parts.port,
+            ]
+        ):
+            logger.warn("Running the COOL iframe in CORS mode is not recommended.")
+            return True
+        return False

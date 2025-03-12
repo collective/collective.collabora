@@ -157,6 +157,50 @@ class TestCoolEdit(unittest.TestCase):
         self.assertIn(IUUID(self.portal.testfile), view.wopi_url)
         self.assertIn("access_token=", view.wopi_url)
 
+    def test_iframe_is_cors_false(self):
+        with mock.patch.object(
+            self.portal,
+            "absolute_url",
+            return_value="http://some.host:8080/plone",
+        ):
+            with temporary_registry_record(
+                "collective.collabora.server_url", "http://some.host:8080/cool"
+            ):
+                self.assertFalse(self.view.iframe_is_cors)
+
+    def test_iframe_is_cors_scheme(self):
+        with mock.patch.object(
+            self.portal,
+            "absolute_url",
+            return_value="http://some.host:8080/plone",
+        ):
+            with temporary_registry_record(
+                "collective.collabora.server_url", "https://some.host:8080/cool"
+            ):
+                self.assertTrue(self.view.iframe_is_cors)
+
+    def test_iframe_is_cors_host(self):
+        with mock.patch.object(
+            self.portal,
+            "absolute_url",
+            return_value="http://some.host:8080/plone",
+        ):
+            with temporary_registry_record(
+                "collective.collabora.server_url", "https://another.some.host:8080/cool"
+            ):
+                self.assertTrue(self.view.iframe_is_cors)
+
+    def test_iframe_is_cors_port(self):
+        with mock.patch.object(
+            self.portal,
+            "absolute_url",
+            return_value="http://some.host:8080/plone",
+        ):
+            with temporary_registry_record(
+                "collective.collabora.server_url", "http://some.host:8090"
+            ):
+                self.assertTrue(self.view.iframe_is_cors)
+
     @mock.patch("requests.get")
     def test__call__render(self, requests_get):
         requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
