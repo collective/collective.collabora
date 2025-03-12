@@ -79,6 +79,8 @@
                   scrolling="no"
                   width="100%"
                   tal:attributes="
+                    collabora_url view/collabora_url;
+                    plone_version view/plone_version;
                     src view/wopi_url;
                   "
           ></iframe>
@@ -97,22 +99,15 @@
          .section-collabora-main iframe { border: 0 }
         </style>
 
-        <script type="text/javascript"
-                tal:attributes="
-                  id string:cool_js;
-                  collabora_url view/collabora_url;
-                  plone_version view/plone_version;
-                "
-        >
+        <script type="text/javascript">
 
           //
           // --- host to collabora ---
           //
 
-          var cool_js = document.getElementById("cool_js");
-          var targetOrigin = cool_js.getAttribute("collabora_url");
-          var plone_version = cool_js.getAttribute("plone_version")
-          var iframe = document.getElementById("cool_iframe")
+          var iframe = document.getElementById("cool_iframe");
+          var targetOrigin = iframe.getAttribute("collabora_url");
+          var plone_version = iframe.getAttribute("plone_version");
 
          function collabora_postMessage(message_id, values={}) {
              var msg = {
