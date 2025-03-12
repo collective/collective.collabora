@@ -6,6 +6,11 @@
     i18n_domain="collective.collabora"
     >
 
+  <browser:resourceDirectory
+      name="collective.collabora"
+      directory="./static"
+      />
+
   <browser:page
       name="cool_edit"
       for="plone.app.contenttypes.interfaces.IFile"

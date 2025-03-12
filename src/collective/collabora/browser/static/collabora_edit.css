@@ -1,0 +1,10 @@
+.section-collabora-actions { text-align: right; background-color: #d6d6d6; margin-bottom: 0; padding: 0.5rem; }
+.section-collabora-actions.plone6 .btn { font-size: 0.9rem; }
+.section-collabora-actions.plone4 { display: flex; justify-content: flex-end; }
+#content .section-collabora-actions.plone4 a.btn {
+    font-size: 0.9rem; margin: 0 0.5rem; padding: 0.25rem 0.5rem; border-radius: 0.25rem; background-color: #6c757d; color:white;
+}
+#content .section-collabora-actions.plone4 a.btn:hover { background-color: #555; }
+#content .section-collabora-actions.plone4 a.btn.fullscreen { margin-right: auto; }
+.section-collabora-actions .fullscreen { float: left; }
+.section-collabora-main iframe { border: 0 }
