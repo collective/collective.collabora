@@ -75,25 +75,25 @@ class TestCoolEdit(unittest.TestCase):
             self.assertIsNone(view.portal_url)
         self.assertEqual(view.error_msg, "error_portal_url")
 
-    def test_server_url_default(self):
+    def test_collabora_url_default(self):
         view = self.view
         self.assertIsNone(view.error_msg, view.error_msg)
-        # This is the fake server_url in tests, not the actual :default value
-        self.assertEqual(view.server_url, "http://host.docker.internal:7777")
+        # This is the fake collabora_url in tests, not the actual :default value
+        self.assertEqual(view.collabora_url, "http://host.docker.internal:7777")
 
-    def test_server_url_error(self):
+    def test_collabora_url_error(self):
         view = self.view
-        with temporary_registry_record("collective.collabora.server_url", ""):
-            self.assertEqual(view.server_url, "")
-        self.assertEqual(view.error_msg, "error_server_url")
+        with temporary_registry_record("collective.collabora.collabora_url", ""):
+            self.assertEqual(view.collabora_url, "")
+        self.assertEqual(view.error_msg, "error_collabora_url")
 
-    def test_editor_url_server_discovery_xml_error_no_server_url(self):
+    def test_editor_url_server_discovery_xml_error_no_collabora_url(self):
         view = self.view
-        with temporary_registry_record("collective.collabora.server_url", ""):
+        with temporary_registry_record("collective.collabora.collabora_url", ""):
             self.assertIsNone(view.editor_url)
-        self.assertEqual(view.error_msg, "error_server_url")
+        self.assertEqual(view.error_msg, "error_collabora_url")
 
-    def test_editor_url_server_discovery_xml_error_unreachable_server_url(self):
+    def test_editor_url_server_discovery_xml_error_unreachable_collabora_url(self):
         view = self.view
         self.assertIsNone(view.editor_url)
         self.assertEqual(view.error_msg, "error_server_discovery")
@@ -164,7 +164,7 @@ class TestCoolEdit(unittest.TestCase):
             return_value="http://some.host:8080/plone",
         ):
             with temporary_registry_record(
-                "collective.collabora.server_url", "http://some.host:8080/cool"
+                "collective.collabora.collabora_url", "http://some.host:8080/cool"
             ):
                 self.assertFalse(self.view.iframe_is_cors)
 
@@ -175,7 +175,7 @@ class TestCoolEdit(unittest.TestCase):
             return_value="http://some.host:8080/plone",
         ):
             with temporary_registry_record(
-                "collective.collabora.server_url", "https://some.host:8080/cool"
+                "collective.collabora.collabora_url", "https://some.host:8080/cool"
             ):
                 self.assertTrue(self.view.iframe_is_cors)
 
@@ -186,7 +186,8 @@ class TestCoolEdit(unittest.TestCase):
             return_value="http://some.host:8080/plone",
         ):
             with temporary_registry_record(
-                "collective.collabora.server_url", "https://another.some.host:8080/cool"
+                "collective.collabora.collabora_url",
+                "https://another.some.host:8080/cool",
             ):
                 self.assertTrue(self.view.iframe_is_cors)
 
@@ -197,7 +198,7 @@ class TestCoolEdit(unittest.TestCase):
             return_value="http://some.host:8080/plone",
         ):
             with temporary_registry_record(
-                "collective.collabora.server_url", "http://some.host:8090"
+                "collective.collabora.collabora_url", "http://some.host:8090"
             ):
                 self.assertTrue(self.view.iframe_is_cors)
 

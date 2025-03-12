@@ -98,7 +98,7 @@ class CollectiveCollaboraLayer(PloneSandboxLayer):
         # the tests against an active server in development - and then getting
         # breakage on CI where no such service is running.
         api.portal.set_registry_record(
-            n(b"collective.collabora.server_url"), "http://host.docker.internal:7777"
+            n(b"collective.collabora.collabora_url"), "http://host.docker.internal:7777"
         )
         setRoles(portal, TEST_USER_ID, roles_before)
 

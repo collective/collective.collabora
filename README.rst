@@ -130,7 +130,7 @@ Configuration
 -------------
 
 There is a single registry record you need to configure:
-``collective.collabora.server_url``. This should be a publicly accessible URL
+``collective.collabora.collabora_url``. This should be a publicly accessible URL
 that accesses (is reverse proxied to) your Collabora server.
 
 See:
@@ -139,7 +139,7 @@ See:
 
 - https://sdk.collaboraonline.com/docs/installation/Configuration.html#network-settings
 
-By default, ``collective.collabora.server_url`` is configured to
+By default, ``collective.collabora.collabora_url`` is configured to
 ``http://host.docker.internal:9980``, which is suitable for development but
 needs to be changed for production deployment.
 
@@ -281,7 +281,7 @@ This package provides a default configuration that is suitable for development:
   package root directory.
 
 - The ``collective.collabora:default`` profile configures the registry record
-  ``collective.collabora.server_url`` to point at that CODE server at that URL.
+  ``collective.collabora.collabora_url`` to point at that COOL server at that URL.
 
 
 No localhost

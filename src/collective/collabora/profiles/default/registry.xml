@@ -3,7 +3,7 @@
           i18n:domain="collective.collabora"
 >
 
-  <record name="collective.collabora.server_url">
+  <record name="collective.collabora.collabora_url">
     <field type="plone.registry.field.TextLine">
       <title>URL of the LibreOffice / Collabora server</title>
       <description>

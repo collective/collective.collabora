@@ -100,7 +100,7 @@
         <script type="text/javascript"
                 tal:attributes="
                   id string:cool_js;
-                  server_url view/server_url;
+                  collabora_url view/collabora_url;
                   plone_version view/plone_version;
                 "
         >
@@ -110,7 +110,7 @@
           //
 
           var cool_js = document.getElementById("cool_js");
-          var targetOrigin = cool_js.getAttribute("server_url");
+          var targetOrigin = cool_js.getAttribute("collabora_url");
           var plone_version = cool_js.getAttribute("plone_version")
           var iframe = document.getElementById("cool_iframe")
 
