@@ -88,7 +88,7 @@ class CoolEditView(FileView):
                 ),
             )
             logger.error("When Plone runs on localhost, Collabora cannot call back.")
-            return
+            return ""
         return portal_url
 
     @property

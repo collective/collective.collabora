@@ -72,7 +72,7 @@ class TestCoolEdit(unittest.TestCase):
             "absolute_url",
             return_value="http://localhost:8080/plone",
         ):
-            self.assertIsNone(view.portal_url)
+            self.assertEqual(view.portal_url, "")
         self.assertEqual(view.error_msg, "error_portal_url")
 
     def test_collabora_url_default(self):
