@@ -10,13 +10,15 @@
   <body>
 
     <metal:css fill-slot="style_slot">
-      <style type="text/css">
-       @import url(<tal:siteroot replace="" content="view/portal_url" />"/++resource++collective.collabora/collabora_edit.css");
+      <style id="cool_css"
+             type="text/css">
+       @import url(<tal:siteroot replace="" content="view/portal_url" />"/++resource++collective.collabora/cool_edit.css");
       </style>
     </metal:css>
     <metal:js fill-slot="javascript_head_slot">
-      <script tal:attributes="
-                src python: view.portal_url + '/++resource++collective.collabora/collabora_edit.js';
+      <script id="cool_js"
+              tal:attributes="
+                src python: view.portal_url + '/++resource++collective.collabora/cool_edit.js';
               "></script>
     </metal:js>
 
@@ -83,10 +85,10 @@
                    class python:'section section-collabora-main ' + view.plone_version;
                  "
         >
-          <iframe id="cool_iframe"
+          <iframe id="cool-iframe"
                   allowfullscreen="true"
                   height="100%"
-                  name="cool_iframe"
+                  name="cool-iframe"
                   scrolling="no"
                   width="100%"
                   tal:attributes="
