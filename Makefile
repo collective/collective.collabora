@@ -1,17 +1,17 @@
-.PHONY: dev test clean start60 build60 start52 build52
+.PHONY: dev test clean start61 build61 start60 build60 start3852 build3852 start2752 build2722 start43 build43
 
 default: dev
 
 all: dev test
 
-dev: dev60/bin/instance dev52/bin/instance
+dev: dev61/bin/instance dev60/bin/instance dev3852/bin/instance dev2752/bin/instance dev43/bin/instance
 
 test:
 	tox -p
 	@echo "You may need to run 'tox -r' to recreate the test environments."
 
 clean:
-	rm -rf dev61 dev60 dev3852 dev2752
+	rm -rf dev61 dev60 dev3852 dev2752 dev43
 
 start61: dev61/bin/instance
 	./dev61/bin/instance fg
