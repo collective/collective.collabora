@@ -75,25 +75,27 @@ class TestCoolEdit(unittest.TestCase):
             self.assertEqual(view.portal_url, "")
         self.assertEqual(view.error_msg, "error_portal_url")
 
-    def test_collabora_url_default(self):
+    def test_collabora_server_url_default(self):
         view = self.view
         self.assertIsNone(view.error_msg, view.error_msg)
-        # This is the fake collabora_url in tests, not the actual :default value
-        self.assertEqual(view.collabora_url, "http://host.docker.internal:7777")
+        # This is the fake collabora_server_url in tests, not the actual :default value
+        self.assertEqual(view.collabora_server_url, "http://host.docker.internal:7777")
 
-    def test_collabora_url_error(self):
+    def test_collabora_server_url_error(self):
         view = self.view
-        with temporary_registry_record("collective.collabora.collabora_url", ""):
-            self.assertEqual(view.collabora_url, "")
-        self.assertEqual(view.error_msg, "error_collabora_url")
+        with temporary_registry_record("collective.collabora.collabora_server_url", ""):
+            self.assertEqual(view.collabora_server_url, "")
+        self.assertEqual(view.error_msg, "error_collabora_server_url")
 
-    def test_editor_url_server_discovery_xml_error_no_collabora_url(self):
+    def test_editor_url_error_no_collabora_server_url(self):
         view = self.view
-        with temporary_registry_record("collective.collabora.collabora_url", ""):
+        with temporary_registry_record("collective.collabora.collabora_server_url", ""):
             self.assertIsNone(view.editor_url)
-        self.assertEqual(view.error_msg, "error_collabora_url")
+        self.assertEqual(view.error_msg, "error_collabora_server_url")
 
-    def test_editor_url_server_discovery_xml_error_unreachable_collabora_url(self):
+    def test_editor_url_error_unreachable_collabora_server_url(
+        self,
+    ):
         view = self.view
         self.assertIsNone(view.editor_url)
         self.assertEqual(view.error_msg, "error_server_discovery")

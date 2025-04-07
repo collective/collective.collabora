@@ -40,7 +40,7 @@ class CollaboraEditView(FileView):
         self.stored_file = IStoredFile(context)
 
     def __call__(self):
-        if not all([self.portal_url, self.collabora_url, self.wopi_url]):
+        if not all([self.portal_url, self.collabora_server_url, self.wopi_url]):
             # accessing those detects errors and sets self.error_msg
             pass
         return super(FileView, self).__call__()
@@ -93,25 +93,25 @@ class CollaboraEditView(FileView):
 
     @property
     @memoize
-    def collabora_url(self):
-        collabora_url = api.portal.get_registry_record(
-            n(b"collective.collabora.collabora_url"), default=None
+    def collabora_server_url(self):
+        collabora_server_url = api.portal.get_registry_record(
+            n(b"collective.collabora.collabora_server_url"), default=None
         )
-        if not collabora_url:
+        if not collabora_server_url:
             self.error_msg = _(
-                "error_collabora_url",
-                default="collective.collabora.collabora_url is not configured.",
+                "error_collabora_server_url",
+                default="collective.collabora.collabora_server_url is not configured.",
             )
-            logger.error("collective.collabora.collabora_url is not configured.")
-        return collabora_url
+            logger.error("collective.collabora.collabora_server_url is not configured.")
+        return collabora_server_url
 
     @property
     @memoize
     def server_discovery_xml(self):
-        if not self.collabora_url:
+        if not self.collabora_server_url:
             return
         try:
-            return requests.get("%s/hosting/discovery" % self.collabora_url).text
+            return requests.get("%s/hosting/discovery" % self.collabora_server_url).text
         except requests.exceptions.RequestException as e:
             self.error_msg = _(
                 "error_server_discovery", default="Collabora server is not responding."

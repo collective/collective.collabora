@@ -49,7 +49,8 @@ class TestUtilsIntegration(unittest.TestCase):
             return_value="http://some.host:8080/plone",
         ):
             with temporary_registry_record(
-                "collective.collabora.collabora_url", "http://some.host:8080/cool"
+                "collective.collabora.collabora_server_url",
+                "http://some.host:8080/cool",
             ):
                 self.assertFalse(utils.collabora_is_cors())
 
@@ -60,7 +61,8 @@ class TestUtilsIntegration(unittest.TestCase):
             return_value="http://some.host:8080/plone",
         ):
             with temporary_registry_record(
-                "collective.collabora.collabora_url", "https://some.host:8080/cool"
+                "collective.collabora.collabora_server_url",
+                "https://some.host:8080/cool",
             ):
                 self.assertTrue(utils.collabora_is_cors())
 
@@ -71,7 +73,7 @@ class TestUtilsIntegration(unittest.TestCase):
             return_value="http://some.host:8080/plone",
         ):
             with temporary_registry_record(
-                "collective.collabora.collabora_url",
+                "collective.collabora.collabora_server_url",
                 "https://another.some.host:8080/cool",
             ):
                 self.assertTrue(utils.collabora_is_cors())
@@ -83,6 +85,6 @@ class TestUtilsIntegration(unittest.TestCase):
             return_value="http://some.host:8080/plone",
         ):
             with temporary_registry_record(
-                "collective.collabora.collabora_url", "http://some.host:8090"
+                "collective.collabora.collabora_server_url", "http://some.host:8090"
             ):
                 self.assertTrue(utils.collabora_is_cors())

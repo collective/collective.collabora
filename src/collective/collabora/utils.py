@@ -64,7 +64,7 @@ def collabora_is_cors():
     portal_parts = urlparse(api.portal.get().absolute_url())
     collabora_parts = urlparse(
         api.portal.get_registry_record(
-            n(b"collective.collabora.collabora_url"), default=None
+            n(b"collective.collabora.collabora_server_url"), default=None
         )
     )
     if any(

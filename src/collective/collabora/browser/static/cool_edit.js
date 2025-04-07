@@ -5,7 +5,7 @@
 
 function collabora_postMessage(message_id, values={}) {
   var iframe = document.getElementById("cool-iframe");
-  var targetOrigin = iframe.getAttribute("collabora_url");
+  var targetOrigin = iframe.getAttribute("collabora_server_url");
   var msg = {
     "MessageId": message_id,
     "SendTime": Date.now(),

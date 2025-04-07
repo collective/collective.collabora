@@ -94,7 +94,7 @@
                   scrolling="no"
                   width="100%"
                   tal:attributes="
-                    collabora_url view/collabora_url;
+                    collabora_server_url view/collabora_server_url;
                     plone_version view/plone_version;
                     src view/wopi_url;
                   "
