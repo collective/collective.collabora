@@ -158,6 +158,7 @@ class TestCoolEdit(unittest.TestCase):
         self.assertIn("%40%40collabora-wopi%2Ffiles", view.wopi_url)
         self.assertIn(IUUID(self.portal.testfile), view.wopi_url)
         self.assertIn("access_token=", view.wopi_url)
+        self.assertIn("_authenticator=", view.wopi_url)
         wopi_src = urllib.parse.parse_qs(
             urllib.parse.urlparse(view.wopi_url).query
         ).get("WOPISrc")[0]

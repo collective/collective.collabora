@@ -24,12 +24,6 @@ import dateutil.parser
 import json
 
 
-try:
-    from plone.protect.utils import safeWrite
-except ImportError:
-    from collective.collabora.monkey_plone43.plone_protect_utils import safeWrite
-
-
 logger = getLogger(__name__)
 
 
@@ -184,12 +178,6 @@ class CollaboraWOPIView(BrowserView):
 
         if self.request.get("HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER", False):
             # Save changes back, if document was modified.
-            #
-            # While this is a POST, the request comes from COOL and lacks an
-            # authenticator token. Instead of passing that around, using
-            # safeWrite is the more convenient way of satisfying plone.protect,
-            # and more targeted than IDisableCSRFProtection.
-            safeWrite(self.context)
             self.stored_file.data = self.request._file.read()
             notify(ObjectModifiedEvent(self.context))
 
