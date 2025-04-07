@@ -38,13 +38,13 @@ class TestCoolEdit(unittest.TestCase):
 
     @property
     def view(self):
-        """return cool_edit view instance with pristine accessors to avoid test
+        """return collabora-edit view instance with pristine accessors to avoid test
         leakage via memoizers.
 
         To test view.error_msg, store and re-access the returned view.
         """
         return api.content.get_view(
-            name="cool_edit", context=self.portal.testfile, request=self.request
+            name="collabora-edit", context=self.portal.testfile, request=self.request
         )
 
     def test_can_edit_member(self):
@@ -153,7 +153,7 @@ class TestCoolEdit(unittest.TestCase):
         self.assertIn("cool.html", view.wopi_url)
         self.assertIn("WOPISrc=", view.wopi_url)
         self.assertIn("testfile", view.wopi_url)
-        self.assertIn("%40%40cool_wopi%2Ffiles", view.wopi_url)
+        self.assertIn("%40%40collabora-wopi%2Ffiles", view.wopi_url)
         self.assertIn(IUUID(self.portal.testfile), view.wopi_url)
         self.assertIn("access_token=", view.wopi_url)
 

@@ -34,7 +34,7 @@ logger = getLogger(__name__)
 
 
 @implementer(IPublishTraverse)
-class CoolWOPIView(BrowserView):
+class CollaboraWOPIView(BrowserView):
     """Callback view used by Collabora Online to talk to Plone"""
 
     def __init__(self, context, request):
@@ -46,16 +46,16 @@ class CoolWOPIView(BrowserView):
     def publishTraverse(self, request, name, *args, **kwargs):
         """Provide the WOPI endpoints:
 
-        - @@cool_wopi/files/<uid>
-        - @@cool_wopi/files/<uid>/contents
+        - @@collabora-wopi/files/<uid>
+        - @@collabora-wopi/files/<uid>/contents
         """
         parts = request.get("PATH_INFO").split("/")
         # This is traversed for each part of the URL. Make sure to catch only
-        # the "last" traversal, by checking the position of "@@cool_wopi".
-        if parts[-3] == "@@cool_wopi" and name == IUUID(self.context):
+        # the "last" traversal, by checking the position of "@@collabora-wopi".
+        if parts[-3] == "@@collabora-wopi" and name == IUUID(self.context):
             assert parts[-2] == "files"
             self.wopi_mode = "file_info"
-        elif parts[-4] == "@@cool_wopi" and name == "contents":
+        elif parts[-4] == "@@collabora-wopi" and name == "contents":
             assert parts[-3] == "files"
             assert parts[-2] == IUUID(self.context)
             self.wopi_mode = "contents"

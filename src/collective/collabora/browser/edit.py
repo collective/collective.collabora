@@ -30,7 +30,7 @@ import requests
 logger = getLogger(__name__)
 
 
-class CoolEditView(FileView):
+class CollaboraEditView(FileView):
     """User interface for interacting with Collabora Online."""
 
     def __init__(self, context, request):
@@ -188,7 +188,7 @@ class CoolEditView(FileView):
         document_url = self.context.absolute_url()
         uuid = IUUID(self.context)
         args = dict(
-            WOPISrc="%s/@@cool_wopi/files/%s" % (document_url, uuid),
+            WOPISrc="%s/@@collabora-wopi/files/%s" % (document_url, uuid),
             access_token=self.jwt_token,
         )
         quoted_args = urlencode(args)

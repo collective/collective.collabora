@@ -151,8 +151,8 @@ There are three main components in play:
 
 1. The browser.
 
-2. Plone server, providing two views: the user-facing ``@@cool_edit`` view, and
-   the Collabora callback API ``@@cool_wopi``.
+2. Plone server, providing two views: the user-facing ``@@collabora-edit`` view, and
+   the Collabora callback API ``@@collabora-wopi``.
 
 3. Collabora Online server.
 
@@ -167,19 +167,19 @@ The following diagram illustrates the information flow.
 Opening a file for read access
 ------------------------------
 
-1. Open the Plone view ``@@cool_edit``. This is integrated in the Plone UI as an
+1. Open the Plone view ``@@collabora-edit``. This is integrated in the Plone UI as an
    action called ``Open``.
 
-2. The ``cool_edit`` view renders with an iframe.
+2. The ``collabora-edit`` view renders with an iframe.
 
 3. The iframe loads the Collabora Online UI. The URL for that iframe contains
-   the callback URL ``cool_wopi`` that Collabora will use to communicate with
+   the callback URL ``collabora-wopi`` that Collabora will use to communicate with
    Plone in steps (4) and (7).
 
 4. Collabora retrieves the file to be edited directly from Plone, outside of the
-   browser, by accessing the WOPI URL ``@@cool_wopi``. It uses a JWT access
+   browser, by accessing the WOPI URL ``@@collabora-wopi``. It uses a JWT access
    token encoded in the iframe URL to connect to Plone as the user that has
-   opened ``cool_edit``.
+   opened ``collabora-edit``.
 
 The file is now rendered in the iframe in the browser. If the user has ``View``
 permissions, but not ``Modify portal content``, the flow ends here. The user can
@@ -195,11 +195,11 @@ Editing a file and saving changes
 6. Any changes the user makes to the document, will be autosaved.
 
 7. The save is performed by Collabora issuing a POST request to the Plone view
-   ``@@cool_wopi``. That view checks permissions, and performs the save. In case
+   ``@@collabora-wopi``. That view checks permissions, and performs the save. In case
    of a write/locking conflict, that's communicated back to Collabora which will
    open a UI for the user to resolve this.
 
-8. Some actions, like ``Save and exit``, can be performed on the ``cool_edit``
+8. Some actions, like ``Save and exit``, can be performed on the ``collabora-edit``
    view outside of the iframe. The Plone document communicates such actions to
    the Collabora iframe via the postMessage API, see:
    https://sdk.collaboraonline.com/docs/postmessage_api.html
@@ -220,20 +220,20 @@ The Collabora Online `security architecture <https://sdk.collaboraonline.com/doc
 isolates all user document sessions from each other.
 
 The only place where Collabora Online interacts with user data is what it gets
-from ``@@cool_wopi`` (including the document name). The
+from ``@@collabora-wopi`` (including the document name). The
 `personal data flow within Collabora <https://sdk.collaboraonline.com/docs/personal_data_flow.html>`_
 can be further anonymized, see ``anonymize_user_data`` in the Collabora
 ``coolwsd.xml`` configuration file.
 
-The collective.collabora ``@@cool_edit`` view passes a authentication token to
+The collective.collabora ``@@collabora-edit`` view passes a authentication token to
 the Collabora Online server. The Collabora Online server uses that
 authentication token, to retrieve information from Plone via the
-collective.collabora ``@@cool_wopi`` view.
+collective.collabora ``@@collabora-wopi`` view.
 
-Collabora Online interacts with Plone exclusively though the ``@@cool_wopi``
-view, logged in as the user who opened the ``@@cool_edit`` view. Both those
+Collabora Online interacts with Plone exclusively though the ``@@collabora-wopi``
+view, logged in as the user who opened the ``@@collabora-edit`` view. Both those
 Plone views are protected with the ``zope2.View`` permission through normal ZCML
-configuration. Additionally, performing a document save on ``@@cool_wopi`` is
+configuration. Additionally, performing a document save on ``@@collabora-wopi`` is
 protected with the ``ModifyPortalContent`` permission in python.
 
 Protection against potential session hijacking can be configured by enabling

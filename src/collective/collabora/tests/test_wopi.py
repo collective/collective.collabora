@@ -44,53 +44,59 @@ class TestCoolWOPI(unittest.TestCase):
 
     def test_publishTraverse_wopi_mode_file_info(self):
         request = self.request.clone()
-        request.set("PATH_INFO", "/plone/testfile/@@cool_wopi/files/%s" % self.uid)
-        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        request.set("PATH_INFO", "/plone/testfile/@@collabora-wopi/files/%s" % self.uid)
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
         view.publishTraverse(request, self.uid)
         self.assertEqual(view.wopi_mode, "file_info")
 
     def test_publishTraverse_wopi_mode_contents(self):
         request = self.request.clone()
         request.set(
-            "PATH_INFO", "/plone/testfile/@@cool_wopi/files/%s/contents" % self.uid
+            "PATH_INFO", "/plone/testfile/@@collabora-wopi/files/%s/contents" % self.uid
         )
-        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
         view.publishTraverse(request, "contents")
         self.assertEqual(view.wopi_mode, "contents")
 
     def test_publishTraverse_invalid_uid_base(self):
         request = self.request.clone()
         uid = "some-invalid-uid"
-        request.set("PATH_INFO", "/plone/testfile/@@cool_wopi/files/%s" % uid)
-        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        request.set("PATH_INFO", "/plone/testfile/@@collabora-wopi/files/%s" % uid)
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
         view.publishTraverse(request, uid)
         self.assertIsNone(view.wopi_mode)
 
     def test_publishTraverse_invalid_uid_contents(self):
         request = self.request.clone()
         uid = "some-invalid-uid"
-        request.set("PATH_INFO", "/plone/testfile/@@cool_wopi/files/%s/contents" % uid)
-        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        request.set(
+            "PATH_INFO", "/plone/testfile/@@collabora-wopi/files/%s/contents" % uid
+        )
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
         with self.assertRaises(AssertionError):
             view.publishTraverse(request, "contents")
         self.assertIsNone(view.wopi_mode)
 
     def test_publishTraverse_missing_files_base(self):
         request = self.request.clone()
-        request.set("PATH_INFO", "/plone/testfile/@@cool_wopi/%s" % self.uid)
-        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        request.set("PATH_INFO", "/plone/testfile/@@collabora-wopi/%s" % self.uid)
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
         view.publishTraverse(request, self.uid)
         self.assertIsNone(view.wopi_mode)
 
     def test_publishTraverse_missing_files_contents(self):
         request = self.request.clone()
-        request.set("PATH_INFO", "/plone/testfile/@@cool_wopi/%s/contents" % self.uid)
-        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        request.set(
+            "PATH_INFO", "/plone/testfile/@@collabora-wopi/%s/contents" % self.uid
+        )
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
         view.publishTraverse(request, "contents")
         self.assertIsNone(view.wopi_mode)
 
     def test_wopi_check_file_info_member(self):
-        view = api.content.get_view("cool_wopi", self.portal.testfile, self.request)
+        view = api.content.get_view(
+            "collabora-wopi", self.portal.testfile, self.request
+        )
         file_info = json.loads(view.wopi_check_file_info())
         expected = {
             "BaseFileName": "testfile.docx",
@@ -107,7 +113,9 @@ class TestCoolWOPI(unittest.TestCase):
 
     def test_wopi_check_file_info_anon(self):
         logout()
-        view = api.content.get_view("cool_wopi", self.portal.testfile, self.request)
+        view = api.content.get_view(
+            "collabora-wopi", self.portal.testfile, self.request
+        )
         file_info = json.loads(view.wopi_check_file_info())
         expected = {
             "BaseFileName": "testfile.docx",
@@ -123,7 +131,9 @@ class TestCoolWOPI(unittest.TestCase):
         self.assertDictEqual(file_info, expected)
 
     def test_wopi_get_file(self):
-        view = api.content.get_view("cool_wopi", self.portal.testfile, self.request)
+        view = api.content.get_view(
+            "collabora-wopi", self.portal.testfile, self.request
+        )
         file_data = view.wopi_get_file()
         self.assertEqual(file_data, IStoredFile(self.portal.testfile).data)
 
@@ -142,7 +152,7 @@ class TestCoolWOPI(unittest.TestCase):
         ) - datetime.timedelta(minutes=2)
         request.set("HTTP_X_COOL_WOPI_TIMESTAMP", user_version_timestamp.isoformat())
         request.set("HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER", "true")
-        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
         payload = view.wopi_put_file()
         self.assertDictEqual(json.loads(payload), {"COOLStatusCode": 1010})
         self.assertEqual(view.request.response.status, 409)
@@ -158,7 +168,7 @@ class TestCoolWOPI(unittest.TestCase):
         request._file = new_data_io
 
         request.set("HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER", "true")
-        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
         payload = view.wopi_put_file()
         self.assertDictEqual(json.loads(payload), {})
         self.assertEqual(view.request.response.status, 200)
@@ -176,7 +186,7 @@ class TestCoolWOPI(unittest.TestCase):
         request._file = new_data_io
 
         request.set("HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER", "true")
-        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
         payload = view.wopi_put_file()
         self.assertDictEqual(json.loads(payload), {})
         self.assertEqual(view.request.response.status, 403)
@@ -189,7 +199,7 @@ class TestCoolWOPI(unittest.TestCase):
         request = self.request.clone()
         request._file = new_data_io
 
-        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
         payload = view.wopi_put_file()
         self.assertDictEqual(json.loads(payload), {})
         self.assertEqual(view.request.response.status, 400)
@@ -210,7 +220,7 @@ class TestCoolWOPI(unittest.TestCase):
         request._file = new_data_io
 
         request.set("HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER", "true")
-        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
 
         event_handler = mock.MagicMock()
         gsm = zope.component.getGlobalSiteManager()
@@ -253,7 +263,7 @@ class TestCoolWOPI(unittest.TestCase):
 
     def test__call__wopi_check_file_info(self):
         request = self.request.clone()
-        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
         view.wopi_mode = "file_info"
         payload = json.loads(view())
         self.assertEqual(
@@ -262,7 +272,7 @@ class TestCoolWOPI(unittest.TestCase):
 
     def test__call__wopi_get_file(self):
         request = self.request.clone()
-        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
         view.wopi_mode = "contents"
         payload = view()
         self.assertEqual(payload, IStoredFile(self.portal.testfile).data)
@@ -270,7 +280,7 @@ class TestCoolWOPI(unittest.TestCase):
     def test__call__wopi_put_file(self):
         request = self.request.clone()
         request.set("method", "POST")
-        view = api.content.get_view("cool_wopi", self.portal.testfile, request)
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
         view.wopi_mode = "contents"
         view.wopi_put_file = mock.MagicMock()
         view()

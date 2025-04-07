@@ -12,7 +12,7 @@
           condition_expr=""
           icon_expr="string:toolbar-action/edit"
           title="Open"
-          url_expr="string:${object_url}/@@cool_edit"
+          url_expr="string:${object_url}/@@collabora-edit"
           visible="True"
           i18n:attributes="title"
   >

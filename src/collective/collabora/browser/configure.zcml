@@ -12,36 +12,36 @@
       />
 
   <browser:page
-      name="cool_edit"
+      name="collabora-edit"
       for="plone.app.contenttypes.interfaces.IFile"
-      class=".cool_edit.CoolEditView"
-      template="templates/cool_edit.pt"
+      class=".edit.CollaboraEditView"
+      template="templates/edit.pt"
       permission="zope2.View"
       layer="collective.collabora.interfaces.ICollectiveCollaboraLayer"
       />
 
   <browser:page
-      name="cool_wopi"
+      name="collabora-wopi"
       for="plone.app.contenttypes.interfaces.IFile"
-      class=".cool_wopi.CoolWOPIView"
+      class=".wopi.CollaboraWOPIView"
       permission="zope2.View"
       layer="collective.collabora.interfaces.ICollectiveCollaboraLayer"
       />
 
   <configure zcml:condition="installed Products.ATContentTypes">
     <browser:page
-        name="cool_edit"
+        name="collabora-edit"
         for="Products.ATContentTypes.interfaces.IATFile"
-        class=".cool_edit.CoolEditView"
-        template="templates/cool_edit.pt"
+        class=".edit.CollaboraEditView"
+        template="templates/edit.pt"
         permission="zope2.View"
         layer="collective.collabora.interfaces.ICollectiveCollaboraLayer"
         />
 
     <browser:page
-        name="cool_wopi"
+        name="collabora-wopi"
         for="Products.ATContentTypes.interfaces.IATFile"
-        class=".cool_wopi.CoolWOPIView"
+        class=".wopi.CollaboraWOPIView"
         permission="zope2.View"
         layer="collective.collabora.interfaces.ICollectiveCollaboraLayer"
         />
