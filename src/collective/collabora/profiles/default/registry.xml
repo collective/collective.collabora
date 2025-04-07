@@ -13,4 +13,17 @@
     </field>
     <value purge="false">http://host.docker.internal:9980</value>
   </record>
+  <record name="collective.collabora.plone_server_url">
+    <field type="plone.registry.field.TextLine">
+      <title>URL of Plone server (optional)</title>
+      <description>
+        The portal URL where Collabora can reach Plone.
+        Leave this empty to use the normal external portal url.
+        Use this only if you want Collabora to use a direct backend-to-backend
+        connection that bypasses your normal nginx/varnish/haproxy frontend stack.
+      </description>
+      <required>False</required>
+    </field>
+    <value purge="false" />
+  </record>
 </registry>

@@ -129,7 +129,7 @@ See *Development* below for instructions on running a development setup.
 Configuration
 -------------
 
-There is a single registry record you need to configure:
+There is a required registry record you need to configure:
 ``collective.collabora.collabora_server_url``. This should be a publicly accessible URL
 that accesses (is reverse proxied to) your Collabora server.
 
@@ -143,6 +143,10 @@ By default, ``collective.collabora.collabora_server_url`` is configured to
 ``http://host.docker.internal:9980``, which is suitable for development but
 needs to be changed for production deployment.
 
+
+There is an optional registry record ``collective.collabora.plone_server_url``.
+See documentation below on production configuration. Don't configure this,
+unless you know you need to.
 
 Architecture and interaction flow
 =================================
@@ -262,6 +266,20 @@ Multihost configuration
 If you want to use the same Collabora server to integrate with multiple sites,
 you will need to configure
 `host allow/deny policies <https://sdk.collaboraonline.com/docs/installation/Configuration.html#multihost-configuration>`_.
+
+Direct Collabora-to-Plone connection
+------------------------------------
+
+Collabora performs direct calls to Plone, on the ``@@collabora-wopi`` view on File objects.
+By default, this uses the same portal url where users access your Plone site in their browser.
+In a full production setup, this means Collabora emits a request that travels outward from
+wherever the Collabora server sits in your network, typically to the Nginx or Apache server
+that performs your SSL termination; to then traverse your full frontend stack via Varnish
+and HAProxy, to end up at a Plone instance.
+
+In case that traversal outward-and-back-in-again gives problems, you can optionally
+configure Collabora to hit a different URL to access Plone, by setting the
+registry record ``collective.collabora.plone_server_url``.
 
 
 Development

@@ -21,6 +21,7 @@ from plone.app.testing import logout
 
 import mock  # unittest.mock backport for both py27 and >= py36
 import unittest
+import urllib.parse
 
 
 class TestCoolEdit(unittest.TestCase):
@@ -60,20 +61,20 @@ class TestCoolEdit(unittest.TestCase):
             "http://nohost/plone/testfile/@@download/file/testfile.docx",
         )
 
-    def test_portal_url_default(self):
+    def test_plone_server_url_default(self):
         view = self.view
         self.assertIsNone(view.error_msg, view.error_msg)
-        self.assertEqual(view.portal_url, "http://nohost/plone")
+        self.assertEqual(view.plone_server_url, "http://nohost/plone")
 
-    def test_portal_url_error(self):
+    def test_plone_server_url_error(self):
         view = self.view
         with mock.patch.object(
             self.portal,
             "absolute_url",
             return_value="http://localhost:8080/plone",
         ):
-            self.assertEqual(view.portal_url, "")
-        self.assertEqual(view.error_msg, "error_portal_url")
+            self.assertEqual(view.plone_server_url, "")
+        self.assertEqual(view.error_msg, "error_plone_server_url")
 
     def test_collabora_server_url_default(self):
         view = self.view
@@ -151,13 +152,33 @@ class TestCoolEdit(unittest.TestCase):
         requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
         view = self.view
         self.assertIsNone(view.error_msg, view.error_msg)
-        self.assertIsNotNone(view.wopi_url)
         self.assertIn("cool.html", view.wopi_url)
         self.assertIn("WOPISrc=", view.wopi_url)
         self.assertIn("testfile", view.wopi_url)
         self.assertIn("%40%40collabora-wopi%2Ffiles", view.wopi_url)
         self.assertIn(IUUID(self.portal.testfile), view.wopi_url)
         self.assertIn("access_token=", view.wopi_url)
+        wopi_src = urllib.parse.parse_qs(
+            urllib.parse.urlparse(view.wopi_url).query
+        ).get("WOPISrc")[0]
+        self.assertTrue(wopi_src.startswith("http://nohost/plone/"))
+
+    @mock.patch("requests.get")
+    def test_wopi_url_override_plone_server_url(self, requests_get):
+        requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
+        with temporary_registry_record(
+            "collective.collabora.plone_server_url", "http://some.where:1234/plone"
+        ):
+            view = self.view
+            self.assertIsNone(view.error_msg, view.error_msg)
+            self.assertIsNotNone(view.wopi_url)
+            self.assertTrue(
+                view.wopi_url.startswith("http://host.docker.internal:9980/browser/")
+            )
+            wopi_src = urllib.parse.parse_qs(
+                urllib.parse.urlparse(view.wopi_url).query
+            ).get("WOPISrc")[0]
+        self.assertTrue(wopi_src.startswith("http://some.where:1234/plone/"))
 
     def test_iframe_is_cors(self):
         self.assertTrue(self.view.iframe_is_cors)
@@ -176,7 +197,7 @@ class TestCoolEdit(unittest.TestCase):
     #
 
     @mock.patch("requests.get")
-    def test__call__portal_url_error(self, requests_get):
+    def test__call__plone_server_url_error(self, requests_get):
         requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
         view = self.view
         with mock.patch.object(
@@ -185,7 +206,7 @@ class TestCoolEdit(unittest.TestCase):
             return_value="http://localhost:8080/plone",
         ):
             view()
-        self.assertEqual(view.error_msg, "error_portal_url")
+        self.assertEqual(view.error_msg, "error_plone_server_url")
 
     @unittest.skipIf(utils.IS_PLONE4, "Archetypes is too convoluted to support fixture")
     @mock.patch("requests.get")

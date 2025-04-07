@@ -40,7 +40,7 @@ class CollaboraEditView(FileView):
         self.stored_file = IStoredFile(context)
 
     def __call__(self):
-        if not all([self.portal_url, self.collabora_server_url, self.wopi_url]):
+        if not all([self.plone_server_url, self.collabora_server_url, self.wopi_url]):
             # accessing those detects errors and sets self.error_msg
             pass
         return super(FileView, self).__call__()
@@ -77,19 +77,33 @@ class CollaboraEditView(FileView):
     @property
     @memoize
     def portal_url(self):
-        portal_url = api.portal.get().absolute_url()
-        parts = urlparse(portal_url)
+        """The 'normal' Plone portal url, as used in the"""
+        return api.portal.get().absolute_url()
+
+    @property
+    @memoize
+    def plone_server_url(self):
+        """The base URL for Collabora to reach Plone on"""
+        plone_server_url = api.portal.get_registry_record(
+            n(b"collective.collabora.plone_server_url"), default=None
+        )
+        if not plone_server_url:
+            plone_server_url = self.portal_url
+        parts = urlparse(plone_server_url)
+        # This assumes you are running Collabora in a docker container,
+        # which means it will hit itself and not Plone when trying to contact localhost.
         if parts.hostname in ("localhost", "127.0.0.1"):
             self.error_msg = _(
-                "error_portal_url",
+                "error_plone_server_url",
                 default=(
-                    "When Plone runs on localhost, Collabora cannot call back. "
+                    "When Plone is supposed to be accessed on localhost, "
+                    "Collabora cannot call back. "
                     "Use host.docker.internal or a public FQDN instead."
                 ),
             )
             logger.error("When Plone runs on localhost, Collabora cannot call back.")
             return ""
-        return portal_url
+        return plone_server_url
 
     @property
     @memoize
@@ -186,6 +200,11 @@ class CollaboraEditView(FileView):
         if not self.editor_url or not self.jwt_token:
             return
         document_url = self.context.absolute_url()
+
+        # optionally enable direct backend-to-backend connection
+        if self.plone_server_url != self.portal_url:
+            document_url = document_url.replace(self.portal_url, self.plone_server_url)
+
         uuid = IUUID(self.context)
         args = dict(
             WOPISrc="%s/@@collabora-wopi/files/%s" % (document_url, uuid),
