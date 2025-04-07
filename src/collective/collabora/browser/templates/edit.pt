@@ -10,18 +10,14 @@
   <body>
 
     <metal:css fill-slot="style_slot">
-      <style id="cool_css"
-             type="text/css"
-      >
-       @import url(<tal:siteroot replace="" content="view/portal_url" />"/++resource++collective.collabora/cool_edit.css");
+      <style type="text/css">
+       @import url(<tal:siteroot replace="" content="view/portal_url" />"/++resource++collective.collabora/edit.css");
       </style>
     </metal:css>
     <metal:js fill-slot="javascript_head_slot">
-      <script id="cool_js"
-              tal:attributes="
-                src python: view.portal_url + '/++resource++collective.collabora/cool_edit.js';
-              "
-      ></script>
+      <script tal:attributes="
+                src python: view.portal_url + '/++resource++collective.collabora/edit.js';
+              "></script>
     </metal:js>
 
     <metal:main fill-slot="main">
