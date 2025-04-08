@@ -82,28 +82,42 @@ class TestCoolEdit(unittest.TestCase):
         # This is the fake collabora_server_url in tests, not the actual :default value
         self.assertEqual(view.collabora_server_url, "http://host.docker.internal:7777")
 
-    def test_collabora_server_url_error(self):
+    def test_collabora_server_url_error_empty(self):
         view = self.view
         with temporary_registry_record("collective.collabora.collabora_server_url", ""):
             self.assertEqual(view.collabora_server_url, "")
-        self.assertEqual(view.error_msg, "error_collabora_server_url")
+        self.assertEqual(view.error_msg, "error_collabora_server_url_empty")
+
+    def test_collabora_server_url_error_invalid(self):
+        view = self.view
+        with temporary_registry_record(
+            "collective.collabora.collabora_server_url", "/collabora"
+        ):
+            self.assertEqual(view.collabora_server_url, "")
+        self.assertEqual(view.error_msg, "error_collabora_server_url_invalid")
 
     def test_editor_url_error_no_collabora_server_url(self):
         view = self.view
         with temporary_registry_record("collective.collabora.collabora_server_url", ""):
             self.assertIsNone(view.editor_url)
-        self.assertEqual(view.error_msg, "error_collabora_server_url")
+        self.assertEqual(view.error_msg, "error_collabora_server_url_empty")
 
     def test_editor_url_error_unreachable_collabora_server_url(
         self,
     ):
-        view = self.view
-        self.assertIsNone(view.editor_url)
-        self.assertEqual(view.error_msg, "error_server_discovery")
+        # Make sure we do not accidentally hit a valid development server
+        with temporary_registry_record(
+            "collective.collabora.collabora_server_url", "http://localhost:1234"
+        ):
+            view = self.view
+            self.assertIsNone(view.editor_url)
+            self.assertEqual(view.error_msg, "error_server_discovery")
 
     @mock.patch("requests.get")
     def test_editor_url_default(self, requests_get):
-        requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
+        requests_get.return_value.configure_mock(
+            **dict(text=self.server_discovery_xml, status_code=200)
+        )
         view = self.view
         self.assertIsNone(view.error_msg, view.error_msg)
         self.assertIsNotNone(view.editor_url)
@@ -116,7 +130,9 @@ class TestCoolEdit(unittest.TestCase):
     @unittest.skipIf(utils.IS_PLONE4, "Archetypes is too convoluted to support fixture")
     @mock.patch("requests.get")
     def test_editor_url_invalid_mimetype(self, requests_get):
-        requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
+        requests_get.return_value.configure_mock(
+            **dict(text=self.server_discovery_xml, status_code=200)
+        )
         self.portal.testfile.file.contentType = "invalid/mimetype"
         view = self.view
         self.assertIsNone(view.editor_url)
@@ -125,7 +141,10 @@ class TestCoolEdit(unittest.TestCase):
     @mock.patch("requests.get")
     def test_editor_url_invalid_urlsrc(self, requests_get):
         requests_get.return_value.configure_mock(
-            **dict(text=self.server_discovery_xml.replace("urlsrc", "no_urlsrc"))
+            **dict(
+                text=self.server_discovery_xml.replace("urlsrc", "no_urlsrc"),
+                status_code=200,
+            )
         )
         view = self.view
         self.assertIsNone(view.editor_url)
@@ -149,7 +168,9 @@ class TestCoolEdit(unittest.TestCase):
     def test_wopi_url_default(self, requests_get):
         from plone.uuid.interfaces import IUUID
 
-        requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
+        requests_get.return_value.configure_mock(
+            **dict(text=self.server_discovery_xml, status_code=200)
+        )
         view = self.view
         self.assertIsNone(view.error_msg, view.error_msg)
         self.assertIn("cool.html", view.wopi_url)
@@ -166,7 +187,9 @@ class TestCoolEdit(unittest.TestCase):
 
     @mock.patch("requests.get")
     def test_wopi_url_override_plone_server_url(self, requests_get):
-        requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
+        requests_get.return_value.configure_mock(
+            **dict(text=self.server_discovery_xml, status_code=200)
+        )
         with temporary_registry_record(
             "collective.collabora.plone_server_url", "http://some.where:1234/plone"
         ):
@@ -186,7 +209,9 @@ class TestCoolEdit(unittest.TestCase):
 
     @mock.patch("requests.get")
     def test__call__render(self, requests_get):
-        requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
+        requests_get.return_value.configure_mock(
+            **dict(text=self.server_discovery_xml, status_code=200)
+        )
         view = self.view
         html = view()
         self.assertIsNone(view.error_msg, view.error_msg)
@@ -199,7 +224,9 @@ class TestCoolEdit(unittest.TestCase):
 
     @mock.patch("requests.get")
     def test__call__plone_server_url_error(self, requests_get):
-        requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
+        requests_get.return_value.configure_mock(
+            **dict(text=self.server_discovery_xml, status_code=200)
+        )
         view = self.view
         with mock.patch.object(
             self.portal,
@@ -212,7 +239,9 @@ class TestCoolEdit(unittest.TestCase):
     @unittest.skipIf(utils.IS_PLONE4, "Archetypes is too convoluted to support fixture")
     @mock.patch("requests.get")
     def test__call__editor_url_invalid_mimetype(self, requests_get):
-        requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
+        requests_get.return_value.configure_mock(
+            **dict(text=self.server_discovery_xml, status_code=200)
+        )
         self.portal.testfile.file.contentType = "invalid/mimetype"
         view = self.view
         view()
@@ -220,7 +249,9 @@ class TestCoolEdit(unittest.TestCase):
 
     @mock.patch("requests.get")
     def test__call__jwt_token_error(self, requests_get):
-        requests_get.return_value.configure_mock(**dict(text=self.server_discovery_xml))
+        requests_get.return_value.configure_mock(
+            **dict(text=self.server_discovery_xml, status_code=200)
+        )
         view = self.view
         with mock.patch.object(
             self.portal.acl_users.plugins, "listPlugins", return_value=[]

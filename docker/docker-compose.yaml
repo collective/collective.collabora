@@ -60,6 +60,8 @@ services:
     image: collabora/code:latest
     restart: no
     container_name: collabora-server
+    volumes:
+      - ./coolwsd.xml/:/etc/coolwsd/coolwsd.xml:ro
     expose:
       - 9980
     ports:
@@ -74,3 +76,16 @@ services:
       - username=${ADMIN_USER:-admin}
       - password=${ADMIN_PASS:-admin}
       - extra_params=--o:ssl.enable=false --o:ssl.termination=${SSL_TERMINATION:-false}
+
+  # This demo nginx is configured to listen on host.docker.internal:80
+  # and to proxy /collabora/* to the collabora server.
+  # This enables accessing collabora on the same hostname and port as Plone,
+  # which means the browser will not activate CORS protections.
+  nginx:
+    image: nginx:1.21
+    restart: no
+    container_name: collabora-nginx
+    volumes:
+      - ./nginx/:/etc/nginx/:ro
+    ports:
+      - 80:80

@@ -30,6 +30,10 @@ import requests
 
 logger = getLogger(__name__)
 
+error_server_discovery_msg = _(
+    "error_server_discovery", default="Collabora server is not responding."
+)
+
 
 class CollaboraEditView(FileView):
     """User interface for interacting with Collabora Online."""
@@ -114,10 +118,23 @@ class CollaboraEditView(FileView):
         )
         if not collabora_server_url:
             self.error_msg = _(
-                "error_collabora_server_url",
+                "error_collabora_server_url_empty",
                 default="collective.collabora.collabora_server_url is not configured.",
             )
             logger.error("collective.collabora.collabora_server_url is not configured.")
+        if collabora_server_url and not collabora_server_url.startswith("http"):
+            self.error_msg = _(
+                "error_collabora_server_url_invalid",
+                default=(
+                    "collective.collabora.collabora_server_url "
+                    "needs to be a full URL."
+                ),
+            )
+            logger.error(
+                "collective.collabora.collabora_server_url %s needs to be a full URL",
+                collabora_server_url,
+            )
+            return ""  # Don't let server discovery error msg obscure this one
         return collabora_server_url
 
     @property
@@ -126,13 +143,19 @@ class CollaboraEditView(FileView):
         if not self.collabora_server_url:
             return
         try:
-            return requests.get("%s/hosting/discovery" % self.collabora_server_url).text
+            response = requests.get("%s/hosting/discovery" % self.collabora_server_url)
         except requests.exceptions.RequestException as e:
-            self.error_msg = _(
-                "error_server_discovery", default="Collabora server is not responding."
-            )
+            self.error_msg = error_server_discovery_msg
             logger.error(e)
             return
+        if response.status_code == 200:
+            return response.text
+        self.error_msg = error_server_discovery_msg
+        logger.error(
+            "Server discovery error %i: %s. Verify your proxy rewrite rules.",
+            response.status_code,
+            response.reason,
+        )
 
     @property
     @memoize
@@ -221,7 +244,8 @@ class CollaboraEditView(FileView):
         """Requesting fullscreen works only when the focus is within the iframe.
 
         Accessing the iframe to set focus is only allowed when CORS protection
-        is not in play, i.e. when running COOL via a reverse proxy on the same
-        domain and port as Plone itself.
+        is not in play, i.e. when running Collabora Online via a reverse proxy
+        on the same domain and port as Plone itself - that is the recommended
+        way of running in production.
         """
         return utils.collabora_is_cors()

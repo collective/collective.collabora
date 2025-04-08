@@ -98,11 +98,8 @@ License
 The project is licensed under the GPLv2.
 
 
-Usage
-=====
-
 Installation
-------------
+============
 
 Install collective.collabora by adding it to your buildout::
 
@@ -114,7 +111,7 @@ Install collective.collabora by adding it to your buildout::
         collective.collabora
 
 
-and then running ``bin/buildout``.
+and then run ``bin/buildout``.
 
 You can then install collective.collabora though the add-on control panel.
 
@@ -124,29 +121,8 @@ See:
 
 - https://sdk.collaboraonline.com/docs/installation/index.html
 
+See *Deployment Configuration* below for instructions on configuring a production deployment.
 See *Development* below for instructions on running a development setup.
-
-Configuration
--------------
-
-There is a required registry record you need to configure:
-``collective.collabora.collabora_server_url``. This should be a publicly accessible URL
-that accesses (is reverse proxied to) your Collabora server.
-
-See:
-
-- https://sdk.collaboraonline.com/docs/installation/Proxy_settings.html
-
-- https://sdk.collaboraonline.com/docs/installation/Configuration.html#network-settings
-
-By default, ``collective.collabora.collabora_server_url`` is configured to
-``http://host.docker.internal:9980``, which is suitable for development but
-needs to be changed for production deployment.
-
-
-There is an optional registry record ``collective.collabora.plone_server_url``.
-See documentation below on production configuration. Don't configure this,
-unless you know you need to.
 
 Architecture and interaction flow
 =================================
@@ -208,14 +184,61 @@ Editing a file and saving changes
    the Collabora iframe via the postMessage API, see:
    https://sdk.collaboraonline.com/docs/postmessage_api.html
 
-Security and production deployment
-==================================
 
-Production configuration
-------------------------
+Deployment Configuration
+========================
+
+
+Collabora server url
+--------------------
+
+
+There is a required registry record you need to configure:
+``collective.collabora.collabora_server_url``. This should be a publicly accessible URL
+that accesses your Collabora server.
+
+
+By default, ``collective.collabora.collabora_server_url`` is configured to
+``http://host.docker.internal:9980``, which is suitable for development but
+needs to be changed for production deployment.
+
+Avoiding CORS
++++++++++++++
+
+Ideally, you will want to run the Collabora server on the same hostname and port
+as your Plone site. This avoids any CORS (Cross-Origin Resource Sharing) problems.
+Specifically, to be able to toggle fullscreen mode from the Plone side, requires
+such a setup where Collabora runs in the same URL space as Plone.
+
+To realize this setup, you need to:
+
+- Proxy to Collabora from your http server. In the ./docker/nginx directory
+  in this package you will find an example configuration that realizes this
+  on the ``/collabora`` URL namespace.
+
+- Configure Collabora ``coolwsd.xml`` config file, to set the record
+  ``service_root`` to the value of the proxied URL path (i.e. ``/collabora``).
+  In the ./docker/ directory in this package you will find an ``coolwsd.xml``
+  example configuration that realizes this configuration.
+
+- Configure the registry record ``collective.collabora.collabora_server_url``
+  to ``https://your.plone.server/collabora``. This needs to be a fully qualified
+  URL, configuring this record to only the path ``/collabora`` is invalid
+  and will show an error in the UI and server logs.
+
+See:
+
+- https://sdk.collaboraonline.com/docs/installation/Proxy_settings.html
+
+- https://sdk.collaboraonline.com/docs/installation/Configuration.html#network-settings
+
+
+Other Collabora configuration changes
+-------------------------------------
 
 To change the Collabora Online configuration, extract ``/etc/coolwsd/coolwsd.xml`` from the docker container.
-Make changes, then use e.g. a bind mound to map your changed configuration back into the docker container. YMMV.
+Make changes, then use e.g. a bind mound to map your changed configuration back into the docker container.
+See the provided example in ./docker (which only changes ``service_root``).
 
 Session security
 ----------------
@@ -278,8 +301,11 @@ that performs your SSL termination; to then traverse your full frontend stack vi
 and HAProxy, to end up at a Plone instance.
 
 In case that traversal outward-and-back-in-again gives problems, you can optionally
-configure Collabora to hit a different URL to access Plone, by setting the
-registry record ``collective.collabora.plone_server_url``.
+configure Collabora to hit a different URL to access Plone directly, by setting the
+registry record ``collective.collabora.plone_server_url`` to point to a URL
+that routes to Plone in a way that bypasses your frontend stack.
+
+Don't configure this, unless you know you need to.
 
 
 Development
@@ -292,14 +318,17 @@ For full SDK integration documentation docs, see:
 Development setup
 -----------------
 
-This package provides a default configuration that is suitable for development:
+A working devlopment setup is provided with this package. To run it::
 
-- The provided ``docker-compose.yaml`` runs the CODE server on
-  ``http://host.docker.internal:9980``, if you run ``docker compose up`` in the
-  package root directory.
+  docker compose -f docker/docker-compose.yaml create --remove-orphans
+  docker compose -f docker/docker-compose.yaml start
+  make start61
 
-- The ``collective.collabora:default`` profile configures the registry record
-  ``collective.collabora.collabora_server_url`` to point at that COOL server at that URL.
+This will start Collabora and build and start Plone. You will need to
+define a host alias ``host.docker.internal``, see below.
+
+The ``collective.collabora:default`` profile configures the registry record
+``collective.collabora.collabora_server_url`` to point at the Collabora server at that URL.
 
 
 No localhost
@@ -319,6 +348,17 @@ Instead, add an alias in your ``/etc/hosts``::
 
 which binds to the docker bridge IP. This will enable COOL to connect to Plone.
 
+Using a proxy to avoid CORS mode
+++++++++++++++++++++++++++++++++
+
+The docker example deployment provided, also starts an Nginx server configured
+to listen on ``http://host.docker.internal``, which then proxies to both Plone
+and Collabora.
+
+To make that work for Collabora, you will need to manually configure the registry
+record ``collective.collabora.server_url`` to ``http://host.docker.internal/collabora``.
+
+See *Avoiding CORS* in the deployment configuration section above.
 
 Building, testing and CI
 ------------------------
@@ -332,15 +372,15 @@ To build and test all environments::
 
 To run a single development server::
 
-  make start60
+  make start61
 
 To run all tests for only that environment::
 
-  tox -e py312-Plone60
+  tox -e py312-Plone61
 
 To run a single test in a single environment and spawn a debugger::
 
-  tox -e py312-Plone60 -- -t your_test_substring -D -x
+  tox -e py312-Plone61 -- -t your_test_substring -D -x
 
 To run all linters in parallel::
 
