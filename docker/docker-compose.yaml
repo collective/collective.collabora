@@ -58,8 +58,8 @@ services:
 
   collabora:
     image: collabora/code:latest
-    # image: collabora/code:22.05.9.2.1
-    container_name: collabora
+    restart: no
+    container_name: collabora-server
     expose:
       - 9980
     ports:
@@ -68,10 +68,9 @@ services:
       # For DEVELOPMENT
       # host.docker.internal points to the IP of the host and can be used by
       # other docker containers, to reach collabora via the host. This is
-      # necessary if you're also running Plone as a docker container.
+      # necessary for Collabora to be able to make calls to Plone.
       - "host.docker.internal:host-gateway"
     environment:
       - username=${ADMIN_USER:-admin}
       - password=${ADMIN_PASS:-admin}
       - extra_params=--o:ssl.enable=false --o:ssl.termination=${SSL_TERMINATION:-false}
-    restart: always

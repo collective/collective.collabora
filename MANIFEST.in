@@ -5,6 +5,6 @@ exclude *.txt
 exclude .github
 exclude .pre-commit-config.yaml
 exclude Makefile
-exclude docker-compose.yaml
 exclude tox.ini
 global-exclude *.pyc
+prune docker
