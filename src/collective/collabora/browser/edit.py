@@ -232,8 +232,13 @@ class CollaboraEditView(FileView):
         uuid = IUUID(self.context)
         args = dict(
             WOPISrc="%s/@@collabora-wopi/files/%s" % (document_url, uuid),
-            access_token=self.jwt_token,
-            _authenticator=createToken(),
+            access_token=self.jwt_token,  # login credentials
+            _authenticator=createToken(),  # plone.protect
+            # https://sdk.collaboraonline.com/docs/theming.html
+            ui_defaults=api.portal.get_registry_record(
+                "collective.collabora.ui_defaults",
+                default="UIMode=compact;TextSidebar=false;TextRuler=false;PresentationStatusbar=false;SpreadsheetSidebar=false;",  # noqa: E501
+            ),
         )
         quoted_args = urlencode(args)
         return "%s%s" % (self.editor_url, quoted_args)

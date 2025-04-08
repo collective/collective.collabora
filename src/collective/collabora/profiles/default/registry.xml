@@ -2,7 +2,6 @@
 <registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
           i18n:domain="collective.collabora"
 >
-
   <record name="collective.collabora.collabora_server_url">
     <field type="plone.registry.field.TextLine">
       <title>URL of the LibreOffice / Collabora server</title>
@@ -25,5 +24,18 @@
       <required>False</required>
     </field>
     <value purge="false" />
+  </record>
+  <record name="collective.collabora.ui_defaults">
+    <field type="plone.registry.field.TextLine">
+      <title>Collabora User Interface defaults</title>
+      <description>
+        Configure the defaults for the Collabora UI on a per-site basis.
+        Once users change their UI away from the defaults, those changes
+        are persisted in local browser storage.
+        See https://sdk.collaboraonline.com/docs/theming.html
+      </description>
+      <required>False</required>
+    </field>
+    <value purge="false">UIMode=compact;TextSidebar=false;TextRuler=false;PresentationStatusbar=false;SpreadsheetSidebar=false;</value>
   </record>
 </registry>

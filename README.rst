@@ -233,6 +233,23 @@ See:
 - https://sdk.collaboraonline.com/docs/installation/Configuration.html#network-settings
 
 
+Collabora UI defaults
+---------------------
+
+You can configure the Collabora UI defaults on a per-site basis, by configuring the
+registry record ``collective.collabora.ui_defaults``.
+
+Collective.collabora ships with a default ui configuration that is compact and uncluttered::
+
+  UIMode=compact;TextSidebar=false;TextRuler=false;PresentationStatusbar=false;SpreadsheetSidebar=false;
+
+Once users change their UI preferences, this is persisted in browser local storage.
+
+See:
+
+- https://sdk.collaboraonline.com/docs/theming.html
+
+
 Other Collabora configuration changes
 -------------------------------------
 
@@ -318,7 +335,7 @@ For full SDK integration documentation docs, see:
 Development setup
 -----------------
 
-A working devlopment setup is provided with this package. To run it::
+A working development setup is provided with this package. To run it::
 
   docker compose -f docker/docker-compose.yaml create --remove-orphans
   docker compose -f docker/docker-compose.yaml start
