@@ -17,12 +17,9 @@ function collabora_postMessage(message_id, values={}) {
 
 
 function collabora_action_fullscreen() {
-  // Requesting fullscreen works only when the focus is within the iframe.
-  // But accessing the iframe to set focus is only allowed when CORS protection
-  // is not in play, i.e. when running COOL via a reverse proxy on the same domain
-  // and port as Plone itself.
-  // FIXME test this in a proper reverse proxy setup
-  // window.frames[0].contentWindow.focus();
+  // Requesting fullscreen works only when CORS protection is not in play, i.e.
+  // when running Collabora via a reverse proxy on the same domain and port as
+  // Plone itself.
   collabora_postMessage("Action_Fullscreen");
 }
 

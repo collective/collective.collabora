@@ -60,7 +60,6 @@ def disallow(*args, **kwargs):
 
 def collabora_is_cors():
     """CORS mode is not recommended."""
-
     portal_parts = urlparse(api.portal.get().absolute_url())
     collabora_parts = urlparse(
         api.portal.get_registry_record(
@@ -74,6 +73,6 @@ def collabora_is_cors():
             portal_parts.port != collabora_parts.port,
         ]
     ):
-        logger.warn("Running the COOL iframe in CORS mode is not recommended.")
+        logger.warn("Running the Collabora iframe in CORS mode is not recommended.")
         return True
     return False

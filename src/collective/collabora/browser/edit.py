@@ -152,7 +152,7 @@ class CollaboraEditView(FileView):
             return response.text
         self.error_msg = error_server_discovery_msg
         logger.error(
-            "Server discovery error %i: %s. Verify your proxy rewrite rules.",
+            "Server discovery error %i: %s. Verify your proxy configuration.",
             response.status_code,
             response.reason,
         )
@@ -169,8 +169,6 @@ class CollaboraEditView(FileView):
             return
         parser = etree.XMLParser()
         tree = etree.fromstring(self.server_discovery_xml, parser=parser)
-        # ext = self.stored_file.filename.split(".")[-1]
-        # action = tree.xpath("//action[@ext='odt']")
         mime_type = self.stored_file.contentType
         action = tree.xpath("//app[@name='%s']/action" % mime_type)
         action = action[0] if len(action) else None
@@ -236,7 +234,7 @@ class CollaboraEditView(FileView):
             _authenticator=createToken(),  # plone.protect
             # https://sdk.collaboraonline.com/docs/theming.html
             ui_defaults=api.portal.get_registry_record(
-                "collective.collabora.ui_defaults",
+                n(b"collective.collabora.ui_defaults"),
                 default="UIMode=compact;TextSidebar=false;TextRuler=false;PresentationStatusbar=false;SpreadsheetSidebar=false;",  # noqa: E501
             ),
         )
@@ -246,11 +244,16 @@ class CollaboraEditView(FileView):
     @property
     @memoize
     def iframe_is_cors(self):
-        """Requesting fullscreen works only when the focus is within the iframe.
-
-        Accessing the iframe to set focus is only allowed when CORS protection
-        is not in play, i.e. when running Collabora Online via a reverse proxy
-        on the same domain and port as Plone itself - that is the recommended
-        way of running in production.
+        """
+        Requesting fullscreen works only when CORS protection is not in play,
+        i.e. when running Collabora Online via a reverse proxy on the same
+        domain and port as Plone itself - that is the recommended way of running
+        in production.
         """
         return utils.collabora_is_cors()
+
+    @property
+    def css_import(self):
+        return (
+            "@import url(%s/++resource++collective.collabora/edit.css" % self.portal_url
+        )

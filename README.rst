@@ -199,8 +199,11 @@ that accesses your Collabora server.
 
 
 By default, ``collective.collabora.collabora_server_url`` is configured to
-``http://host.docker.internal:9980``, which is suitable for development but
-needs to be changed for production deployment.
+``http://host.docker.internal/collabora``. This requires a reverse proxy to be
+set up, see below.
+
+Any configuration of this record on the Plone side, needs to match the corresponding
+``sercice_root`` record of the Collabora server in ``coolwsd.xml``. See below.
 
 Avoiding CORS
 +++++++++++++

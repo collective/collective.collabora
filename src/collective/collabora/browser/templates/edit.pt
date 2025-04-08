@@ -10,8 +10,9 @@
   <body>
 
     <metal:css fill-slot="style_slot">
-      <style type="text/css">
-       @import url(<tal:siteroot replace="" content="view/portal_url" />"/++resource++collective.collabora/edit.css");
+      <style type="text/css"
+             tal:content="view/css_import"
+      >
       </style>
     </metal:css>
     <metal:js fill-slot="javascript_head_slot">
