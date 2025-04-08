@@ -2,8 +2,8 @@ Changelog
 =========
 
 
-1.0a1 (unreleased)
-------------------
+0.9.0rc1 (unreleased)
+---------------------
 
 - Initial release.
   [gyst]

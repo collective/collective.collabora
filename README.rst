@@ -54,16 +54,13 @@ Features
 
 - Wide compatibility of this add-on across Plone and Python versions.
 
-Status: alpha
--------------
-
-Development alpha, not suitable for production use yet.
+Status
+------
 
 Things that need to implemented/improved/tested:
 
 - Translations
-- Plone4 backport
-- Overall testing and UI polishing
+- Edge case handling (Collabora down, locking conflicts, ...)
 
 Authors
 -------
@@ -285,7 +282,9 @@ protected with the ``ModifyPortalContent`` permission in python.
 
 Protection against potential session hijacking can be configured by enabling
 `WOPI Proof <https://sdk.collaboraonline.com/docs/advanced_integration.html#wopi-proof>`_
-in your production deployment of Collabora Online.
+in your production deployment of Collabora Online. I'm not sure that makes sense in
+Plone though, since we already perform both authentication checks (twice: JWT +
+protect tokens) and full RBAC authorization checks.
 
 Deployment security configuration
 ---------------------------------
