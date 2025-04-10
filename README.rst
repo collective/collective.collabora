@@ -41,7 +41,7 @@ and works out of the box in about any Plone version.
 
 Additionally, collective.collabora provides a building block for integration of
 real-time document collaboration into Plone-based applications like
-`Quaive <https://quaive.com>`_ and `iA.Delib <https://www.imio.be/apps-et-services/ia-delib>`_.
+Quaive and iA.Delib.
 
 Features
 --------
@@ -60,12 +60,14 @@ Status
 Things that need to implemented/improved/tested:
 
 - Translations
+
 - Edge case handling (Collabora down, locking conflicts, ...)
 
 Authors
 -------
 
 - Johannes Raggam (thet): initial proof of concept (integration, WOPI implementation).
+
 - Guido A.J. Stevens (gyst): production quality code (cleanup, tests, CI, documentation, backporting, release).
 
 
@@ -73,6 +75,7 @@ Contribute
 ----------
 
 - Issue Tracker: https://github.com/collective/collective.collabora/issues
+
 - Source Code: https://github.com/collective/collective.collabora
 
 
@@ -144,19 +147,19 @@ The following diagram illustrates the information flow.
 Opening a file for read access
 ------------------------------
 
-1. Open the Plone view ``@@collabora-edit``. This is integrated in the Plone UI as an
-   action called ``Open``.
+- Open the Plone view ``@@collabora-edit``. This is integrated in the Plone UI as an
+  action called ``Open``.
 
-2. The ``collabora-edit`` view renders with an iframe.
+- The ``collabora-edit`` view renders with an iframe.
 
-3. The iframe loads the Collabora Online UI. The URL for that iframe contains
-   the callback URL ``collabora-wopi`` that Collabora will use to communicate with
-   Plone in steps (4) and (7).
+- The iframe loads the Collabora Online UI. The URL for that iframe contains
+  the callback URL ``collabora-wopi`` that Collabora will use to communicate with
+  Plone in steps (4) and (7).
 
-4. Collabora retrieves the file to be edited directly from Plone, outside of the
-   browser, by accessing the WOPI URL ``@@collabora-wopi``. It uses a JWT access
-   token encoded in the iframe URL to connect to Plone as the user that has
-   opened ``collabora-edit``.
+- Collabora retrieves the file to be edited directly from Plone, outside of the
+  browser, by accessing the WOPI URL ``@@collabora-wopi``. It uses a JWT access
+  token encoded in the iframe URL to connect to Plone as the user that has
+  opened ``collabora-edit``.
 
 The file is now rendered in the iframe in the browser. If the user has ``View``
 permissions, but not ``Modify portal content``, the flow ends here. The user can
@@ -166,20 +169,20 @@ Collabora.
 Editing a file and saving changes
 ---------------------------------
 
-5. If the user opening the document has ``Modify portal content`` permission on
-   the file, a real-time editing session is opened.
+- If the user opening the document has ``Modify portal content`` permission on
+  the file, a real-time editing session is opened.
 
-6. Any changes the user makes to the document, will be autosaved.
+- Any changes the user makes to the document, will be autosaved.
 
-7. The save is performed by Collabora issuing a POST request to the Plone view
-   ``@@collabora-wopi``. That view checks permissions, and performs the save. In case
-   of a write/locking conflict, that's communicated back to Collabora which will
-   open a UI for the user to resolve this.
+- The save is performed by Collabora issuing a POST request to the Plone view
+  ``@@collabora-wopi``. That view checks permissions, and performs the save. In case
+  of a write/locking conflict, that's communicated back to Collabora which will
+  open a UI for the user to resolve this.
 
-8. Some actions, like ``Save and exit``, can be performed on the ``collabora-edit``
-   view outside of the iframe. The Plone document communicates such actions to
-   the Collabora iframe via the postMessage API, see:
-   https://sdk.collaboraonline.com/docs/postmessage_api.html
+- Some actions, like ``Save and exit``, can be performed on the ``collabora-edit``
+  view outside of the iframe. The Plone document communicates such actions to
+  the Collabora iframe via the postMessage API, see:
+  https://sdk.collaboraonline.com/docs/postmessage_api.html
 
 
 Deployment Configuration
