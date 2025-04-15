@@ -59,8 +59,6 @@ Status
 
 Things that need to implemented/improved/tested:
 
-- Translations
-
 - Edge case handling (Collabora down, locking conflicts, ...)
 
 Authors

@@ -1,0 +1,120 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2025-04-15 12:57+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: DOMAIN\n"
+
+#: ../browser/templates/edit.pt:72
+msgid "Close"
+msgstr ""
+
+#: ../profiles/default/registry.xml
+msgid "Collabora User Interface defaults"
+msgstr ""
+
+#: ../profiles/default/registry.xml
+msgid "Configure the defaults for the Collabora UI on a per-site basis. Once users change their UI away from the defaults, those changes are persisted in local browser storage. See https://sdk.collaboraonline.com/docs/theming.html"
+msgstr ""
+
+#: ../browser/templates/edit.pt:52
+msgid "Download"
+msgstr ""
+
+#: ../browser/templates/edit.pt:57
+#: ../profiles/default/types/File.xml
+msgid "Edit metadata"
+msgstr ""
+
+#: ../browser/templates/edit.pt:42
+msgid "Fullscreen"
+msgstr ""
+
+#: ../configure.zcml:36
+msgid "Installs the collective.collabora add-on."
+msgstr ""
+
+#: ../profiles/default/types/File.xml
+msgid "Open"
+msgstr ""
+
+#: ../browser/templates/edit.pt:64
+msgid "Save & Close"
+msgstr ""
+
+#: ../profiles/default/registry.xml
+msgid "The URL of the LibreOffice / Collabora server. Note that this needs to match the Collabora coolwsd.xml 'server_root' setting."
+msgstr ""
+
+#: ../profiles/default/registry.xml
+msgid "The portal URL where Collabora can reach Plone. Leave this empty to use the normal external portal url. Use this only if you want Collabora to use a direct backend-to-backend connection that bypasses your normal nginx/varnish/haproxy frontend stack."
+msgstr ""
+
+#: ../profiles/default/registry.xml
+msgid "URL of Plone server (optional)"
+msgstr ""
+
+#: ../profiles/default/registry.xml
+msgid "URL of the LibreOffice / Collabora server"
+msgstr ""
+
+#: ../configure.zcml:45
+msgid "Uninstalls the collective.collabora add-on."
+msgstr ""
+
+#: ../configure.zcml:36
+msgid "collective.collabora"
+msgstr ""
+
+#: ../configure.zcml:45
+msgid "collective.collabora (uninstall)"
+msgstr ""
+
+#. Default: "collective.collabora.collabora_server_url is not configured."
+#: ../browser/edit.py:120
+msgid "error_collabora_server_url_empty"
+msgstr ""
+
+#. Default: "collective.collabora.collabora_server_url needs to be a full URL."
+#: ../browser/edit.py:126
+msgid "error_collabora_server_url_invalid"
+msgstr ""
+
+#. Default: "Collabora does not support mimetype ${mimetype}."
+#: ../browser/edit.py:176
+msgid "error_editor_mimetype"
+msgstr ""
+
+#. Default: "Cannot extract url source from action"
+#: ../browser/edit.py:185
+msgid "error_editor_urlsrc"
+msgstr ""
+
+#. Default: "JWT Authentication Plugin not found. Is plone.restapi installed?"
+#: ../browser/edit.py:207
+msgid "error_jwt_plugin"
+msgstr ""
+
+#. Default: "When Plone is supposed to be accessed on localhost, Collabora cannot call back. Use host.docker.internal or a public FQDN instead."
+#: ../browser/edit.py:101
+msgid "error_plone_server_url"
+msgstr ""
+
+#. Default: "Collabora server is not responding."
+#: ../browser/edit.py:33
+msgid "error_server_discovery"
+msgstr ""
+
+#. Default: "Error"
+#: ../browser/templates/edit.pt:31
+msgid "label_error"
+msgstr ""

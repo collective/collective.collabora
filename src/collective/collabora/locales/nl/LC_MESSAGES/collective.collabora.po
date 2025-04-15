@@ -1,11 +1,8 @@
-#--- PLEASE EDIT THE LINES BELOW CORRECTLY ---
-#SOME DESCRIPTIVE TITLE.
-#FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2025-04-15 12:57+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"PO-Revision-Date: 2025-04-15 15:38+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -15,109 +12,109 @@ msgstr ""
 "Language-Code: en\n"
 "Language-Name: English\n"
 "Preferred-Encodings: utf-8 latin1\n"
-"Domain: collective.collabora\n"
+"Domain: DOMAIN\n"
 
 #: ../browser/templates/edit.pt:72
 msgid "Close"
-msgstr ""
+msgstr "Sluiten"
 
 #: ../profiles/default/registry.xml
 msgid "Collabora User Interface defaults"
-msgstr ""
+msgstr "Standaardinstellingen Collabora gebruikersinterface"
 
 #: ../profiles/default/registry.xml
 msgid "Configure the defaults for the Collabora UI on a per-site basis. Once users change their UI away from the defaults, those changes are persisted in local browser storage. See https://sdk.collaboraonline.com/docs/theming.html"
-msgstr ""
+msgstr "Configureer de standaardinstellingen voor de Collabora UI per site. Zodra gebruikers hun gebruikersinterface wijzigen in plaats van de standaardinstellingen, worden deze wijzigingen opgeslagen in de lokale browseropslag. Zie https://sdk.collaboraonline.com/docs/theming.html"
 
 #: ../browser/templates/edit.pt:52
 msgid "Download"
-msgstr ""
+msgstr "Downloaden"
 
 #: ../browser/templates/edit.pt:57
 #: ../profiles/default/types/File.xml
 msgid "Edit metadata"
-msgstr ""
+msgstr "Metagegevens bewerken"
 
 #: ../browser/templates/edit.pt:42
 msgid "Fullscreen"
-msgstr ""
+msgstr "Volledig scherm"
 
 #: ../configure.zcml:36
 msgid "Installs the collective.collabora add-on."
-msgstr ""
+msgstr "Installeert de add-on collective.collabora."
 
 #: ../profiles/default/types/File.xml
 msgid "Open"
-msgstr ""
+msgstr "Open"
 
 #: ../browser/templates/edit.pt:64
 msgid "Save & Close"
-msgstr ""
+msgstr "Opslaan en sluiten"
 
 #: ../profiles/default/registry.xml
 msgid "The URL of the LibreOffice / Collabora server. Note that this needs to match the Collabora coolwsd.xml 'server_root' setting."
-msgstr ""
+msgstr "De URL van de LibreOffice / Collabora server. Deze moet overeenkomen met de Collabora coolwsd.xml 'server_root' instelling."
 
 #: ../profiles/default/registry.xml
 msgid "The portal URL where Collabora can reach Plone. Leave this empty to use the normal external portal url. Use this only if you want Collabora to use a direct backend-to-backend connection that bypasses your normal nginx/varnish/haproxy frontend stack."
-msgstr ""
+msgstr "De portal URL waar Collabora Plone kan bereiken. Laat dit leeg om de normale externe portal url te gebruiken. Gebruik dit alleen als je wilt dat Collabora een directe backend-naar-backend verbinding gebruikt die je normale nginx/varnish/haproxy frontend stack omzeilt."
 
 #: ../profiles/default/registry.xml
 msgid "URL of Plone server (optional)"
-msgstr ""
+msgstr "URL van Plone server (optioneel)"
 
 #: ../profiles/default/registry.xml
 msgid "URL of the LibreOffice / Collabora server"
-msgstr ""
+msgstr "URL van de LibreOffice / Collabora-server"
 
 #: ../configure.zcml:45
 msgid "Uninstalls the collective.collabora add-on."
-msgstr ""
+msgstr "Verwijdert de add-on collective.collabora."
 
 #: ../configure.zcml:36
 msgid "collective.collabora"
-msgstr ""
+msgstr "collective.collabora"
 
 #: ../configure.zcml:45
 msgid "collective.collabora (uninstall)"
-msgstr ""
+msgstr "collective.collabora (verwijderen)"
 
 #. Default: "collective.collabora.collabora_server_url is not configured."
 #: ../browser/edit.py:120
 msgid "error_collabora_server_url_empty"
-msgstr ""
+msgstr "collective.collabora.collabora_server_url is niet geconfigureerd."
 
 #. Default: "collective.collabora.collabora_server_url needs to be a full URL."
 #: ../browser/edit.py:126
 msgid "error_collabora_server_url_invalid"
-msgstr ""
+msgstr "collective.collabora.collabora_server_url moet een volledige URL zijn."
 
 #. Default: "Collabora does not support mimetype ${mimetype}."
 #: ../browser/edit.py:176
 msgid "error_editor_mimetype"
-msgstr ""
+msgstr "Collabora ondersteunt het mimetype ${mimetype} niet."
 
 #. Default: "Cannot extract url source from action"
 #: ../browser/edit.py:185
 msgid "error_editor_urlsrc"
-msgstr ""
+msgstr "Kan url-bron niet uit actie halen"
 
 #. Default: "JWT Authentication Plugin not found. Is plone.restapi installed?"
 #: ../browser/edit.py:207
 msgid "error_jwt_plugin"
-msgstr ""
+msgstr "JWT-authenticatieplugin niet gevonden. Is plone.restapi geïnstalleerd?"
 
 #. Default: "When Plone is supposed to be accessed on localhost, Collabora cannot call back. Use host.docker.internal or a public FQDN instead."
 #: ../browser/edit.py:101
 msgid "error_plone_server_url"
-msgstr ""
+msgstr "Als Plone op localhost benaderd moet worden, kan Collabora niet terugbellen. Gebruik in plaats daarvan host.docker.internal of een publieke FQDN."
 
 #. Default: "Collabora server is not responding."
 #: ../browser/edit.py:33
 msgid "error_server_discovery"
-msgstr ""
+msgstr "De Collabora-server reageert niet."
 
 #. Default: "Error"
 #: ../browser/templates/edit.pt:31
 msgid "label_error"
-msgstr ""
+msgstr "Fout"
