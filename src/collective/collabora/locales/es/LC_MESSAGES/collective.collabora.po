@@ -3,11 +3,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: collective.collabora\n"
-"POT-Creation-Date: 2025-04-11 10:51+0000\n"
-"PO-Revision-Date: 2025-04-11 12:55+0200\n"
+"POT-Creation-Date: 2025-04-15 12:41+0000\n"
+"PO-Revision-Date: 2025-04-15 14:45+0200\n"
 "Last-Translator: Leonardo J. Caballero G. <leonardocaballero@gmail.com>\n"
 "Language-Team: Spanish Team <plone-i18n@lists.sourceforge.net>\n"
-"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -16,8 +15,13 @@ msgstr ""
 "Language-Name: Español\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.collabora\n"
+"Language: es\n"
 "X-Is-Fallback-For: es-ar es-bo es-cl es-co es-cr es-do es-ec es-es es-sv es-gt es-hn es-mx es-ni es-pa es-py es-pe es-pr es-us es-uy es-ve\n"
 "X-Generator: Poedit 3.5\n"
+
+#: ../browser/templates/edit.pt:72
+msgid "Close"
+msgstr "Cerrar"
 
 #: ../profiles/default/registry.xml
 msgid "Collabora User Interface defaults"
@@ -27,9 +31,30 @@ msgstr "Valores por defecto de la interfaz de usuario de Collabora"
 msgid "Configure the defaults for the Collabora UI on a per-site basis. Once users change their UI away from the defaults, those changes are persisted in local browser storage. See https://sdk.collaboraonline.com/docs/theming.html"
 msgstr "Configure los valores predeterminados para la interfaz de usuario de Collabora en función de cada sitio. Una vez que los usuarios cambian su interfaz de usuario lejos de los valores predeterminados, esos cambios se conservan en el almacenamiento del explorador local. Véase https://sdk.collaboraonline.com/docs/theming.html"
 
+#: ../browser/templates/edit.pt:52
+msgid "Download"
+msgstr "Descargar"
+
+#: ../browser/templates/edit.pt:57
+#: ../profiles/default/types/File.xml
+msgid "Edit metadata"
+msgstr "Editar metadatos"
+
+#: ../browser/templates/edit.pt:42
+msgid "Fullscreen"
+msgstr "Pantalla completa"
+
 #: ../configure.zcml:36
 msgid "Installs the collective.collabora add-on."
 msgstr "Instala el complemento collective.collabora."
+
+#: ../profiles/default/types/File.xml
+msgid "Open"
+msgstr "Abrir"
+
+#: ../browser/templates/edit.pt:64
+msgid "Save & Close"
+msgstr "Guardar & Cerrar"
 
 #: ../profiles/default/registry.xml
 msgid "The URL of the LibreOffice / Collabora server. Note that this needs to match the Collabora coolwsd.xml 'server_root' setting."
@@ -93,3 +118,8 @@ msgstr "Cuando se supone que se accede a Plone en localhost, Collabora no puede 
 #: ../browser/edit.py:33
 msgid "error_server_discovery"
 msgstr "El servidor Collabora no responde."
+
+#. Default: "Error"
+#: ../browser/templates/edit.pt:31
+msgid "label_error"
+msgstr "Error"

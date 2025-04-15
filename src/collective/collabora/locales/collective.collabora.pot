@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2025-04-11 10:51+0000\n"
+"POT-Creation-Date: 2025-04-15 12:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,10 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.collabora\n"
 
+#: ../browser/templates/edit.pt:72
+msgid "Close"
+msgstr ""
+
 #: ../profiles/default/registry.xml
 msgid "Collabora User Interface defaults"
 msgstr ""
@@ -25,8 +29,29 @@ msgstr ""
 msgid "Configure the defaults for the Collabora UI on a per-site basis. Once users change their UI away from the defaults, those changes are persisted in local browser storage. See https://sdk.collaboraonline.com/docs/theming.html"
 msgstr ""
 
+#: ../browser/templates/edit.pt:52
+msgid "Download"
+msgstr ""
+
+#: ../browser/templates/edit.pt:57
+#: ../profiles/default/types/File.xml
+msgid "Edit metadata"
+msgstr ""
+
+#: ../browser/templates/edit.pt:42
+msgid "Fullscreen"
+msgstr ""
+
 #: ../configure.zcml:36
 msgid "Installs the collective.collabora add-on."
+msgstr ""
+
+#: ../profiles/default/types/File.xml
+msgid "Open"
+msgstr ""
+
+#: ../browser/templates/edit.pt:64
+msgid "Save & Close"
 msgstr ""
 
 #: ../profiles/default/registry.xml
@@ -90,4 +115,9 @@ msgstr ""
 #. Default: "Collabora server is not responding."
 #: ../browser/edit.py:33
 msgid "error_server_discovery"
+msgstr ""
+
+#. Default: "Error"
+#: ../browser/templates/edit.pt:31
+msgid "label_error"
 msgstr ""
