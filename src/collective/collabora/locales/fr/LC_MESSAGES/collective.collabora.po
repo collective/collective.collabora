@@ -1,125 +1,120 @@
-# Translation of collective.collabora.pot to Spanish
-# Leonardo J. Caballero G. <leonardocaballero@gmail.com>, 2025.
 msgid ""
 msgstr ""
-"Project-Id-Version: collective.collabora\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2025-04-15 12:57+0000\n"
-"PO-Revision-Date: 2025-04-15 14:45+0200\n"
-"Last-Translator: Leonardo J. Caballero G. <leonardocaballero@gmail.com>\n"
-"Language-Team: Spanish Team <plone-i18n@lists.sourceforge.net>\n"
+"PO-Revision-Date: 2025-04-15 15:36+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language-Code: es\n"
-"Language-Name: Español\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: fr\n"
+"Language-Name: Francais\n"
 "Preferred-Encodings: utf-8 latin1\n"
-"Domain: collective.collabora\n"
-"Language: es\n"
-"X-Is-Fallback-For: es-ar es-bo es-cl es-co es-cr es-do es-ec es-es es-sv es-gt es-hn es-mx es-ni es-pa es-py es-pe es-pr es-us es-uy es-ve\n"
-"X-Generator: Poedit 3.5\n"
+"Domain: DOMAIN\n"
 
 #: ../browser/templates/edit.pt:72
 msgid "Close"
-msgstr "Cerrar"
+msgstr "Fermer"
 
 #: ../profiles/default/registry.xml
 msgid "Collabora User Interface defaults"
-msgstr "Valores por defecto de la interfaz de usuario de Collabora"
+msgstr "Interface utilisateur de Collabora par défaut"
 
 #: ../profiles/default/registry.xml
 msgid "Configure the defaults for the Collabora UI on a per-site basis. Once users change their UI away from the defaults, those changes are persisted in local browser storage. See https://sdk.collaboraonline.com/docs/theming.html"
-msgstr "Configure los valores predeterminados para la interfaz de usuario de Collabora en función de cada sitio. Una vez que los usuarios cambian su interfaz de usuario lejos de los valores predeterminados, esos cambios se conservan en el almacenamiento del explorador local. Véase https://sdk.collaboraonline.com/docs/theming.html"
+msgstr "Configurer les valeurs par défaut de l'interface utilisateur de Collabora pour chaque site. Lorsque les utilisateurs modifient leur interface utilisateur par rapport aux valeurs par défaut, ces modifications sont conservées dans le stockage local du navigateur. Voir https://sdk.collaboraonline.com/docs/theming.html"
 
 #: ../browser/templates/edit.pt:52
 msgid "Download"
-msgstr "Descargar"
+msgstr "Télécharger"
 
 #: ../browser/templates/edit.pt:57
 #: ../profiles/default/types/File.xml
 msgid "Edit metadata"
-msgstr "Editar metadatos"
+msgstr "Modifier les métadonnées"
 
 #: ../browser/templates/edit.pt:42
 msgid "Fullscreen"
-msgstr "Pantalla completa"
+msgstr "Plein écran"
 
 #: ../configure.zcml:36
 msgid "Installs the collective.collabora add-on."
-msgstr "Instala el complemento collective.collabora."
+msgstr "Installe le module complémentaire collective.collabora."
 
 #: ../profiles/default/types/File.xml
 msgid "Open"
-msgstr "Abrir"
+msgstr "Ouvrir"
 
 #: ../browser/templates/edit.pt:64
 msgid "Save & Close"
-msgstr "Guardar & Cerrar"
+msgstr "Enregistrer et fermer"
 
 #: ../profiles/default/registry.xml
 msgid "The URL of the LibreOffice / Collabora server. Note that this needs to match the Collabora coolwsd.xml 'server_root' setting."
-msgstr "La dirección URL del servidor de LibreOffice / Collabora. Tenga en cuenta que esto debe coincidir con la configuración del archivo coolwsd.xml \"server_root\" de Collabora."
+msgstr "L'URL du serveur LibreOffice / Collabora. Notez que cela doit correspondre au paramètre 'server_root' du fichier coolwsd.xml de Collabora"
 
 #: ../profiles/default/registry.xml
 msgid "The portal URL where Collabora can reach Plone. Leave this empty to use the normal external portal url. Use this only if you want Collabora to use a direct backend-to-backend connection that bypasses your normal nginx/varnish/haproxy frontend stack."
-msgstr "La dirección URL del portal donde Collabora puede llegar a Plone. Déjelo vacío para usar la dirección URL normal del portal externo. Úselo solo si desea que Collabora utilice una conexión directa de backend a backend que omita su normal stack de frontend nginx/varnish/haproxy."
+msgstr "L'URL du portail où Collabora peut accéder à Plone. Laissez ce champ vide pour utiliser l'url normale du portail externe. N'utilisez ceci que si vous voulez que Collabora utilise une connexion directe de backend à backend qui contourne votre pile frontale normale nginx/varnish/haproxy"
 
 #: ../profiles/default/registry.xml
 msgid "URL of Plone server (optional)"
-msgstr "Dirección URL del servidor Plone (opcional)"
+msgstr "URL du serveur Plone (facultatif)"
 
 #: ../profiles/default/registry.xml
 msgid "URL of the LibreOffice / Collabora server"
-msgstr "Dirección URL del servidor de LibreOffice / Collabora"
+msgstr "URL du serveur LibreOffice / Collabora"
 
 #: ../configure.zcml:45
 msgid "Uninstalls the collective.collabora add-on."
-msgstr "Desinstala el complemento collective.collabora."
+msgstr "Désinstalle le module complémentaire collective.collabora."
 
 #: ../configure.zcml:36
 msgid "collective.collabora"
-msgstr "colectivo.collabora"
+msgstr "collective.collabora"
 
 #: ../configure.zcml:45
 msgid "collective.collabora (uninstall)"
-msgstr "collective.collabora (desinstalar)"
+msgstr "collective.collabora (désinstallation)"
 
 #. Default: "collective.collabora.collabora_server_url is not configured."
 #: ../browser/edit.py:120
 msgid "error_collabora_server_url_empty"
-msgstr "collective.collabora.collabora_server_url no está configurado."
+msgstr "collective.collabora.collabora_server_url n'est pas configuré."
 
 #. Default: "collective.collabora.collabora_server_url needs to be a full URL."
 #: ../browser/edit.py:126
 msgid "error_collabora_server_url_invalid"
-msgstr "collective.collabora.collabora_server_url debe ser una URL completa."
+msgstr "collective.collabora.collabora_server_url doit être une URL complète."
 
 #. Default: "Collabora does not support mimetype ${mimetype}."
 #: ../browser/edit.py:176
 msgid "error_editor_mimetype"
-msgstr "Collabora no admite el mimetype ${mimetype}."
+msgstr "Collabora ne supporte pas le mimetype ${mimetype}."
 
 #. Default: "Cannot extract url source from action"
 #: ../browser/edit.py:185
 msgid "error_editor_urlsrc"
-msgstr "No se puede extraer la fuente URL de la acción"
+msgstr "Impossible d'extraire l'url source de l'action"
 
 #. Default: "JWT Authentication Plugin not found. Is plone.restapi installed?"
 #: ../browser/edit.py:207
 msgid "error_jwt_plugin"
-msgstr "No se ha encontrado el plugin de autenticación JWT. ¿Está instalado plone.restapi?"
+msgstr "Plugin d'authentification JWT introuvable. Est-ce que plone.restapi est installé ?"
 
 #. Default: "When Plone is supposed to be accessed on localhost, Collabora cannot call back. Use host.docker.internal or a public FQDN instead."
 #: ../browser/edit.py:101
 msgid "error_plone_server_url"
-msgstr "Cuando se supone que se accede a Plone en localhost, Collabora no puede devolver la llamada. Utilice host.docker.internal o un FQDN público en su lugar."
+msgstr "Lorsque Plone est censé être accessible sur localhost, Collabora ne peut pas rappeler. Utilisez host.docker.internal ou un FQDN public à la place."
 
 #. Default: "Collabora server is not responding."
 #: ../browser/edit.py:33
 msgid "error_server_discovery"
-msgstr "El servidor Collabora no responde."
+msgstr "Le serveur Collabora ne répond pas."
 
 #. Default: "Error"
 #: ../browser/templates/edit.pt:31
 msgid "label_error"
-msgstr "Error"
+msgstr "Erreur"

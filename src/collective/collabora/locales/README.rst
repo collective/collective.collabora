@@ -9,7 +9,8 @@ For German
 
 .. code-block:: console
 
-    $ mkdir de
+    $ mkdir -p de/LC_MESSAGES
+    $ touch de/LC_MESSAGES/collective.collabora.po
 
 For updating locales
 
