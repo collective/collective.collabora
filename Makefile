@@ -82,3 +82,45 @@ dev43/bin/instance: dev43
 
 dev43:
 	tox --devenv ./dev43 -e py27-Plone43
+
+
+# The below targets create installs running the released egg of collective.collabora,
+# instead of using the source. This makes it possible to test released builds.
+
+.PHONY: eggs egg61 egg60 egg3852 egg2752 egg43
+eggs: egg61 egg60 egg3852 egg2752 egg43
+
+egg61:
+	rm -rf egg61
+	tox --devenv ./egg61 -e py312-Plone61
+	./egg61/bin/pip install -r requirements_plone61.txt
+	./egg61/bin/buildout -c ./dev_plone61.cfg buildout:directory=$(CURDIR)/egg61 buildout:develop= bootstrap
+	./egg61/bin/buildout -c ./dev_plone61.cfg buildout:directory=$(CURDIR)/egg61 buildout:develop= install instance
+
+egg60:
+	rm -rf egg60
+	tox --devenv ./egg60 -e py311-Plone60
+	./egg60/bin/pip install -r requirements_plone60.txt
+	./egg60/bin/buildout -c ./dev_plone60.cfg buildout:directory=$(CURDIR)/egg60 buildout:develop= bootstrap
+	./egg60/bin/buildout -c ./dev_plone60.cfg buildout:directory=$(CURDIR)/egg60 buildout:develop= install instance
+
+egg3852:
+	rm -rf egg3852
+	tox --devenv ./egg3852 -e py38-Plone52
+	./egg3852/bin/pip install -r requirements_plone52.txt
+	./egg3852/bin/buildout -c ./dev38_plone52.cfg buildout:directory=$(CURDIR)/egg3852 buildout:develop= bootstrap
+	./egg3852/bin/buildout -c ./dev38_plone52.cfg buildout:directory=$(CURDIR)/egg3852 buildout:develop= install instance
+
+egg2752:
+	rm -rf egg2752
+	tox --devenv ./egg2752 -e py27-Plone52
+	./egg2752/bin/pip install -r requirements_plone52.txt
+	./egg2752/bin/buildout -c ./dev27_plone52.cfg buildout:directory=$(CURDIR)/egg2752 buildout:develop= bootstrap
+	./egg2752/bin/buildout -c ./dev27_plone52.cfg buildout:directory=$(CURDIR)/egg2752 buildout:develop= install instance
+
+egg43:
+	rm -rf egg43
+	tox --devenv ./egg43 -e py27-Plone43
+	./egg43/bin/pip install -r requirements_plone43.txt -cconstraints_py27.txt
+	./egg43/bin/buildout -c ./dev_plone43.cfg buildout:directory=$(CURDIR)/egg43 buildout:develop= bootstrap
+	./egg43/bin/buildout -c ./dev_plone43.cfg buildout:directory=$(CURDIR)/egg43 buildout:develop= install instance
