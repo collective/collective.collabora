@@ -1,9 +1,10 @@
 graft src/collective
 graft docs
+prune docs/_build
 include *.rst
 exclude *.txt
 exclude .github
-exclude .pre-commit-config.yaml
+exclude *.yaml
 exclude Makefile
 exclude tox.ini
 global-exclude *.pyc

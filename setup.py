@@ -47,7 +47,7 @@ setup(
         "PyPI": "https://pypi.org/project/collective.collabora/",
         "Source": "https://github.com/collective/collective.collabora",
         "Tracker": "https://github.com/collective/collective.collabora/issues",
-        # 'Documentation': 'https://collective.collabora.readthedocs.io/en/latest/',
+        "Documentation": "https://collective.collabora.readthedocs.io/en/latest/",
     },
     license="GPL version 2",
     packages=find_packages("src", exclude=["ez_setup"]),
