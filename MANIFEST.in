@@ -1,6 +1,8 @@
 graft src/collective
 graft docs
 prune docs/_build
+exclude docs/conf.py
+exclude docs/Makefile
 include *.rst
 exclude *.txt
 exclude .github
