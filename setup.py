@@ -15,7 +15,7 @@ long_description = "\n\n".join(
 
 setup(
     name="collective.collabora",
-    version="0.9.1a1",
+    version="0.9.1a2.dev0",
     description="Collabora Online integration for Plone",
     long_description=long_description,
     # Get more from https://pypi.org/classifiers/
