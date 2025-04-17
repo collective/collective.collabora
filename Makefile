@@ -11,7 +11,7 @@ test:
 	@echo "You may need to run 'tox -r' to recreate the test environments."
 
 clean:
-	rm -rf dev61 dev60 dev3852 dev2752 dev43
+	rm -rf dev61 dev60 dev3852 dev2752 dev43 egg61 egg60 egg3852 egg2752 egg43
 
 start61: dev61/bin/instance
 	./dev61/bin/instance fg
