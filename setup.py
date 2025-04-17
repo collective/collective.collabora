@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
 """Installer for the collective.collabora package."""
 
-from setuptools import find_packages
+try:
+    # find_packages errors out on py3 on non-python packages
+    from setuptools import find_namespace_packages
+except ImportError:
+    # python 2.7 has no find_namespace_packages
+    # but works fine with find_packages
+    from setuptools import find_packages as find_namespace_packages
+
 from setuptools import setup
 
 
@@ -18,6 +25,7 @@ setup(
     version="0.9.1.dev0",
     description="Collabora Online integration for Plone",
     long_description=long_description,
+    long_description_content_type="text/x-rst",
     # Get more from https://pypi.org/classifiers/
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -50,7 +58,7 @@ setup(
         "Documentation": "https://collective.collabora.readthedocs.io/en/latest/",
     },
     license="GPL version 2",
-    packages=find_packages("src", exclude=["ez_setup"]),
+    packages=find_namespace_packages("src", exclude=["ez_setup"]),
     # keep deprecated namespace_packages for backward compatibility
     namespace_packages=["collective"],
     package_dir={"": "src"},
