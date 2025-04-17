@@ -18,6 +18,7 @@ setup(
     version="0.9.1a2",
     description="Collabora Online integration for Plone",
     long_description=long_description,
+    long_description_content_type="text/x-rst",
     # Get more from https://pypi.org/classifiers/
     classifiers=[
         "Development Status :: 4 - Beta",
