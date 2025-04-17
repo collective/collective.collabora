@@ -127,6 +127,15 @@ class TestCoolEdit(unittest.TestCase):
         )
         self.assertIsNone(view.error_msg)
 
+    @mock.patch("requests.get")
+    def test_editor_url_invalid_discovery_url(self, requests_get):
+        requests_get.return_value.configure_mock(
+            **dict(text=self.server_discovery_xml, status_code=405)
+        )
+        view = self.view
+        self.assertIsNone(view.editor_url)
+        self.assertEqual(view.error_msg, "error_server_discovery")
+
     @unittest.skipIf(utils.IS_PLONE4, "Archetypes is too convoluted to support fixture")
     @mock.patch("requests.get")
     def test_editor_url_invalid_mimetype(self, requests_get):

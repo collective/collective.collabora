@@ -30,7 +30,7 @@ import requests
 
 logger = getLogger(__name__)
 
-error_server_discovery_msg = _(
+error_server_discovery = _(
     "error_server_discovery", default="Collabora server is not responding."
 )
 
@@ -145,12 +145,12 @@ class CollaboraEditView(FileView):
         try:
             response = requests.get("%s/hosting/discovery" % self.collabora_server_url)
         except requests.exceptions.RequestException as e:
-            self.error_msg = error_server_discovery_msg
+            self.error_msg = error_server_discovery
             logger.error(e)
             return
         if response.status_code == 200:
             return response.text
-        self.error_msg = error_server_discovery_msg
+        self.error_msg = error_server_discovery
         logger.error(
             "Server discovery error %i: %s. Verify your proxy configuration.",
             response.status_code,
