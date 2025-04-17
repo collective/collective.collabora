@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Installer for the collective.collabora package."""
 
-from setuptools import find_packages
+from setuptools import find_namespace_packages
 from setuptools import setup
 
 
@@ -50,7 +50,7 @@ setup(
         "Documentation": "https://collective.collabora.readthedocs.io/en/latest/",
     },
     license="GPL version 2",
-    packages=find_packages("src", exclude=["ez_setup"]),
+    packages=find_namespace_packages("src", exclude=["ez_setup"]),
     # keep deprecated namespace_packages for backward compatibility
     namespace_packages=["collective"],
     package_dir={"": "src"},
