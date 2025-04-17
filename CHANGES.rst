@@ -6,8 +6,10 @@ Changelog
 ------------------
 
 - Cleanup unused code [thet]
+
 - Add translations [macagua, gyst]
 
+- Extract documentation to readthedocs [gyst]
 
 0.9.0 (2025-04-10)
 ------------------
