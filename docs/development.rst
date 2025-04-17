@@ -18,15 +18,17 @@ This will start Collabora and build and start Plone. You will need to
 define a host alias ``host.docker.internal``, see below.
 
 The ``collective.collabora:default`` profile configures the registry record
-``collective.collabora.collabora_server_url`` to point at the Collabora server at that URL.
-
+``collective.collabora.collabora_server_url`` to point at the :ref:`Collabora server URL`.
 
 No localhost
 ++++++++++++
 
 Use ``host.docker.internal`` instead of ``localhost``.
 
-For this package to work you *cannot* access your Plone site on ``localhost``.
+.. important::
+
+   For this package to work you *cannot* access your Plone site on ``localhost``.
+
 Plone provides its own URL to Collabora, and Collabora performs callbacks on
 that URL. Obviously if Collabora tries to access localhost, it will reach itself
 and not Plone. Protections against this misconfiguration are built into the
@@ -48,7 +50,7 @@ and Collabora.
 To make that work for Collabora, you will need to manually configure the registry
 record ``collective.collabora.server_url`` to ``http://host.docker.internal/collabora``.
 
-See *Avoiding CORS* in the deployment configuration section above.
+See :ref:`Avoiding CORS` in the deployment configuration section.
 
 Building, testing and CI
 ------------------------
@@ -83,3 +85,22 @@ Github CI testing is configured in::
 For the tox CLI documentation, see:
 
 - https://tox.wiki/en/latest/cli_interface.html
+
+Contributing
+------------
+
+Please open an issue on `Github <https://github.com/collective/collective.collabora/issues>`_ if you have a problem.
+Provide a full description of the problem you're encountering, including all necessary steps to reproduce.
+
+To fix an issue, open a PR.
+Please make sure all tests pass locally::
+
+  tox -p
+
+
+Running the tests locally ensures, that your changes do not break backward compatibility
+with older Plone versions running on Python 2.7.
+
+.. note::
+
+   The Github actions CI runs only Python 3.x tests. It does not run Python 2.7 tests.

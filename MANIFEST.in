@@ -1,5 +1,6 @@
 graft src/collective
 graft docs
+prune docs/_build
 include *.rst
 exclude *.txt
 exclude .github

@@ -8,9 +8,12 @@
 .*project
 # dirs
 /.settings/
+.tox/
+.vscode/
 bin/
 buildout-cache/
 develop-eggs/
+docs/_build/
 eggs/
 htmlcov/
 include/
@@ -21,6 +24,8 @@ parts/
 dist/*
 test.plone_addon/
 var/
+reports/
+venv/
 # files
 .installed.cfg
 .mr.developer.cfg
@@ -32,8 +37,4 @@ output.xml
 pip-selfcheck.json
 pyvenv.cfg
 report.html
-.vscode/
-.tox/
-reports/
-venv/
 # excludes

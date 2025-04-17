@@ -1,8 +1,8 @@
-Deployment Configuration
-========================
+Deployment
+==========
 
 
-Collabora server url
+Collabora server URL
 --------------------
 
 
@@ -15,8 +15,14 @@ By default, ``collective.collabora.collabora_server_url`` is configured to
 ``http://host.docker.internal/collabora``. This requires a reverse proxy to be
 set up, see below.
 
-Any configuration of this record on the Plone side, needs to match the corresponding
-``sercice_root`` record of the Collabora server in ``coolwsd.xml``. See below.
+.. important::
+
+   You will need to configure this value to match your deployment URL.
+
+.. important::
+
+   Any configuration of this record on the Plone side, needs to match the corresponding
+   ``service_root`` record of the Collabora server in ``coolwsd.xml``. See below.
 
 Avoiding CORS
 +++++++++++++
@@ -28,19 +34,30 @@ such a setup where Collabora runs in the same URL space as Plone.
 
 To realize this setup, you need to:
 
-- Proxy to Collabora from your http server. In the ./docker/nginx directory
+1. Proxy to Collabora
+
+  You need to configure your http server to proxy to Collabora.
+  In the `./docker/nginx <https://github.com/collective/collective.collabora/tree/main/docker/nginx>`_ directory
   in this package you will find an example configuration that realizes this
   on the ``/collabora`` URL namespace.
 
-- Configure Collabora ``coolwsd.xml`` config file, to set the record
+2. Configure Collabora
+
+  Configure the Collabora ``coolwsd.xml`` config file, to set the record
   ``service_root`` to the value of the proxied URL path (i.e. ``/collabora``).
-  In the ./docker/ directory in this package you will find an ``coolwsd.xml``
+  In the `./docker <https://github.com/collective/collective.collabora/tree/main/docker>`_ directory in this package you will find an ``coolwsd.xml``
   example configuration that realizes this configuration.
 
-- Configure the registry record ``collective.collabora.collabora_server_url``
-  to ``https://your.plone.server/collabora``. This needs to be a fully qualified
-  URL, configuring this record to only the path ``/collabora`` is invalid
-  and will show an error in the UI and server logs.
+3. Configure Plone
+
+  Configure the registry record ``collective.collabora.collabora_server_url``
+  to ``https://your.plone.server/collabora``.
+
+  .. hint::
+
+     This needs to be a fully qualified URL.
+     Configuring this record to only the path ``/collabora`` is invalid
+     and will show an error in the UI and server logs.
 
 See:
 
@@ -106,10 +123,13 @@ Deployment security configuration
 ---------------------------------
 
 You will typically deploy a Collabora Online server behind a reverse proxy,
-and otherwise firewall it from the open internet. Whatever your network topology,
-Collabora Online needs to be able to connect to Plone on the public URL of your
-Plone site. Adding an extra configuration to enable Collabora to talk directly
-to Plone on an internal URL, bypassing your frontend stack, is planned.
+and otherwise firewall it from the open internet.
+
+.. note::
+
+   Whatever your network topology,
+   Collabora Online needs to be able to connect to Plone on the public URL of your
+   Plone site (or use the special direct URL, see below).
 
 For a production deployment, you need to take the following security configurations into account:
 
@@ -140,4 +160,6 @@ configure Collabora to hit a different URL to access Plone directly, by setting 
 registry record ``collective.collabora.plone_server_url`` to point to a URL
 that routes to Plone in a way that bypasses your frontend stack.
 
-Don't configure this, unless you know you need to.
+.. caution::
+
+   Don't configure this, unless you know you need to.

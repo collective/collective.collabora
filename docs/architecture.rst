@@ -1,5 +1,5 @@
-Architecture and interaction flow
-=================================
+Architecture
+============
 
 There are three main components in play:
 
@@ -12,6 +12,9 @@ There are three main components in play:
 
 Collabora needs to be accessible from the browser.
 Plone needs to be not only accessible from the browser, but *also from Collabora*.
+
+Information flow diagram
+------------------------
 
 The following diagram illustrates the information flow.
 
