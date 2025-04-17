@@ -11,6 +11,8 @@ Changelog
 
 - Extract documentation to readthedocs [gyst]
 
+- Configure build tooling [gyst]
+
 0.9.0 (2025-04-10)
 ------------------
 
