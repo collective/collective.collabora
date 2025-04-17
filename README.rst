@@ -24,7 +24,6 @@
     :alt: License
 
 
-====================
 collective.collabora
 ====================
 
@@ -32,7 +31,7 @@ Collabora Online integration for Plone.
 
 
 Introduction
-============
+------------
 
 `Collabora Online <https://www.collaboraonline.com/>`_ provides collaborative open source document editing, controlled by you.
 
@@ -54,12 +53,11 @@ Features
 
 - Wide compatibility of this add-on across Plone and Python versions.
 
-Status
-------
+Documentation
+-------------
 
-Things that need to implemented/improved/tested:
-
-- Edge case handling (Collabora down, locking conflicts, ...)
+For instructions on configuring collective.collabora,
+see the documentation at `Read the Docs <https://collectivecollabora.readthedocs.io/en/latest/>`_.
 
 Authors
 -------
@@ -94,3 +92,5 @@ License
 -------
 
 The project is licensed under the GPLv2.
+
+
