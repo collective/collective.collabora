@@ -1,28 +1,31 @@
-Installation
+==================================
+collective.collabora documentation
+==================================
+
+Introduction
 ============
 
-Install collective.collabora by adding it to your buildout::
+`Collabora Online <https://www.collaboraonline.com/>`_ provides collaborative open source document editing, controlled by you.
 
-    [buildout]
+Collective.collabora brings this capability into Plone. It can be used as-is,
+and works out of the box in about any Plone version.
 
-    ...
+Additionally, collective.collabora provides a building block for integration of
+real-time document collaboration into Plone-based applications like
+Quaive and iA.Delib.
 
-    eggs =
-        collective.collabora
+Features
+--------
+
+- Real-time collaborative document editing of office-type documents: Word
+  documents, spreadsheets, etc.
+
+- Reading Office files and PDFs in your browser in a Plone page, with comments,
+  even if you do not have edit rights.
+
+- Wide compatibility of this add-on across Plone and Python versions.
 
 
-and then run ``bin/buildout``.
-
-You can then install collective.collabora though the add-on control panel.
-
-For this to work, you need to have a Collabora Online service up and running.
-
-See:
-
-- https://sdk.collaboraonline.com/docs/installation/index.html
-
-See `Architecture <architecture.rst>`_ for an overview of components and call flow.
-
-See `Deployment Configuration <deployment.rst>`_ for instructions on configuring a production deployment.
-
-See `Development <development.rst>`_ for instructions on running a development setup.
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
