@@ -163,10 +163,15 @@ class CollaboraWOPIView(BrowserView):
 
         if self.request.get("HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER", False):
             # Save changes back, if document was modified.
+            #
+            # Note that the user does not have to click "save". When the last
+            # user navigates out of a session, Collabora will issue a PUT
+            # request. This is true, even if the exit action is closing the
+            # browser.
             self.stored_file.data = self.request._file.read()
             notify(ObjectModifiedEvent(self.context))
 
-            logger.debug(
+            logger.info(
                 "File updated. User: <%r>. URL: <%r>.",
                 api.user.get_current().getId(),
                 self.context.absolute_url(),

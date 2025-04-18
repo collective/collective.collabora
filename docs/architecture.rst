@@ -60,3 +60,7 @@ Editing a file and saving changes
   view outside of the iframe. The Plone document communicates such actions to
   the Collabora iframe via the postMessage API, see:
   https://sdk.collaboraonline.com/docs/postmessage_api.html
+
+Note that Collabora will issue a PUT request to save the file, once the last user
+leaves a collaborative editing session on a document. Even if a user makes changes
+and then directly kills their browser window, the document will be saved.

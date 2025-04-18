@@ -17,7 +17,10 @@ Changelog
 
 - Remove unneeded CORS headers [gyst]
 
-- Let Collabora handle locking conflicts
+- Let Collabora handle locking conflicts [gyst]
+
+- Increase log level on file writes, and document that Collabora
+  always saves changes, even on browser exit. [gyst]
 
 0.9.0 (2025-04-10)
 ------------------
