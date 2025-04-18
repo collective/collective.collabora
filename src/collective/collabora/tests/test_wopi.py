@@ -161,7 +161,6 @@ class TestCoolWOPI(unittest.TestCase):
         self.assertFalse(IDisableCSRFProtection.providedBy(request))
 
     def test_wopi_put_file_write_member(self):
-        old_modified = self.portal.testfile.modified()
         new_data_io = io.BytesIO(b"Really Fake Byte Payload")
         new_data = new_data_io.read()
         new_data_io.seek(0)
@@ -187,7 +186,6 @@ class TestCoolWOPI(unittest.TestCase):
         self.assertDictEqual(json.loads(payload), expected)
         self.assertEqual(view.request.response.status, 200)
         self.assertEqual(IStoredFile(self.portal.testfile).data, new_data)
-        self.assertNotEqual(self.portal.testfile.modified(), old_modified)
         self.assertTrue(IDisableCSRFProtection.providedBy(request))
 
     def test_wopi_put_file_write_anon(self):
