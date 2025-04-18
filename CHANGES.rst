@@ -17,6 +17,8 @@ Changelog
 
 - Remove unneeded CORS headers [gyst]
 
+- Let Collabora handle locking conflicts
+
 0.9.0 (2025-04-10)
 ------------------
 

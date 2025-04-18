@@ -87,9 +87,12 @@ class CollaboraWOPIView(BrowserView):
         )
 
     @property
-    @memoize
     def file_info(self):
-        """Extension/customization flex point for CheckFileInfo"""
+        """Extension/customization flex point for CheckFileInfo
+
+        Do not memoize this property. It needs to render the new modification
+        time after a save.
+        """
         user = api.user.get_current()
         user_id = user.getId()
         return {
@@ -183,7 +186,7 @@ class CollaboraWOPIView(BrowserView):
             )
 
             self.request.response.setStatus(200)
-            return json.dumps({})
+            return json.dumps(self.file_info)
 
         logger.warn(
             "Unhandled wopi_put_file request: %r",

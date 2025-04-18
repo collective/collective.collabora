@@ -159,6 +159,7 @@ class TestCoolWOPI(unittest.TestCase):
         self.assertEqual(IStoredFile(self.portal.testfile).data, old_data)
 
     def test_wopi_put_file_write_member(self):
+        old_modified = self.portal.testfile.modified()
         new_data_io = io.BytesIO(b"Really Fake Byte Payload")
         new_data = new_data_io.read()
         new_data_io.seek(0)
@@ -170,9 +171,21 @@ class TestCoolWOPI(unittest.TestCase):
         request.set("HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER", "true")
         view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
         payload = view.wopi_put_file()
-        self.assertDictEqual(json.loads(payload), {})
+        expected = {
+            "BaseFileName": "testfile.docx",
+            "Size": 24,
+            "OwnerId": "test_user_1_",
+            "UserId": "test_user_1_",
+            "UserCanWrite": True,
+            "UserFriendlyName": "test_user_1_",
+            "UserCanNotWriteRelative": True,
+            "LastModifiedTime": self.portal.testfile.modified().ISO(),
+            "PostMessageOrigin": "http://nohost/plone/testfile",
+        }
+        self.assertDictEqual(json.loads(payload), expected)
         self.assertEqual(view.request.response.status, 200)
         self.assertEqual(IStoredFile(self.portal.testfile).data, new_data)
+        self.assertNotEqual(self.portal.testfile.modified(), old_modified)
 
     def test_wopi_put_file_write_anon(self):
         new_data_io = io.BytesIO(b"Really Fake Byte Payload")
@@ -257,8 +270,18 @@ class TestCoolWOPI(unittest.TestCase):
         self.assertEqual(IStoredFile(_object).data, new_data)
         self.assertEqual(_event.object, self.portal.testfile)
         self.assertEqual(IStoredFile(_event.object).data, new_data)
-
-        self.assertDictEqual(json.loads(payload), {})
+        expected = {
+            "BaseFileName": "testfile.docx",
+            "Size": 24,
+            "OwnerId": "test_user_1_",
+            "UserId": "test_user_1_",
+            "UserCanWrite": True,
+            "UserFriendlyName": "test_user_1_",
+            "UserCanNotWriteRelative": True,
+            "LastModifiedTime": self.portal.testfile.modified().ISO(),
+            "PostMessageOrigin": "http://nohost/plone/testfile",
+        }
+        self.assertDictEqual(json.loads(payload), expected)
         self.assertEqual(view.request.response.status, 200)
 
     def test__call__wopi_check_file_info(self):
