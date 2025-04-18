@@ -155,16 +155,16 @@ class CollaboraWOPIView(BrowserView):
 
         user_timestamp = self.request.get("HTTP_X_COOL_WOPI_TIMESTAMP", None)
         if user_timestamp:
-            # Document modified by another user. Return and let LibreOffice /
-            # Collabora ask the user to overwrite or not. If called again
-            # without a HTTP_X_COOL_WOPI_TIMESTAMP, the document is saved
-            # regardless of the modification status.
-            #
-            # See:
-            # https://sdk.collaboraonline.com/docs/advanced_integration.html#detecting-external-document-change  # noqa: E501
-            #
             user_dt = dateutil.parser.isoparse(user_timestamp)
             if pydt(self.context.modified()) > user_dt:
+                # Document modified by another user. Return and let LibreOffice /
+                # Collabora ask the user to overwrite or not. If called again
+                # without a HTTP_X_COOL_WOPI_TIMESTAMP, the document is saved
+                # regardless of the modification status.
+                #
+                # See:
+                # https://sdk.collaboraonline.com/docs/advanced_integration.html#detecting-external-document-change  # noqa: E501
+                #
                 logger.debug(
                     "User changes are outdated. User: <%r>. URL: <%r>.",
                     api.user.get_current().getId(),
