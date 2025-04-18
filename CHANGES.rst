@@ -5,7 +5,7 @@ Changelog
 1.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix documentation URL in setup.py [gyst]
 
 
 1.0.0 (2025-04-18)
