@@ -12,9 +12,11 @@ from logging import getLogger
 from plone import api
 from plone.event.utils import pydt
 from plone.memoize.view import memoize
+from plone.protect.interfaces import IDisableCSRFProtection
 from plone.uuid.interfaces import IUUID
 from Products.Five.browser import BrowserView
 from zope.event import notify
+from zope.interface import alsoProvides
 from zope.interface import implementer
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.publisher.interfaces import IPublishTraverse
@@ -168,6 +170,21 @@ class CollaboraWOPIView(BrowserView):
             # user navigates out of a session, Collabora will issue a PUT
             # request. This is true, even if the exit action is closing the
             # browser.
+            #
+            # I tried to implement proper CSRF protection by:
+            # - passing the authentication token as a URL argument
+            #   .. that is not passed on by Collabora
+            # - passing the authentication token as part of the URL path
+            #   .. but that puts each user opening the same file on a
+            #   .. different URL in sandboxed individual sessions,
+            #   .. instead of in a shared session
+            # - marking the context as safeWrite
+            #   .. but that causes breakage further down the
+            #   .. transform chain
+            # So that leaves only the option, to disable CSRF
+            # protection completely on file writes via the WOPI view.
+            alsoProvides(self.request, IDisableCSRFProtection)
+
             self.stored_file.data = self.request._file.read()
             notify(ObjectModifiedEvent(self.context))
 

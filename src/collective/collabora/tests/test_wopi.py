@@ -21,6 +21,7 @@ from collective.collabora.testing import COLLECTIVE_COLLABORA_INTEGRATION_TESTIN
 from plone import api
 from plone.app.testing import logout
 from plone.event.utils import pydt
+from plone.protect.interfaces import IDisableCSRFProtection
 from plone.uuid.interfaces import IUUID
 
 import datetime
@@ -157,6 +158,7 @@ class TestCoolWOPI(unittest.TestCase):
         self.assertDictEqual(json.loads(payload), {"COOLStatusCode": 1010})
         self.assertEqual(view.request.response.status, 409)
         self.assertEqual(IStoredFile(self.portal.testfile).data, old_data)
+        self.assertFalse(IDisableCSRFProtection.providedBy(request))
 
     def test_wopi_put_file_write_member(self):
         old_modified = self.portal.testfile.modified()
@@ -186,6 +188,7 @@ class TestCoolWOPI(unittest.TestCase):
         self.assertEqual(view.request.response.status, 200)
         self.assertEqual(IStoredFile(self.portal.testfile).data, new_data)
         self.assertNotEqual(self.portal.testfile.modified(), old_modified)
+        self.assertTrue(IDisableCSRFProtection.providedBy(request))
 
     def test_wopi_put_file_write_anon(self):
         new_data_io = io.BytesIO(b"Really Fake Byte Payload")
@@ -204,6 +207,7 @@ class TestCoolWOPI(unittest.TestCase):
         self.assertDictEqual(json.loads(payload), {})
         self.assertEqual(view.request.response.status, 403)
         self.assertEqual(IStoredFile(self.portal.testfile).data, old_data)
+        self.assertFalse(IDisableCSRFProtection.providedBy(request))
 
     def test_wopi_put_file_fallthrough(self):
         new_data_io = io.BytesIO(b"Really Fake Byte Payload")
@@ -217,6 +221,7 @@ class TestCoolWOPI(unittest.TestCase):
         self.assertDictEqual(json.loads(payload), {})
         self.assertEqual(view.request.response.status, 400)
         self.assertEqual(IStoredFile(self.portal.testfile).data, old_data)
+        self.assertFalse(IDisableCSRFProtection.providedBy(request))
 
     def test_wopi_put_file_write_notifies_ObjectModifiedEvent(self):
         from plone.app.contenttypes.interfaces import IFile
@@ -283,6 +288,7 @@ class TestCoolWOPI(unittest.TestCase):
         }
         self.assertDictEqual(json.loads(payload), expected)
         self.assertEqual(view.request.response.status, 200)
+        self.assertTrue(IDisableCSRFProtection.providedBy(request))
 
     def test__call__wopi_check_file_info(self):
         request = self.request.clone()

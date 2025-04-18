@@ -13,14 +13,15 @@ Changelog
 
 - Configure build tooling [gyst]
 
-- Fix CSRF protection by reimplementing it via traversal [gyst]
-
 - Remove unneeded CORS headers [gyst]
 
 - Let Collabora handle locking conflicts [gyst]
 
 - Increase log level on file writes, and document that Collabora
   always saves changes, even on browser exit. [gyst]
+
+- Disable CSRF protection, after exhausting all other options. [gyst]
+
 
 0.9.0 (2025-04-10)
 ------------------

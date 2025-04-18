@@ -19,7 +19,6 @@ from lxml import etree
 from plone import api
 from plone.app.contenttypes.browser.file import FileView
 from plone.memoize.view import memoize
-from plone.protect.authenticator import createToken
 from plone.uuid.interfaces import IUUID
 from Products.PluggableAuthService.interfaces.plugins import IAuthenticationPlugin
 from urllib.parse import urlencode
@@ -231,7 +230,6 @@ class CollaboraEditView(FileView):
         args = dict(
             WOPISrc="%s/@@collabora-wopi/files/%s" % (document_url, uuid),
             access_token=self.jwt_token,  # login credentials
-            _authenticator=createToken(),  # plone.protect
             # https://sdk.collaboraonline.com/docs/theming.html
             ui_defaults=api.portal.get_registry_record(
                 n(b"collective.collabora.ui_defaults"),
