@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-0.9.1 (unreleased)
+1.0.0 (2025-04-18)
 ------------------
 
 - Cleanup unused code [thet]
