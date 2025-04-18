@@ -140,19 +140,6 @@ class CollaboraWOPIView(BrowserView):
             # This is not a COOL status message. Just catching that edge case
             return json.dumps({})
 
-        # TODO:
-        # - Check locking (see ploneintranet.workspace.basecontent.baseviews.BaseView)
-        # - Check autosave (see same)
-        # - Should we derive from BaseView and also use reset_dx_modified?
-        # - Use ploneintranet.workspace.basecontent.utils.dexterity_update?
-
-        # https://sdk.collaboraonline.com/docs/advanced_integration.html#putfile-headers
-        # Relevant headers:
-        # - HTTP_X_COOL_WOPI_ISAUTOSAVE
-        # - HTTP_X_COOL_WOPI_ISEXITSAVE
-        # - HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER
-        # - HTTP_X_COOL_WOPI_TIMESTAMP
-
         user_timestamp = self.request.get("HTTP_X_COOL_WOPI_TIMESTAMP", None)
         if user_timestamp:
             user_dt = dateutil.parser.isoparse(user_timestamp)
