@@ -13,6 +13,10 @@ Changelog
 
 - Configure build tooling [gyst]
 
+- Fix CSRF protection by reimplementing it via traversal [gyst]
+
+- Remove unneeded CORS headers [gyst]
+
 0.9.0 (2025-04-10)
 ------------------
 

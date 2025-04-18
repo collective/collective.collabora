@@ -107,8 +107,6 @@ class CollaboraWOPIView(BrowserView):
     def wopi_check_file_info(self):
         """WOPI CheckFileInfo endpoint. Return the file information."""
         logger.debug("wopi_check_file_info: %r", self.context.absolute_url())
-        # TODO: CORS header actually not needed.
-        self.request.response.setHeader("Access-Control-Allow-Origin", "*")
         self.request.response.setHeader("Content-Type", "application/json")
         logger.debug("file_info: %r", self.file_info)
         return json.dumps(self.file_info)
@@ -116,9 +114,6 @@ class CollaboraWOPIView(BrowserView):
     def wopi_get_file(self):
         """WOPI GetFile endpoint. Return the file content."""
         logger.debug("wopi_get_file: %r", self.context.absolute_url())
-        # TODO: CORS header actually not needed.
-        self.request.response.setHeader("Access-Control-Allow-Origin", "*")
-
         return self.stored_file.data
 
     def wopi_put_file(self):
