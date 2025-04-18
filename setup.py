@@ -22,7 +22,7 @@ long_description = "\n\n".join(
 
 setup(
     name="collective.collabora",
-    version="1.0.1.dev0",
+    version="1.0.1",
     description="Collabora Online integration for Plone",
     long_description=long_description,
     long_description_content_type="text/x-rst",
