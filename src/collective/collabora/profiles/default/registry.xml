@@ -5,7 +5,7 @@
   <record name="collective.collabora.collabora_server_url">
     <field type="plone.registry.field.TextLine">
       <title i18n:translate="">URL of the LibreOffice / Collabora server</title>
-      <description i18n:translate="">The URL of the LibreOffice / Collabora server. Note that this needs to match the Collabora coolwsd.xml 'server_root' setting.</description>
+      <description i18n:translate="">The URL of the LibreOffice / Collabora server. Note that this needs to match the Collabora coolwsd.xml 'service_root' setting.</description>
       <required>True</required>
     </field>
     <value purge="false">http://host.docker.internal/collabora</value>

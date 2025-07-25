@@ -55,7 +55,7 @@ msgid "Save & Close"
 msgstr ""
 
 #: ../profiles/default/registry.xml
-msgid "The URL of the LibreOffice / Collabora server. Note that this needs to match the Collabora coolwsd.xml 'server_root' setting."
+msgid "The URL of the LibreOffice / Collabora server. Note that this needs to match the Collabora coolwsd.xml 'service_root' setting."
 msgstr ""
 
 #: ../profiles/default/registry.xml
