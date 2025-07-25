@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.1.0 (unreleased)
+1.1.0 (2025-07-25)
 ------------------
 
 - Make it easier to provide custom IStoredField adapters for varying file field names. [gyst]
