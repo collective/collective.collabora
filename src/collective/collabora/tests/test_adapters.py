@@ -47,6 +47,11 @@ class TestDXStoredFile(unittest.TestCase):
         self.stored_file.data = b"1234"
         self.assertEqual(self.portal.testfile.file.data, b"1234")
 
+    def test_invalid_file_field_name(self):
+        self.stored_file.file_field_name = "invalid"
+        with self.assertRaises(AttributeError):
+            self.stored_file.file_field
+
 
 @unittest.skipUnless(utils.IS_PLONE4, "Archetypes tested only in Plone4")
 class TestATStoredFile(TestDXStoredFile):
@@ -56,3 +61,14 @@ class TestATStoredFile(TestDXStoredFile):
     def test_set_data(self):
         self.stored_file.data = b"1234"
         self.assertEqual(self.portal.testfile.data, b"1234")
+
+    def test_invalid_file_field_name(self):
+        """Carefully mock that outside of tests the file field is set
+        as a class variable before __init__ is run"""
+        from collective.collabora.adapters import ATStoredFile
+
+        class MyATStoredFile(ATStoredFile):
+            file_field_name = "invalid"
+
+        with self.assertRaises(AttributeError):
+            MyATStoredFile(self.portal.testfile)

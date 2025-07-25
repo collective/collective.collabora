@@ -26,6 +26,12 @@ class IStoredFile(Interface):
     adaptation beyond our narrow use case.
     """
 
+    # provide dynamic lookup of field name for easier customization
+    file_field_name = Attribute(
+        "Attribute name of the storage field. Typically 'file'."
+    )
+
+    # the actual storage api
     data = Attribute("file data")
     filename = Attribute("file name")
     contentType = Attribute("content type")
