@@ -52,6 +52,15 @@ record ``collective.collabora.server_url`` to ``http://host.docker.internal/coll
 
 See :ref:`Avoiding CORS` in the deployment configuration section.
 
+Adapting to custom file fields
+------------------------------
+
+The ``IStoredFile`` interface and adapters feature ``file_field_name`` powered
+getattr/setattr access to the underlying file field of the context object.
+This is intended to make it easier to support objects whose file field has
+a name which is different from ``file``: just subclass and provide the correct
+``file_field_name`` in your subclass; you won't have to copy any of the actual logic.
+
 Building, testing and CI
 ------------------------
 
