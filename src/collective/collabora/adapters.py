@@ -38,8 +38,8 @@ class DXStoredFile(object):
 
     def __init__(self, context):
         self.context = context
-        self.filename = context.file.filename
-        self.contentType = context.file.contentType
+        self.filename = self.file_field.filename
+        self.contentType = self.file_field.contentType
 
     @property
     def file_field(self):
