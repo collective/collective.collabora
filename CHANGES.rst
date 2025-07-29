@@ -5,7 +5,7 @@ Changelog
 1.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixed IStoredFile's file field name. [chris-adam]
 
 
 1.1.0 (2025-07-25)
