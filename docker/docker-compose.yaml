@@ -1,6 +1,8 @@
-# quaive.app.libreoffice docker-compose file
-# ==========================================
+# collective.collabora docker-compose file
+# ========================================
 
+# See https://collectivecollabora.readthedocs.io/en/latest/deployment.html
+#
 # Have Docker installed:
 # https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
 #
