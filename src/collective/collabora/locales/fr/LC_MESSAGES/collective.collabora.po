@@ -52,8 +52,8 @@ msgid "Save & Close"
 msgstr "Enregistrer et fermer"
 
 #: ../profiles/default/registry.xml
-msgid "The URL of the LibreOffice / Collabora server. Note that this needs to match the Collabora coolwsd.xml 'server_root' setting."
-msgstr "L'URL du serveur LibreOffice / Collabora. Notez que cela doit correspondre au paramètre 'server_root' du fichier coolwsd.xml de Collabora"
+msgid "The URL of the LibreOffice / Collabora server. Note that the path needs to match the Collabora coolwsd.xml 'service_root' setting."
+msgstr "L'URL du serveur LibreOffice / Collabora. Notez que cela doit correspondre au paramètre 'service_root' du fichier coolwsd.xml de Collabora"
 
 #: ../profiles/default/registry.xml
 msgid "The portal URL where Collabora can reach Plone. Leave this empty to use the normal external portal url. Use this only if you want Collabora to use a direct backend-to-backend connection that bypasses your normal nginx/varnish/haproxy frontend stack."
