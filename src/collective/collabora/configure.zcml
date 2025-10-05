@@ -30,6 +30,7 @@
       description="Uninstalls the collective.collabora add-on."
       provides="Products.GenericSetup.interfaces.EXTENSION"
       directory="profiles/uninstall"
+      post_handler=".setuphandlers.uninstall"
       />
 
   <utility

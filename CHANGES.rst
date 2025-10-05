@@ -5,7 +5,7 @@ Changelog
 1.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Reset File object actions on uninstall [gyst]
 
 
 1.1.0 (2025-07-25)
