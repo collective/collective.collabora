@@ -6,7 +6,13 @@ all: dev test
 
 dev: dev61/bin/instance dev60/bin/instance dev3852/bin/instance dev2752/bin/instance dev43/bin/instance
 
-test:
+# tox skip_missing_interpreters=True silently skips envs whose python is
+# unavailable. That turns "wrong-environment" into a misleading green run.
+# Guard targets fail fast if a required interpreter is missing.
+guard-py%:
+	@python$* -V
+
+test: guard-py2.7 guard-py3.8 guard-py3.9 guard-py3.10 guard-py3.11 guard-py3.12 guard-py3.13
 	tox -p
 	@echo "You may need to run 'tox -r' to recreate the test environments."
 
@@ -24,7 +30,7 @@ dev61/bin/instance: dev61
 	./dev61/bin/buildout -c ./dev_plone61.cfg buildout:directory=$(CURDIR)/dev61 buildout:develop=$(CURDIR) bootstrap
 	./dev61/bin/buildout -c ./dev_plone61.cfg buildout:directory=$(CURDIR)/dev61 buildout:develop=$(CURDIR) install
 
-dev61:
+dev61: guard-py3.12
 	tox --devenv ./dev61 -e py312-Plone61
 
 start60: dev60/bin/instance
@@ -38,7 +44,7 @@ dev60/bin/instance: dev60
 	./dev60/bin/buildout -c ./dev_plone60.cfg buildout:directory=$(CURDIR)/dev60 buildout:develop=$(CURDIR) bootstrap
 	./dev60/bin/buildout -c ./dev_plone60.cfg buildout:directory=$(CURDIR)/dev60 buildout:develop=$(CURDIR) install
 
-dev60:
+dev60: guard-py3.11
 	tox --devenv ./dev60 -e py311-Plone60
 
 start3852: dev3852/bin/instance
@@ -52,7 +58,7 @@ dev3852/bin/instance: dev3852
 	./dev3852/bin/buildout -c ./dev38_plone52.cfg buildout:directory=$(CURDIR)/dev3852 buildout:develop=$(CURDIR) bootstrap
 	./dev3852/bin/buildout -c ./dev38_plone52.cfg buildout:directory=$(CURDIR)/dev3852 buildout:develop=$(CURDIR) install
 
-dev3852:
+dev3852: guard-py3.8
 	tox --devenv ./dev3852 -e py38-Plone52
 
 start2752: dev2752/bin/instance
@@ -66,7 +72,7 @@ dev2752/bin/instance: dev2752
 	./dev2752/bin/buildout -c ./dev27_plone52.cfg buildout:directory=$(CURDIR)/dev2752 buildout:develop=$(CURDIR) bootstrap
 	./dev2752/bin/buildout -c ./dev27_plone52.cfg buildout:directory=$(CURDIR)/dev2752 buildout:develop=$(CURDIR) install
 
-dev2752:
+dev2752: guard-py2.7
 	tox --devenv ./dev2752 -e py27-Plone52
 
 start43: dev43/bin/instance
@@ -80,7 +86,7 @@ dev43/bin/instance: dev43
 	./dev43/bin/buildout -c ./dev_plone43.cfg buildout:directory=$(CURDIR)/dev43 buildout:develop=$(CURDIR) bootstrap
 	./dev43/bin/buildout -c ./dev_plone43.cfg buildout:directory=$(CURDIR)/dev43 buildout:develop=$(CURDIR) install
 
-dev43:
+dev43: guard-py2.7
 	tox --devenv ./dev43 -e py27-Plone43
 
 
@@ -90,35 +96,35 @@ dev43:
 .PHONY: eggs egg61 egg60 egg3852 egg2752 egg43
 eggs: egg61 egg60 egg3852 egg2752 egg43
 
-egg61:
+egg61: guard-py3.12
 	rm -rf egg61
 	tox --devenv ./egg61 -e py312-Plone61
 	./egg61/bin/pip install -r requirements_plone61.txt
 	./egg61/bin/buildout -c ./dev_plone61.cfg buildout:directory=$(CURDIR)/egg61 buildout:develop= bootstrap
 	./egg61/bin/buildout -c ./dev_plone61.cfg buildout:directory=$(CURDIR)/egg61 buildout:develop= install instance
 
-egg60:
+egg60: guard-py3.11
 	rm -rf egg60
 	tox --devenv ./egg60 -e py311-Plone60
 	./egg60/bin/pip install -r requirements_plone60.txt
 	./egg60/bin/buildout -c ./dev_plone60.cfg buildout:directory=$(CURDIR)/egg60 buildout:develop= bootstrap
 	./egg60/bin/buildout -c ./dev_plone60.cfg buildout:directory=$(CURDIR)/egg60 buildout:develop= install instance
 
-egg3852:
+egg3852: guard-py3.8
 	rm -rf egg3852
 	tox --devenv ./egg3852 -e py38-Plone52
 	./egg3852/bin/pip install -r requirements_plone52.txt
 	./egg3852/bin/buildout -c ./dev38_plone52.cfg buildout:directory=$(CURDIR)/egg3852 buildout:develop= bootstrap
 	./egg3852/bin/buildout -c ./dev38_plone52.cfg buildout:directory=$(CURDIR)/egg3852 buildout:develop= install instance
 
-egg2752:
+egg2752: guard-py2.7
 	rm -rf egg2752
 	tox --devenv ./egg2752 -e py27-Plone52
 	./egg2752/bin/pip install -r requirements_plone52.txt
 	./egg2752/bin/buildout -c ./dev27_plone52.cfg buildout:directory=$(CURDIR)/egg2752 buildout:develop= bootstrap
 	./egg2752/bin/buildout -c ./dev27_plone52.cfg buildout:directory=$(CURDIR)/egg2752 buildout:develop= install instance
 
-egg43:
+egg43: guard-py2.7
 	rm -rf egg43
 	tox --devenv ./egg43 -e py27-Plone43
 	./egg43/bin/pip install -r requirements_plone43.txt -cconstraints_py27.txt
