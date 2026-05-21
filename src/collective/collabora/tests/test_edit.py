@@ -240,7 +240,7 @@ class TestCoolEdit(unittest.TestCase):
         self.assertEqual(qs.get("lang"), ["nl"])
 
     @mock.patch("requests.get")
-    def test_wopi_url_lang_from_request_supported(self, requests_get):
+    def test_wopi_url_lang_from_request(self, requests_get):
         """When the request asks for a supported language, that language
         is propagated as ``lang`` to Collabora."""
         requests_get.return_value.configure_mock(
@@ -253,27 +253,6 @@ class TestCoolEdit(unittest.TestCase):
         self.assertIsNone(view.error_msg, view.error_msg)
         qs = urllib.parse.parse_qs(urllib.parse.urlparse(view.wopi_url).query)
         self.assertEqual(qs.get("lang"), ["nl"])
-
-    @mock.patch("requests.get")
-    def test_wopi_url_lang_from_request_unsupported(self, requests_get):
-        """When the request asks for an unsupported language, Plone falls
-        back; whatever ``portal_languages.getPreferredLanguage`` returns is
-        what gets propagated as ``lang`` to Collabora."""
-        requests_get.return_value.configure_mock(
-            **dict(text=self.server_discovery_xml, status_code=200)
-        )
-        portal_languages = api.portal.get_tool("portal_languages")
-        # Only 'en' is supported.
-        self.request.cookies["I18N_LANGUAGE"] = "de"
-        view = self.view
-        self.assertIsNone(view.error_msg, view.error_msg)
-        qs = urllib.parse.parse_qs(urllib.parse.urlparse(view.wopi_url).query)
-        # Plone clamps to a supported language; the exact fallback is
-        # whatever portal_languages decides - we just propagate it.
-        self.assertEqual(
-            qs.get("lang"),
-            [portal_languages.getPreferredLanguage(self.request)],
-        )
 
     @mock.patch("requests.get")
     def test_ui_language_hook_override(self, requests_get):

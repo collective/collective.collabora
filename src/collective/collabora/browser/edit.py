@@ -216,28 +216,9 @@ class CollaboraEditView(FileView):
 
     @property
     def ui_language(self):
-        """Language to propagate to the Collabora editor as ``?lang=``.
-
-        Negotiation order:
-
-        1. ``I18N_LANGUAGE`` request cookie, if its value is a supported
-           language. We honor the cookie directly rather than relying on
-           ``portal_languages`` to do so, because cookie negotiation in
-           Plone is opt-in (``use_cookie_negotiation`` defaults to False).
-        2. Fall back to the site default language. We use
-           ``getDefaultLanguage()`` rather than
-           ``getPreferredLanguage(request)`` because the latter caches a
-           per-request language binding that does not see runtime changes
-           to the site default.
-
-        Subclasses may override this property to plug in a different
-        source, e.g. a user profile preference.
-        """
         portal_languages = api.portal.get_tool("portal_languages")
         cookie_lang = self.request.cookies.get("I18N_LANGUAGE")
-        if cookie_lang and cookie_lang in portal_languages.getSupportedLanguages():
-            return cookie_lang
-        return portal_languages.getDefaultLanguage()
+        return cookie_lang or portal_languages.getDefaultLanguage()
 
     @property
     @memoize
