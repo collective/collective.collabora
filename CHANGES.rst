@@ -6,6 +6,7 @@ Changelog
 ------------------
 
 - Reset File object actions on uninstall [gyst]
+- Propagate UI language setting to Collabora [gyst]
 
 
 1.1.0 (2025-07-25)

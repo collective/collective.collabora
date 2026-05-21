@@ -212,6 +212,89 @@ class TestCoolEdit(unittest.TestCase):
             ).get("WOPISrc")[0]
         self.assertTrue(wopi_src.startswith("http://some.where:1234/plone/"))
 
+    @mock.patch("requests.get")
+    def test_wopi_url_lang_default(self, requests_get):
+        """With no portal_languages or request configuration, the default
+        Plone language (en) is propagated as ``lang`` to Collabora."""
+        requests_get.return_value.configure_mock(
+            **dict(text=self.server_discovery_xml, status_code=200)
+        )
+        view = self.view
+        self.assertIsNone(view.error_msg, view.error_msg)
+        qs = urllib.parse.parse_qs(urllib.parse.urlparse(view.wopi_url).query)
+        self.assertEqual(qs.get("lang"), ["en"])
+
+    @mock.patch("requests.get")
+    def test_wopi_url_lang_from_portal_default(self, requests_get):
+        """When the site default language is changed, that language is
+        propagated as ``lang`` to Collabora."""
+        requests_get.return_value.configure_mock(
+            **dict(text=self.server_discovery_xml, status_code=200)
+        )
+        portal_languages = api.portal.get_tool("portal_languages")
+        portal_languages.addSupportedLanguage("nl")
+        portal_languages.setDefaultLanguage("nl")
+        view = self.view
+        self.assertIsNone(view.error_msg, view.error_msg)
+        qs = urllib.parse.parse_qs(urllib.parse.urlparse(view.wopi_url).query)
+        self.assertEqual(qs.get("lang"), ["nl"])
+
+    @mock.patch("requests.get")
+    def test_wopi_url_lang_from_request_supported(self, requests_get):
+        """When the request asks for a supported language, that language
+        is propagated as ``lang`` to Collabora."""
+        requests_get.return_value.configure_mock(
+            **dict(text=self.server_discovery_xml, status_code=200)
+        )
+        portal_languages = api.portal.get_tool("portal_languages")
+        portal_languages.addSupportedLanguage("nl")
+        self.request.cookies["I18N_LANGUAGE"] = "nl"
+        view = self.view
+        self.assertIsNone(view.error_msg, view.error_msg)
+        qs = urllib.parse.parse_qs(urllib.parse.urlparse(view.wopi_url).query)
+        self.assertEqual(qs.get("lang"), ["nl"])
+
+    @mock.patch("requests.get")
+    def test_wopi_url_lang_from_request_unsupported(self, requests_get):
+        """When the request asks for an unsupported language, Plone falls
+        back; whatever ``portal_languages.getPreferredLanguage`` returns is
+        what gets propagated as ``lang`` to Collabora."""
+        requests_get.return_value.configure_mock(
+            **dict(text=self.server_discovery_xml, status_code=200)
+        )
+        portal_languages = api.portal.get_tool("portal_languages")
+        # Only 'en' is supported.
+        self.request.cookies["I18N_LANGUAGE"] = "de"
+        view = self.view
+        self.assertIsNone(view.error_msg, view.error_msg)
+        qs = urllib.parse.parse_qs(urllib.parse.urlparse(view.wopi_url).query)
+        # Plone clamps to a supported language; the exact fallback is
+        # whatever portal_languages decides - we just propagate it.
+        self.assertEqual(
+            qs.get("lang"),
+            [portal_languages.getPreferredLanguage(self.request)],
+        )
+
+    @mock.patch("requests.get")
+    def test_ui_language_hook_override(self, requests_get):
+        """Subclasses can override ``ui_language`` to plug in a different
+        language source (e.g. a user profile preference)."""
+        from collective.collabora.browser.edit import CollaboraEditView
+
+        requests_get.return_value.configure_mock(
+            **dict(text=self.server_discovery_xml, status_code=200)
+        )
+        with mock.patch.object(
+            CollaboraEditView,
+            "ui_language",
+            new_callable=mock.PropertyMock,
+            return_value="fr",
+        ):
+            view = self.view
+            self.assertIsNone(view.error_msg, view.error_msg)
+            qs = urllib.parse.parse_qs(urllib.parse.urlparse(view.wopi_url).query)
+            self.assertEqual(qs.get("lang"), ["fr"])
+
     def test_iframe_is_cors(self):
         self.assertTrue(self.view.iframe_is_cors)
 
