@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.1.1 (unreleased)
+1.2.0 (2026-06-03)
 ------------------
 
 - Reset File object actions on uninstall [gyst]
