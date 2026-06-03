@@ -18,10 +18,10 @@ jobs:
               python-version: ['3.13']
         steps:
             - name: Git checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
 
             - name: Set up Python ${{ matrix.python-version }}
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                   python-version: ${{ matrix.python-version }}
 
@@ -73,10 +73,10 @@ jobs:
 
         steps:
             - name: Git checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
 
             - name: Set up Python ${{ matrix.python-version }}
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                   python-version: ${{ matrix.python-version }}
 
@@ -106,7 +106,8 @@ jobs:
 
             - name: Test with tox
               run: |
-                  tox -r -e py${{ matrix.python-version }}-${{ matrix.plone-version }}
+                  PYVER="${{ matrix.python-version }}"
+                  tox -r -e "py${PYVER//./}-${{ matrix.plone-version }}"
               env:
                 PLONE_VERSION: ${{ matrix.plone-version }}
 
@@ -133,10 +134,10 @@ jobs:
 
         steps:
           - name: Git checkout
-            uses: actions/checkout@v4
+            uses: actions/checkout@v6
 
           - name: Setup Python 3.12
-            uses: actions/setup-python@v5
+            uses: actions/setup-python@v6
             with:
               # Use latest Python, so it understands all syntax.
               python-version: "3.12"
@@ -172,7 +173,7 @@ jobs:
             if: ${{ failure() }}
 
           - name: "Make badge"
-            uses: schneegans/dynamic-badges-action@v1.4.0
+            uses: schneegans/dynamic-badges-action@v1.8.0
             with:
               # COVERAGE_GIST_SECRET is a GitHub personal access token with scope "gist".
               auth: ${{ secrets.COVERAGE_GIST_SECRET }}
