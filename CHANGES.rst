@@ -2,8 +2,10 @@ Changelog
 =========
 
 
-1.2.0 (2026-06-03)
+1.2.0 (2026-06-17)
 ------------------
+
+NB: this release was refused by PyPi (requires collective_collabora) - it's only available via pypi.quaive.net.
 
 - Reset File object actions on uninstall [gyst]
 
