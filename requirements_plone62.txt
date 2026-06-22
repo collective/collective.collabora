@@ -1,0 +1,4 @@
+-c constraints_plone62.txt
+setuptools
+zc.buildout
+horse-with-no-namespace
