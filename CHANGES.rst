@@ -5,6 +5,8 @@ Changelog
 1.3.0 (2026-06-22)
 ------------------
 
+NB: this release was refused by PyPi (requires collective_collabora) - it's only available via pypi.quaive.net.
+
 - Fix IStoredFile's file field name [cadam, gyst]
 
 - Declare and test python3.14 and Plone 6.2 supported [gyst]
