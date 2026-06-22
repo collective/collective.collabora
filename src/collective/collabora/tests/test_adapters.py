@@ -47,10 +47,31 @@ class TestDXStoredFile(unittest.TestCase):
         self.stored_file.data = b"1234"
         self.assertEqual(self.portal.testfile.file.data, b"1234")
 
+    def test_custom_file_field_name(self):
+        from collective.collabora.adapters import DXStoredFile
+        from plone.namedfile.file import NamedBlobFile
+
+        self.portal.testfile.other = NamedBlobFile(
+            data=b"abcd", filename="other.txt", contentType="text/plain"
+        )
+
+        class MyDXStoredFile(DXStoredFile):
+            file_field_name = "other"
+
+        stored = MyDXStoredFile(self.portal.testfile)
+        self.assertEqual(stored.filename, "other.txt")
+        self.assertEqual(stored.contentType, "text/plain")
+        self.assertEqual(stored.data, b"abcd")
+        self.assertEqual(stored.getSize(), 4)
+
     def test_invalid_file_field_name(self):
-        self.stored_file.file_field_name = "invalid"
+        from collective.collabora.adapters import DXStoredFile
+
+        class MyDXStoredFile(DXStoredFile):
+            file_field_name = "invalid"
+
         with self.assertRaises(AttributeError):
-            self.stored_file.file_field
+            MyDXStoredFile(self.portal.testfile)
 
 
 @unittest.skipUnless(utils.IS_PLONE4, "Archetypes tested only in Plone4")

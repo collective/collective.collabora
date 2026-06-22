@@ -5,7 +5,7 @@ Changelog
 1.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix IStoredFile's file field name [cadam, gyst]
 
 
 1.2.0 (2026-06-17)
