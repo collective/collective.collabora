@@ -9,6 +9,8 @@ Changelog
 
 - Declare and test python3.14 and Plone 6.2 supported [gyst]
 
+- More Github CI infra upgrades [gyst]
+
 
 1.2.0 (2026-06-17)
 ------------------
