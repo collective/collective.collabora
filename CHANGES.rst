@@ -1,17 +1,19 @@
 Changelog
 =========
 
+NB: all releases >= 1.2.0 and < 2.0 are refused by PyPi, which now requires collective_collabora as a name, instead of collective.collabora). Changing that would break python 2.7 compatibility and will only happen once 2.x is released.
+
+Until then, the 1.x series >= 1.2.0 is only available via the private server pypi.quaive.net.
+If you need updates, the suggested bridge until 2.x is available, is to re-release an egg to your own private server.
 
 1.3.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix Collabora menu bar overflow in non-English UI. [gyst]
 
 
 1.3.0 (2026-06-22)
 ------------------
-
-NB: this release was refused by PyPi (requires collective_collabora) - it's only available via pypi.quaive.net.
 
 - Fix IStoredFile's file field name [cadam, gyst]
 
@@ -22,8 +24,6 @@ NB: this release was refused by PyPi (requires collective_collabora) - it's only
 
 1.2.0 (2026-06-17)
 ------------------
-
-NB: this release was refused by PyPi (requires collective_collabora) - it's only available via pypi.quaive.net.
 
 - Reset File object actions on uninstall [gyst]
 

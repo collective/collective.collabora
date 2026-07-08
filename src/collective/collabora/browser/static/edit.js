@@ -51,21 +51,61 @@ function isValidJSON(text) {
 }
 
 function resize_iframe() {
-  var iframe = document.getElementById("cool-iframe");
-  var plone_version = iframe.getAttribute("plone_version");
+    var iframe = document.getElementById("cool-iframe");
+    var plone_version = iframe.getAttribute("plone_version");
 
-  console.log("Resizing iframe on document loaded");
-  if (plone_version == "quaive") {
-    var offset = iframe.offsetTop + 80;
-  } else if (plone_version == "plone6") {
-    var offset = iframe.offsetTop + 5;
-  } else if (plone_version == "plone5") {
-    var offset = window.document.getElementById("main-container").offsetTop + 55;
-  } else {
-    var offset = window.document.getElementById("content").offsetTop + 210;
+    console.log("Resizing iframe on document loaded");
+    if (plone_version == "quaive") {
+        var offset = iframe.offsetTop + 80;
+    } else if (plone_version == "plone6") {
+        var offset = iframe.offsetTop + 5;
+    } else if (plone_version == "plone5") {
+        var offset = window.document.getElementById("main-container").offsetTop + 55;
+    } else {
+        var offset = window.document.getElementById("content").offsetTop + 210;
+    }
+    iframe.style.height = 'calc(100vh - ' + offset  + 'px)';
+    console.log("Resized cool-iframe");
+}
+
+// Fix Collabora menu bar overflow in non-English UI, directly via CSS.
+// This works around an upstream regression introduced in the 26.x series.
+//
+// Background: when the Collabora UI language is not English, localized menu
+// labels are wider. Since Collabora 26 (which added the "Editing" menu with
+// "Viewing Mode" / "Editing Mode" entries) the menu bar can overflow in e.g.
+// French: not all entries fit. Collabora apparently computes the menu bar
+// layout before the localized strings are applied and does not recompute
+// afterwards.
+//
+// A reflow can be triggered by, in the UI, selecting "Viewing Mode" and then
+// "Editing Mode". That fixes the layout issue manually. Trying to force a reflow
+// by firing postMessage calls failed.
+//
+// Instead, sidestep the reflow entirely and fix via CSS. Injecting a stylesheet 
+// did not fix the rendering, but setting a hard style attribute does the trick. 
+// This requires same-origin access to the iframe, which holds when Collabora is 
+// reverse-proxied on the same origin as Plone (the recommended production setup).
+function collabora_inject_iframe_css() {
+  var iframe = document.getElementById("cool-iframe");
+  if (!iframe) {
+    return;
   }
-  iframe.style.height = 'calc(100vh - ' + offset  + 'px)';
-  console.log("Resized cool-iframe");
+  var doc;
+  try {
+    doc = iframe.contentDocument || iframe.contentWindow.document;
+  } catch (err) {
+    // Cross-origin: cannot reach into the iframe. Nothing we can do here.
+    console.warn("Cannot reach Collabora iframe (cross-origin):", err);
+    return;
+  }
+  if (!doc) {
+    return;
+  }
+  var nav = doc.querySelector("html > body > nav.main-nav");
+  if (nav) {
+    nav.style.height = "auto";
+  }
 }
 
 // https://sdk.collaboraonline.com/docs/postmessage_api.html
@@ -84,6 +124,7 @@ function handlePostMessage(e) {
   }
   if (msgData.Status == 'Document_Loaded') {
     resize_iframe();
+    collabora_inject_iframe_css();
   }
 }
 
