@@ -6,7 +6,7 @@ NB: all releases >= 1.2.0 and < 2.0 are refused by PyPi, which now requires coll
 Until then, the 1.x series >= 1.2.0 is only available via the private server pypi.quaive.net.
 If you need updates, the suggested bridge until 2.x is available, is to re-release an egg to your own private server.
 
-1.3.1 (unreleased)
+1.3.1 (2026-07-09)
 ------------------
 
 - Fix Collabora menu bar overflow in non-English UI. [gyst]
