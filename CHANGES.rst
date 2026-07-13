@@ -9,7 +9,7 @@ If you need updates, the suggested bridge until 2.x is available, is to re-relea
 1.3.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Issue proper log level when encountering an unsupported mimetype. [gyst]
 
 
 1.3.1 (2026-07-09)

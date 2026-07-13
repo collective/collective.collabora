@@ -177,7 +177,12 @@ class CollaboraEditView(FileView):
                 default="Collabora does not support mimetype ${mimetype}.",
                 mapping={"mimetype": mime_type},
             )
-            logger.error("Collabora does not support mimetype %r.", mime_type)
+            # This is not an error. It's a valid opt-out on a specific file.
+            logger.info(
+                "Collabora does not support mimetype %r on %r",
+                mime_type,
+                self.context.absolute_url(),
+            )
             return
         urlsrc = action.get("urlsrc")
         if not urlsrc:
