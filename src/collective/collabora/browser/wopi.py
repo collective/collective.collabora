@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from builtins import super
 from future import standard_library
-
 
 standard_library.install_aliases()
 
@@ -24,7 +19,6 @@ from zope.publisher.interfaces import IPublishTraverse
 # datetime.datetime.fromisotime() is not available in py27
 import dateutil.parser
 import json
-
 
 logger = getLogger(__name__)
 

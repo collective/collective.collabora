@@ -1,10 +1,5 @@
-# -*- coding: utf-8 -*-
-from __future__ import division
-from __future__ import unicode_literals
-
 from future import standard_library
 from future.utils import bytes_to_native_str as n
-
 
 standard_library.install_aliases()
 
@@ -12,7 +7,6 @@ from importlib import import_module
 from logging import getLogger
 from plone import api
 from urllib.parse import urlparse
-
 
 logger = getLogger(__name__)
 
@@ -50,7 +44,7 @@ def human_readable_size(size):
         if size // SIZE_CONST[c] > 0:
             break
     fraction = float(size) / SIZE_CONST[c]
-    return "%.1f %s" % (fraction, c)
+    return f"{fraction:.1f} {c}"
 
 
 def disallow(*args, **kwargs):

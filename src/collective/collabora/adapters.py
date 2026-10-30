@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from future import standard_library
-
 
 standard_library.install_aliases()
 
@@ -12,7 +8,6 @@ from plone.app.contenttypes.interfaces import IFile
 from plone.namedfile.file import NamedBlobFile
 from zope.component import adapter
 from zope.interface import implementer
-
 
 try:
     from Products.ATContentTypes.interfaces import IATFile
@@ -25,7 +20,7 @@ except ImportError:
 
 @adapter(IFile)
 @implementer(IStoredFile)
-class DXStoredFile(object):
+class DXStoredFile:
     """Access the file storage on a Dexterity content object.
 
     By default that's the `file` attribute on the content object,
@@ -65,7 +60,7 @@ class DXStoredFile(object):
 
 @adapter(IATFile)
 @implementer(IStoredFile)
-class ATStoredFile(object):
+class ATStoredFile:
     """Access the file storage on a Archetypes content object.
 
     By default that's the `file` File field on the content object,

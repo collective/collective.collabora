@@ -10,4 +10,7 @@ exclude *.yaml
 exclude Makefile
 exclude tox.ini
 global-exclude *.pyc
+include .coveragerc
+include base.cfg
+recursive-include news *.gitkeep *.internal *.breaking
 prune docker

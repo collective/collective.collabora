@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from future import standard_library
-
 
 standard_library.install_aliases()
 
@@ -10,8 +6,8 @@ from collective.collabora import utils
 from collective.collabora.testing import COLLECTIVE_COLLABORA_INTEGRATION_TESTING
 from collective.collabora.testing import temporary_registry_record
 from plone import api
+from unittest import mock
 
-import mock  # unittest.mock backport for both py27 and >= py36
 import unittest
 
 
