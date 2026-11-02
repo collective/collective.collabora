@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Callback API tests for this package.
 
 
@@ -7,10 +6,8 @@ included: trying to implement those breaks on a
 ZODB.POSException.ConnectionStateError. Let's simply trust the plone.restapi JWT
 token authentication, and verify permission checks by directly logging in here.
 """
-from __future__ import unicode_literals
 
 from future import standard_library
-
 
 standard_library.install_aliases()
 
@@ -23,11 +20,11 @@ from plone.app.testing import logout
 from plone.event.utils import pydt
 from plone.protect.interfaces import IDisableCSRFProtection
 from plone.uuid.interfaces import IUUID
+from unittest import mock
 
 import datetime
 import io
 import json
-import mock  # unittest.mock backport for both py27 and >= py36
 import unittest
 
 

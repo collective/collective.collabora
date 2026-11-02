@@ -1,0 +1,34 @@
+# Generated from:
+# https://github.com/plone/meta/tree/2.x/src/plone/meta/default
+# See the inline comments on how to expand/tweak this configuration file
+[meta]
+template = "default"
+commit-id = "2.12.0"
+
+[tox]
+test_matrix = {"6.2" = ["3.14", "3.13", "3.12", "3.11"]}
+
+[flake8]
+extra_lines = """
+extend-ignore = E402
+"""
+
+[pyproject]
+codespell_skip = "*.po,docker/nginx/mime.types"
+check_manifest_ignores = """
+    \"Makefile\",
+    \"requirements_plone*.txt\",
+    \"setup.cfg\",
+    \"test_plone*.cfg\",
+"""
+dependencies_ignores = """
+[
+    \"Products.ATContentTypes\", \"Products.CMFPlone\", \"Products.Five\",
+    \"Products.GenericSetup\", \"Products.PluggableAuthService\", \"StringIO\",
+    \"lxml\", \"pkg_resources\", \"plone.base\", \"plone.browserlayer\",
+    \"plone.event\", \"plone.memoize\", \"plone.namedfile\", \"plone.uuid\",
+    \"requests\", \"zope.component\", \"zope.configuration\",
+    \"zope.event\", \"zope.i18nmessageid\", \"zope.interface\",
+    \"zope.lifecycleevent\", \"zope.publisher\",
+]
+"""

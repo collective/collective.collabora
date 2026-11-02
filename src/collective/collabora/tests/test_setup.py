@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
 """Setup tests for this package."""
-from __future__ import unicode_literals
 
-from builtins import open
 from future import standard_library
 from future.utils import bytes_to_native_str as n
-
 
 standard_library.install_aliases()
 
@@ -20,7 +16,6 @@ from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 
 import unittest
-
 
 try:
     from Products.CMFPlone.utils import get_installer

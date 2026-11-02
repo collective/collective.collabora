@@ -1,10 +1,5 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from builtins import open
 from future import standard_library
 from future.utils import bytes_to_native_str as n
-
 
 standard_library.install_aliases()
 
@@ -23,7 +18,6 @@ from plone.namedfile.file import NamedBlobFile
 import collective.collabora
 import os
 import pathlib
-
 
 try:
     from Products.ATContentTypes.interfaces import IATFile

@@ -1,11 +1,6 @@
-# -*- coding: utf-8 -*-
 """UI tests for this package."""
-from __future__ import unicode_literals
 
-from builtins import dict
-from builtins import open
 from future import standard_library
-
 
 standard_library.install_aliases()
 
@@ -18,8 +13,8 @@ from collective.collabora.testing import temporary_registry_record
 from collective.collabora.testing import TESTDATA_PATH
 from plone import api
 from plone.app.testing import logout
+from unittest import mock
 
-import mock  # unittest.mock backport for both py27 and >= py36
 import unittest
 import urllib.parse
 
