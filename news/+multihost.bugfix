@@ -1,0 +1,3 @@
+Document how to let Collabora accept more than one Plone site, and make the example
+``coolwsd.xml`` trust its development site explicitly instead of the first site that connects.
+[gyst]

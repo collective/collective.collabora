@@ -138,12 +138,45 @@ For a production deployment, you need to take the following security configurati
 - `Content Security Policy <https://sdk.collaboraonline.com/docs/advanced_integration.html#content-security-policy>`_
 - Other `security settings <https://sdk.collaboraonline.com/docs/installation/Configuration.html#security-settings>`_
 
-Multihost configuration
------------------------
+Allowing Plone sites to connect
+-------------------------------
 
-If you want to use the same Collabora server to integrate with multiple sites,
-you will need to configure
-`host allow/deny policies <https://sdk.collaboraonline.com/docs/installation/Configuration.html#multihost-configuration>`_.
+Collabora only accepts WOPI calls from hosts it trusts. Its default
+configuration, ``mode="first"`` under ``storage.wopi.alias_groups`` in
+``coolwsd.xml``, trusts the first Plone site that connects after Collabora
+starts, and refuses every other site until the next restart. The Collabora log
+then shows ``Only allowed host is: ...``. This bites as soon as one Collabora
+server serves more than one Plone site, or a site under more than one name.
+
+Name every Plone site explicitly, as Collabora reaches it: the portal URL, or
+the URL in the registry record ``collective.collabora.plone_server_url`` when
+you set it (see below). Either list them in ``coolwsd.xml``::
+
+  <alias_groups mode="groups">
+    <group>
+      <host allow="true">https://plone.example.com:443</host>
+      <alias>https://www.plone.example.com:443</alias>
+    </group>
+    <group>
+      <host allow="true">https://intranet.example.com:443</host>
+    </group>
+  </alias_groups>
+
+or, with the Collabora Docker image, set one environment variable per site,
+the host first and its aliases after it, comma separated::
+
+  aliasgroup1=https://plone.example.com:443,https://www.plone.example.com:443
+  aliasgroup2=https://intranet.example.com:443
+
+With Collabora 26.04 the environment variables switch to ``groups`` mode by
+themselves. Collabora 25.04 also needs ``mode="groups"`` set in
+``coolwsd.xml``. See the
+`multihost configuration <https://sdk.collaboraonline.com/docs/installation/Configuration.html#multihost-configuration>`_
+in the Collabora documentation.
+
+The example ``docker/coolwsd.xml`` in this package trusts
+``http://host.docker.internal:80``, the development setup described in
+:doc:`development`.
 
 Direct Collabora-to-Plone connection
 ------------------------------------
