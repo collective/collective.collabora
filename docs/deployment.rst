@@ -148,9 +148,19 @@ starts, and refuses every other site until the next restart. The Collabora log
 then shows ``Only allowed host is: ...``. This bites as soon as one Collabora
 server serves more than one Plone site, or a site under more than one name.
 
-Name every Plone site explicitly, as Collabora reaches it: the portal URL, or
-the URL in the registry record ``collective.collabora.plone_server_url`` when
-you set it (see below). Either list them in ``coolwsd.xml``::
+List each Plone site by its portal URL.
+
+With the Collabora Docker image, set one environment variable per site, the
+host first and its aliases after it, comma separated::
+
+  aliasgroup1=https://plone.example.com:443,https://www.plone.example.com:443
+  aliasgroup2=https://intranet.example.com:443
+
+Collabora 26.04 then switches to ``groups`` mode by itself.
+
+With Collabora 25.04, or without the Docker image, list the sites in
+``coolwsd.xml`` instead, and set ``mode="groups"``. With the default
+``mode="first"``, Collabora ignores the groups::
 
   <alias_groups mode="groups">
     <group>
@@ -162,15 +172,13 @@ you set it (see below). Either list them in ``coolwsd.xml``::
     </group>
   </alias_groups>
 
-or, with the Collabora Docker image, set one environment variable per site,
-the host first and its aliases after it, comma separated::
+.. note::
 
-  aliasgroup1=https://plone.example.com:443,https://www.plone.example.com:443
-  aliasgroup2=https://intranet.example.com:443
+   If you set ``collective.collabora.plone_server_url`` (see below), Collabora
+   calls Plone on that URL instead of the portal URL. List that URL for the
+   site, not the portal URL.
 
-With Collabora 26.04 the environment variables switch to ``groups`` mode by
-themselves. Collabora 25.04 also needs ``mode="groups"`` set in
-``coolwsd.xml``. See the
+See the
 `multihost configuration <https://sdk.collaboraonline.com/docs/installation/Configuration.html#multihost-configuration>`_
 in the Collabora documentation.
 
