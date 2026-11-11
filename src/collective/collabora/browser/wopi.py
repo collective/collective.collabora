@@ -185,7 +185,7 @@ class CollaboraWOPIView(BrowserView):
             self.request.response.setStatus(200)
             return json.dumps(self.file_info)
 
-        logger.warn(
+        logger.warning(
             "Unhandled wopi_put_file request: %r",
             {k: v for k, v in self.request.items() if "WOPI" in k},
         )

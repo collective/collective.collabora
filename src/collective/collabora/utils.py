@@ -20,6 +20,6 @@ def collabora_is_cors():
             portal_parts.port != collabora_parts.port,
         ]
     ):
-        logger.warn("Running the Collabora iframe in CORS mode is not recommended.")
+        logger.warning("Running the Collabora iframe in CORS mode is not recommended.")
         return True
     return False
