@@ -8,14 +8,13 @@ For full SDK integration documentation docs, see:
 Development setup
 -----------------
 
-A working development setup is provided with this package. To run it::
+A Collabora server for development is provided with this package. To run it::
 
   docker compose -f docker/docker-compose.yaml create --remove-orphans
   docker compose -f docker/docker-compose.yaml start
-  make start61
 
-This will start Collabora and build and start Plone. You will need to
-define a host alias ``host.docker.internal``, see below.
+Then run a Plone 6.2 site with this package installed in development mode.
+You will need to define a host alias ``host.docker.internal``, see below.
 
 The ``collective.collabora:default`` profile configures the registry record
 ``collective.collabora.collabora_server_url`` to point at the :ref:`Collabora server URL`.
@@ -64,32 +63,37 @@ a name which is different from ``file``: just subclass and provide the correct
 Building, testing and CI
 ------------------------
 
-This package uses ``tox`` to drive buildout and test runners.
+This package is configured with `plone.meta <https://github.com/plone/meta>`_.
+``tox`` drives the linters and the test runners.
 
-See the provided ``Makefile`` for some usage pointers.
-To build and test all environments::
+Version 2.x supports Plone 6.2 on Python 3.11 to 3.14.
+For older Plone versions, Archetypes or Python 2.7, use the 1.x series.
 
-  make all
+To list the environments::
 
-To run a single development server::
+  tox -l
 
-  make start61
+To run all tests on one Python version::
 
-To run all tests for only that environment::
+  tox -e py312-plone62
 
-  tox -e py312-Plone61
+To run a single test and spawn a debugger::
 
-To run a single test in a single environment and spawn a debugger::
+  tox -e py312-plone62 -- -t your_test_substring -D -x
 
-  tox -e py312-Plone61 -- -t your_test_substring -D -x
+To run the linters, and to reformat the code::
 
-To run all linters in parallel::
+  tox -e lint
+  tox -e format
 
-  tox -p -f lint
+To check that the package declares all its dependencies::
+
+  tox -e dependencies
 
 Github CI testing is configured in::
 
-  .github/workflows/plone-package.yml
+  .github/workflows/meta.yml
+  .github/workflows/test-matrix.yml
 
 For the tox CLI documentation, see:
 
@@ -106,10 +110,5 @@ Please make sure all tests pass locally::
 
   tox -p
 
-
-Running the tests locally ensures, that your changes do not break backward compatibility
-with older Plone versions running on Python 2.7.
-
-.. note::
-
-   The Github actions CI runs only Python 3.x tests. It does not run Python 2.7 tests.
+Add a change log entry as a file in ``news/``, see
+`towncrier <https://towncrier.readthedocs.io/>`_.

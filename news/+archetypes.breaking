@@ -1,0 +1,2 @@
+Drop Archetypes support: the ``ATStoredFile`` adapter, the views for ``IATFile`` and ``IDummy``.
+[gyst]

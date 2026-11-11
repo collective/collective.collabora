@@ -123,8 +123,8 @@ Zope = [
 python-dateutil = ['dateutil']
 pytest-plone = ['pytest', 'zope.pytestlayer', 'plone.testing', 'plone.app.testing']
 ignore-packages = [
-    "Products.ATContentTypes", "Products.CMFPlone", "Products.Five",
-    "Products.GenericSetup", "Products.PluggableAuthService", "StringIO",
+    "Products.CMFPlone", "Products.Five",
+    "Products.GenericSetup", "Products.PluggableAuthService",
     "lxml", "pkg_resources", "plone.base", "plone.browserlayer",
     "plone.event", "plone.memoize", "plone.namedfile", "plone.uuid",
     "requests", "zope.component", "zope.configuration",

@@ -1,7 +1,11 @@
 Installation
 ============
 
-Install collective.collabora by adding it to your buildout::
+Install collective.collabora with pip::
+
+    pip install collective.collabora
+
+or by adding it to your buildout::
 
     [buildout]
 
@@ -9,7 +13,6 @@ Install collective.collabora by adding it to your buildout::
 
     eggs =
         collective.collabora
-
 
 and then run ``bin/buildout``.
 
