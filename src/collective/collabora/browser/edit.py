@@ -10,6 +10,7 @@ from logging import getLogger
 from lxml import etree
 from plone import api
 from plone.app.contenttypes.browser.file import FileView
+from plone.base.utils import human_readable_size
 from plone.memoize.view import memoize
 from plone.uuid.interfaces import IUUID
 from Products.PluggableAuthService.interfaces.plugins import IAuthenticationPlugin
@@ -41,14 +42,14 @@ class CollaboraEditView(FileView):
         return super(FileView, self).__call__()
 
     def human_readable_size(self):
-        """Use our own reimplementation, against our own adapter"""
-        return utils.human_readable_size(self.stored_file.getSize())
+        """The file size, read through our own adapter"""
+        return human_readable_size(self.stored_file.getSize())
 
     @property
     @memoize
     def plone_version(self):
-        """Get the major version we're running in."""
-        return "plone%i" % utils.PLONE_VERSION
+        """The host UI, as a CSS class and iframe attribute."""
+        return "plone6"
 
     @property
     @memoize

@@ -5,7 +5,6 @@ from future.utils import bytes_to_native_str as n
 
 standard_library.install_aliases()
 
-from collective.collabora import utils
 from collective.collabora.interfaces import IStoredFile
 from collective.collabora.testing import (  # noqa: E501
     COLLECTIVE_COLLABORA_INTEGRATION_TESTING,
@@ -14,13 +13,9 @@ from collective.collabora.testing import TESTDATA_PATH
 from plone import api
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
+from plone.base.utils import get_installer
 
 import unittest
-
-try:
-    from Products.CMFPlone.utils import get_installer
-except ImportError:
-    get_installer = None
 
 
 class TestSetup(unittest.TestCase):
@@ -31,20 +26,11 @@ class TestSetup(unittest.TestCase):
     def setUp(self):
         """Custom shared utility setup for tests."""
         self.portal = self.layer["portal"]
-        if get_installer:
-            self.installer = get_installer(self.portal, self.layer["request"])
-        else:
-            self.installer = api.portal.get_tool("portal_quickinstaller")
+        self.installer = get_installer(self.portal, self.layer["request"])
 
-    @unittest.skipIf(utils.IS_PLONE4, "plone 5/6 variant")
     def test_product_installed(self):
         """Test if collective.collabora is installed."""
         self.assertTrue(self.installer.is_product_installed(n(b"collective.collabora")))
-
-    @unittest.skipUnless(utils.IS_PLONE4, "plone4 variant")
-    def test_product_installed_plone4(self):
-        """Test if collective.collabora is installed."""
-        self.assertTrue(self.installer.isProductInstalled(n(b"collective.collabora")))
 
     def test_browserlayer(self):
         """Test that ICollectiveCollaboraLayer is registered."""
@@ -54,12 +40,8 @@ class TestSetup(unittest.TestCase):
         self.assertIn(ICollectiveCollaboraLayer, utils.registered_layers())
 
     def test_hidden_profiles(self):
+        from plone.base.interfaces import INonInstallable
         from zope.component import getAllUtilitiesRegisteredFor
-
-        try:
-            from plone.base.interfaces import INonInstallable
-        except ImportError:
-            from Products.CMFPlone.interfaces import INonInstallable
 
         utils = getAllUtilitiesRegisteredFor(INonInstallable)
         my_utils = [x for x in utils if n(b"collective.collabora") in repr(x)]
@@ -79,29 +61,17 @@ class TestUninstall(unittest.TestCase):
 
     def setUp(self):
         self.portal = self.layer["portal"]
-        if get_installer:
-            self.installer = get_installer(self.portal, self.layer["request"])
-        else:
-            self.installer = api.portal.get_tool("portal_quickinstaller")
+        self.installer = get_installer(self.portal, self.layer["request"])
         roles_before = api.user.get_roles(TEST_USER_ID)
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
-        if utils.IS_PLONE4:
-            self.installer.uninstallProducts(products=[n(b"collective.collabora")])
-        else:
-            self.installer.uninstall_product(n(b"collective.collabora"))
+        self.installer.uninstall_product(n(b"collective.collabora"))
         setRoles(self.portal, TEST_USER_ID, roles_before)
 
-    @unittest.skipIf(utils.IS_PLONE4, "plone 5/6 variant")
     def test_product_uninstalled(self):
         """Test if collective.collabora is cleanly uninstalled."""
         self.assertFalse(
             self.installer.is_product_installed(n(b"collective.collabora"))
         )
-
-    @unittest.skipUnless(utils.IS_PLONE4, "plone4 variant")
-    def test_product_uninstalled_plone4(self):
-        """Test if collective.collabora is installed."""
-        self.assertFalse(self.installer.isProductInstalled(n(b"collective.collabora")))
 
     def test_browserlayer_removed(self):
         """Test that ICollectiveCollaboraLayer is removed."""

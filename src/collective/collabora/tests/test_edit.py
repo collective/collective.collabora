@@ -52,6 +52,9 @@ class TestCoolEdit(unittest.TestCase):
             "http://nohost/plone/testfile/@@download/file/testfile.docx",
         )
 
+    def test_human_readable_size(self):
+        self.assertEqual(self.view.human_readable_size(), "6.0 KB")
+
     def test_plone_server_url_default(self):
         view = self.view
         self.assertIsNone(view.error_msg, view.error_msg)
