@@ -91,7 +91,7 @@ For older Plone versions, Archetypes or Python 2.7, use the 1.x series.
 To run the whole matrix in parallel, with ``tox-uv`` fetching any missing
 Python version::
 
-  uvx --with tox-uv tox -p auto
+  uvx --with tox-uv tox -p auto -o
 
 Plain ``tox`` works too, if Python 3.11 to 3.14 are installed.
 
@@ -134,7 +134,7 @@ Provide a full description of the problem you're encountering, including all nec
 To fix an issue, open a PR.
 Please make sure all tests pass locally::
 
-  uvx --with tox-uv tox -p auto
+  uvx --with tox-uv tox -p auto -o
 
 Add a change log entry as a file in ``news/``, see
 `towncrier <https://towncrier.readthedocs.io/>`_.
