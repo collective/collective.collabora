@@ -32,3 +32,8 @@ dependencies_ignores = """
     \"zope.lifecycleevent\", \"zope.publisher\",
 ]
 """
+
+[gitignore]
+extra_lines = """
+.venv
+"""
