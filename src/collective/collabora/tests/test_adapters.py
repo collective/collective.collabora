@@ -1,7 +1,3 @@
-from future import standard_library
-
-standard_library.install_aliases()
-
 from collective.collabora.interfaces import IStoredFile
 from collective.collabora.testing import COLLECTIVE_COLLABORA_INTEGRATION_TESTING
 
@@ -29,7 +25,7 @@ class TestDXStoredFile(unittest.TestCase):
         )
 
     def test_data(self):
-        # not testing type(data) since this code covers both py2 and py3
+        self.assertIsInstance(self.stored_file.data, bytes)
         self.assertEqual(len(self.stored_file.data), 6132)
 
     def test_getSize(self):

@@ -1,7 +1,3 @@
-from future import standard_library
-
-standard_library.install_aliases()
-
 from plone import api
 from plone.base.interfaces import INonInstallable
 from zope.interface import implementer

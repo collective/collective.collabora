@@ -1,7 +1,3 @@
-from future import standard_library
-
-standard_library.install_aliases()
-
 from collective.collabora.interfaces import IStoredFile
 from plone.app.contenttypes.interfaces import IFile
 from plone.namedfile.file import NamedBlobFile

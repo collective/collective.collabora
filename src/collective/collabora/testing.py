@@ -1,8 +1,3 @@
-from future import standard_library
-from future.utils import bytes_to_native_str as n
-
-standard_library.install_aliases()
-
 from contextlib import contextmanager
 from plone import api
 from plone.app.contenttypes.interfaces import IFile
@@ -34,9 +29,7 @@ class CollectiveCollaboraLayer(PloneSandboxLayer):
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, "collective.collabora:default")
-        # py27: TypeError: invalid file: PosixPath('/collective.coll...
-        with open(str(TESTDATA_PATH / "testfile.docx"), "br") as fh:
-            file_data = fh.read()
+        file_data = (TESTDATA_PATH / "testfile.docx").read_bytes()
         roles_before = api.user.get_roles(TEST_USER_ID)
         setRoles(portal, TEST_USER_ID, ["Manager"])
         testfile = api.content.create(
@@ -52,7 +45,7 @@ class CollectiveCollaboraLayer(PloneSandboxLayer):
         # the tests against an active server in development - and then getting
         # breakage on CI where no such service is running.
         api.portal.set_registry_record(
-            n(b"collective.collabora.collabora_server_url"),
+            "collective.collabora.collabora_server_url",
             "http://host.docker.internal:7777",
         )
         setRoles(portal, TEST_USER_ID, roles_before)

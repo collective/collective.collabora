@@ -1,9 +1,5 @@
 """Module where all interfaces, events and exceptions live."""
 
-from future import standard_library
-
-standard_library.install_aliases()
-
 from zope.interface import Attribute
 from zope.interface import Interface
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer

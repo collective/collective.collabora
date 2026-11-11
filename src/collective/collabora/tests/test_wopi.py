@@ -7,10 +7,6 @@ ZODB.POSException.ConnectionStateError. Let's simply trust the plone.restapi JWT
 token authentication, and verify permission checks by directly logging in here.
 """
 
-from future import standard_library
-
-standard_library.install_aliases()
-
 from collective.collabora.interfaces import IStoredFile
 from collective.collabora.testing import COLLECTIVE_COLLABORA_INTEGRATION_TESTING
 from plone import api

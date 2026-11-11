@@ -1,9 +1,5 @@
 """UI tests for this package."""
 
-from future import standard_library
-
-standard_library.install_aliases()
-
 from collective.collabora.testing import COLLECTIVE_COLLABORA_INTEGRATION_TESTING
 from collective.collabora.testing import temporary_registry_record
 from collective.collabora.testing import TESTDATA_PATH
@@ -24,9 +20,7 @@ class TestCoolEdit(unittest.TestCase):
         """Custom shared utility setup for tests."""
         self.portal = self.layer["portal"]
         self.request = self.layer["request"]
-        # py27: TypeError: invalid file: PosixPath('/collective.coll...
-        with open(str(TESTDATA_PATH / "server_discovery_xml")) as fh:
-            self.server_discovery_xml = fh.read()
+        self.server_discovery_xml = (TESTDATA_PATH / "server_discovery_xml").read_text()
 
     @property
     def view(self):

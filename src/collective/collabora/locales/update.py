@@ -1,6 +1,3 @@
-from future import standard_library
-
-standard_library.install_aliases()
 from importlib import resources
 
 import os

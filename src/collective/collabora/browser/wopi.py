@@ -1,7 +1,3 @@
-from future import standard_library
-
-standard_library.install_aliases()
-
 from collective.collabora.adapters import IStoredFile
 from logging import getLogger
 from plone import api
@@ -28,8 +24,7 @@ class CollaboraWOPIView(BrowserView):
     """Callback view used by Collabora Online to talk to Plone"""
 
     def __init__(self, context, request):
-        # newsuper throws an infinite loop in py27
-        super(BrowserView, self).__init__(context, request)
+        super().__init__(context, request)
         self.wopi_mode = None
         self.stored_file = IStoredFile(self.context)
 

@@ -1,12 +1,6 @@
 """Installer for the collective.collabora package."""
 
-try:
-    # find_packages errors out on py3 on non-python packages
-    from setuptools import find_namespace_packages
-except ImportError:
-    # but works fine with find_packages
-    from setuptools import find_packages as find_namespace_packages
-
+from setuptools import find_namespace_packages
 from setuptools import setup
 
 long_description = "\n\n".join(
@@ -52,11 +46,8 @@ setup(
     package_dir={"": "src"},
     include_package_data=True,
     zip_safe=False,
-    # python_requires comma sep functions as an AND.
-    # So to express ==2.7 OR >= 3.8, we have to write it as follows:
     python_requires=">=3.11,<3.15",
     install_requires=[
-        "future",
         "plone.api",
         "plone.app.contenttypes",
         "plone.protect",

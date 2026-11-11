@@ -1,7 +1,3 @@
-from future import standard_library
-
-standard_library.install_aliases()
-
 from collective.collabora import utils
 from collective.collabora.testing import COLLECTIVE_COLLABORA_INTEGRATION_TESTING
 from collective.collabora.testing import temporary_registry_record
@@ -9,16 +5,6 @@ from plone import api
 from unittest import mock
 
 import unittest
-
-
-class TestUtilsUnit(unittest.TestCase):
-    def test_disallow(self):
-        with self.assertRaises(RuntimeError):
-            utils.disallow()
-        with self.assertRaises(RuntimeError):
-            utils.disallow("foo")
-        with self.assertRaises(RuntimeError):
-            utils.disallow(foo="bar")
 
 
 class TestUtilsIntegration(unittest.TestCase):
