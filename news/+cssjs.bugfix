@@ -1,0 +1,3 @@
+Close the ``@import url(...)`` of ``edit.css``, drop the Plone 4/5 iframe offsets and CSS rules,
+and register the Collabora message listener once when ``edit.js`` loads twice.
+[gyst]

@@ -251,5 +251,6 @@ class CollaboraEditView(FileView):
     @property
     def css_import(self):
         return (
-            "@import url(%s/++resource++collective.collabora/edit.css" % self.portal_url
+            "@import url(%s/++resource++collective.collabora/edit.css);"
+            % self.portal_url
         )

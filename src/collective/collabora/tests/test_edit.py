@@ -275,6 +275,35 @@ class TestCoolEdit(unittest.TestCase):
         self.assertIn("Edit metadata", html)
         self.assertIn("<iframe", html)
 
+    @mock.patch("requests.get")
+    def test__call__render_markup(self, requests_get):
+        """Pin the markup contract the CSS, the JS and integrations rely on."""
+        from lxml import html as lxml_html
+
+        requests_get.return_value.configure_mock(
+            **dict(text=self.server_discovery_xml, status_code=200)
+        )
+        tree = lxml_html.fromstring(self.view())
+        actions = tree.cssselect("section.section-collabora-actions")[0]
+        self.assertIn("plone6", actions.get("class").split())
+        main = tree.cssselect("section.section-collabora-main")[0]
+        self.assertIn("plone6", main.get("class").split())
+        iframe = tree.cssselect("iframe#cool-iframe")[0]
+        self.assertEqual(iframe.get("plone_version"), "plone6")
+        self.assertEqual(
+            iframe.get("collabora_server_url"), "http://host.docker.internal:7777"
+        )
+        scripts = [x.get("src") for x in tree.cssselect("script[src]")]
+        self.assertIn(
+            "http://nohost/plone/++resource++collective.collabora/edit.js", scripts
+        )
+        styles = " ".join(x.text or "" for x in tree.cssselect("style"))
+        self.assertIn(
+            "@import url(http://nohost/plone/++resource++collective.collabora"
+            "/edit.css);",
+            styles,
+        )
+
     #
     # ensure __call__ sets error_msg for use in template
     #
