@@ -1,15 +1,16 @@
 Changelog
 =========
 
-NB: all releases >= 1.2.0 and < 2.0 are refused by PyPi, which now requires collective_collabora as a name, instead of collective.collabora). Changing that would break python 2.7 compatibility and will only happen once 2.x is released.
+.. towncrier release notes start
 
-Until then, the 1.x series >= 1.2.0 is only available via the private server pypi.quaive.net.
-If you need updates, the suggested bridge until 2.x is available, is to re-release an egg to your own private server.
 
-2.0.0 (unreleased)
-------------------
+1.x series
+==========
 
-- Issue proper log level when encountering an unsupported mimetype. [gyst]
+The 1.x series supports Plone 6, Plone5, Plone 4, Archetypes, and python 2.7.
+
+NB: all releases >= 1.2.0 and < 2.0 were refused by PyPi.
+If you need a 1.3.x version, use a private egg server.
 
 
 1.3.1 (2026-07-09)

@@ -12,5 +12,5 @@ exclude tox.ini
 global-exclude *.pyc
 include .coveragerc
 include base.cfg
-recursive-include news *.gitkeep *.internal *.breaking
+recursive-include news *.gitkeep *.breaking *.feature *.bugfix *.internal
 prune docker
