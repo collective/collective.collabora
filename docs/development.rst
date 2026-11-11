@@ -88,6 +88,13 @@ This package is configured with `plone.meta <https://github.com/plone/meta>`_.
 Version 2.x supports Plone 6.2 on Python 3.11 to 3.14.
 For older Plone versions, Archetypes or Python 2.7, use the 1.x series.
 
+To run the whole matrix in parallel, with ``tox-uv`` fetching any missing
+Python version::
+
+  uvx --with tox-uv tox -p auto
+
+Plain ``tox`` works too, if Python 3.11 to 3.14 are installed.
+
 To list the environments::
 
   tox -l
@@ -127,7 +134,7 @@ Provide a full description of the problem you're encountering, including all nec
 To fix an issue, open a PR.
 Please make sure all tests pass locally::
 
-  tox -p
+  uvx --with tox-uv tox -p auto
 
 Add a change log entry as a file in ``news/``, see
 `towncrier <https://towncrier.readthedocs.io/>`_.
