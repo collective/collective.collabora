@@ -60,6 +60,25 @@ This is intended to make it easier to support objects whose file field has
 a name which is different from ``file``: just subclass and provide the correct
 ``file_field_name`` in your subclass; you won't have to copy any of the actual logic.
 
+Integrating the editor in another UI
+------------------------------------
+
+``@@collabora-edit`` renders the editor iframe ``#cool-iframe``. The iframe
+carries what ``edit.js`` needs as its own attributes, so an integration can
+inject just that element into its own page, as Quaive does:
+
+- ``collabora_server_url``: the target origin for ``postMessage`` calls.
+- ``plone_version``: the host UI, from the view property of that name.
+  ``edit.js`` sizes the iframe to the viewport from it: ``quaive`` uses the
+  Quaive offset, any other value the Plone 6 offset. The value is also a CSS
+  class on the two sections of the page, for host-specific styles.
+
+To support another host UI, override ``plone_version`` in a subclass of
+``CollaboraEditView``, register it for ``collabora-edit`` on your browser layer,
+and load ``++resource++collective.collabora/edit.js`` on the pages that show
+the iframe. The action buttons call the global ``collabora_action_*`` functions
+of ``edit.js``.
+
 Building, testing and CI
 ------------------------
 
