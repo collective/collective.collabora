@@ -14,7 +14,7 @@ class ICollectiveCollaboraLayer(IDefaultBrowserLayer):
 
 
 class IStoredFile(Interface):
-    """Support a minimal set of File accessors across AT and DX.
+    """Support a minimal set of File accessors on Dexterity content.
 
     This provides a subset of DX INamedBlobFile.
 
@@ -35,7 +35,3 @@ class IStoredFile(Interface):
 
     def getSize():
         """file size"""
-
-
-class IDummy(Interface):
-    """Disables adaptation for components that are not installed"""

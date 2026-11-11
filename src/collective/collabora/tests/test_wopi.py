@@ -11,9 +11,7 @@ from future import standard_library
 
 standard_library.install_aliases()
 
-from collective.collabora import utils
 from collective.collabora.interfaces import IStoredFile
-from collective.collabora.testing import AT_COLLECTIVE_COLLABORA_INTEGRATION_TESTING
 from collective.collabora.testing import COLLECTIVE_COLLABORA_INTEGRATION_TESTING
 from plone import api
 from plone.app.testing import logout
@@ -238,29 +236,15 @@ class TestCoolWOPI(unittest.TestCase):
         event_handler = mock.MagicMock()
         gsm = zope.component.getGlobalSiteManager()
 
-        if self.layer.IS_DX:
-            gsm.registerHandler(
+        gsm.registerHandler(
+            event_handler, (IFile, zope.lifecycleevent.IObjectModifiedEvent)
+        )
+        try:
+            payload = view.wopi_put_file()
+        finally:
+            gsm.unregisterHandler(
                 event_handler, (IFile, zope.lifecycleevent.IObjectModifiedEvent)
             )
-            try:
-                payload = view.wopi_put_file()
-            finally:
-                gsm.unregisterHandler(
-                    event_handler, (IFile, zope.lifecycleevent.IObjectModifiedEvent)
-                )
-
-        else:
-            from Products.ATContentTypes.interfaces import IATFile
-
-            gsm.registerHandler(
-                event_handler, (IATFile, zope.lifecycleevent.IObjectModifiedEvent)
-            )
-            try:
-                payload = view.wopi_put_file()
-            finally:
-                gsm.unregisterHandler(
-                    event_handler, (IATFile, zope.lifecycleevent.IObjectModifiedEvent)
-                )
 
         event_handler.assert_called_once()
         self.assertIsNotNone(event_handler.call_args)
@@ -309,10 +293,3 @@ class TestCoolWOPI(unittest.TestCase):
         view.wopi_put_file = mock.MagicMock()
         view()
         view.wopi_put_file.assert_called()
-
-
-@unittest.skipUnless(utils.IS_PLONE4, "Archetypes tested only in Plone4")
-class TestCoolWopiAT(TestCoolWOPI):
-    """Test user interface view against Archetypes."""
-
-    layer = AT_COLLECTIVE_COLLABORA_INTEGRATION_TESTING

@@ -2,11 +2,7 @@ from future import standard_library
 
 standard_library.install_aliases()
 
-from collective.collabora import utils
 from collective.collabora.interfaces import IStoredFile
-from collective.collabora.testing import (  # noqa: E501
-    AT_COLLECTIVE_COLLABORA_INTEGRATION_TESTING,
-)
 from collective.collabora.testing import COLLECTIVE_COLLABORA_INTEGRATION_TESTING
 
 import unittest
@@ -68,24 +64,3 @@ class TestDXStoredFile(unittest.TestCase):
 
         with self.assertRaises(AttributeError):
             MyDXStoredFile(self.portal.testfile)
-
-
-@unittest.skipUnless(utils.IS_PLONE4, "Archetypes tested only in Plone4")
-class TestATStoredFile(TestDXStoredFile):
-
-    layer = AT_COLLECTIVE_COLLABORA_INTEGRATION_TESTING
-
-    def test_set_data(self):
-        self.stored_file.data = b"1234"
-        self.assertEqual(self.portal.testfile.data, b"1234")
-
-    def test_invalid_file_field_name(self):
-        """Carefully mock that outside of tests the file field is set
-        as a class variable before __init__ is run"""
-        from collective.collabora.adapters import ATStoredFile
-
-        class MyATStoredFile(ATStoredFile):
-            file_field_name = "invalid"
-
-        with self.assertRaises(AttributeError):
-            MyATStoredFile(self.portal.testfile)
