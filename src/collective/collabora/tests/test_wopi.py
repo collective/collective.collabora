@@ -151,6 +151,49 @@ class TestCoolWOPI(unittest.TestCase):
         self.assertEqual(IStoredFile(self.portal.testfile).data, old_data)
         self.assertFalse(IDisableCSRFProtection.providedBy(request))
 
+    def test_wopi_put_file_outdated_collabora_timestamp(self):
+        """Collabora sends UTC timestamps with a Z suffix and microseconds."""
+        new_data_io = io.BytesIO(b"Really Fake Byte Payload")
+        old_data = IStoredFile(self.portal.testfile).data
+
+        request = self.request.clone()
+        request._file = new_data_io
+
+        user_version_timestamp = pydt(self.portal.testfile.modified()).astimezone(
+            datetime.UTC
+        ) - datetime.timedelta(minutes=2)
+        request.set(
+            "HTTP_X_COOL_WOPI_TIMESTAMP",
+            user_version_timestamp.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+        )
+        request.set("HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER", "true")
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
+        payload = view.wopi_put_file()
+        self.assertDictEqual(json.loads(payload), {"COOLStatusCode": 1010})
+        self.assertEqual(view.request.response.status, 409)
+        self.assertEqual(IStoredFile(self.portal.testfile).data, old_data)
+
+    def test_wopi_put_file_current_collabora_timestamp(self):
+        new_data_io = io.BytesIO(b"Really Fake Byte Payload")
+        new_data = new_data_io.read()
+        new_data_io.seek(0)
+
+        request = self.request.clone()
+        request._file = new_data_io
+
+        user_version_timestamp = pydt(self.portal.testfile.modified()).astimezone(
+            datetime.UTC
+        ) + datetime.timedelta(microseconds=1)
+        request.set(
+            "HTTP_X_COOL_WOPI_TIMESTAMP",
+            user_version_timestamp.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+        )
+        request.set("HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER", "true")
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
+        view.wopi_put_file()
+        self.assertEqual(view.request.response.status, 200)
+        self.assertEqual(IStoredFile(self.portal.testfile).data, new_data)
+
     def test_wopi_put_file_write_member(self):
         new_data_io = io.BytesIO(b"Really Fake Byte Payload")
         new_data = new_data_io.read()

@@ -12,8 +12,7 @@ from zope.interface import implementer
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.publisher.interfaces import IPublishTraverse
 
-# datetime.datetime.fromisotime() is not available in py27
-import dateutil.parser
+import datetime
 import json
 
 logger = getLogger(__name__)
@@ -133,7 +132,7 @@ class CollaboraWOPIView(BrowserView):
 
         user_timestamp = self.request.get("HTTP_X_COOL_WOPI_TIMESTAMP", None)
         if user_timestamp:
-            user_dt = dateutil.parser.isoparse(user_timestamp)
+            user_dt = datetime.datetime.fromisoformat(user_timestamp)
             if pydt(self.context.modified()) > user_dt:
                 # Document modified by another user. Return and let LibreOffice /
                 # Collabora ask the user to overwrite or not. If called again

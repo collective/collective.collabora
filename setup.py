@@ -52,7 +52,6 @@ setup(
         "plone.app.contenttypes",
         "plone.protect",
         "plone.restapi",
-        "python-dateutil",
     ],
     extras_require={
         "test": [
