@@ -1,3 +1,0 @@
--c constraints_plone43.txt
-setuptools
-zc.buildout

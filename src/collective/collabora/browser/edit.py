@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from builtins import dict
-from builtins import filter
-from builtins import next
-from builtins import super
 from future import standard_library
 from future.utils import bytes_to_native_str as n
-
 
 standard_library.install_aliases()
 
@@ -25,7 +17,6 @@ from urllib.parse import urlencode
 from urllib.parse import urlparse
 
 import requests
-
 
 logger = getLogger(__name__)
 
@@ -239,7 +230,7 @@ class CollaboraEditView(FileView):
 
         uuid = IUUID(self.context)
         args = dict(
-            WOPISrc="%s/@@collabora-wopi/files/%s" % (document_url, uuid),
+            WOPISrc=f"{document_url}/@@collabora-wopi/files/{uuid}",
             access_token=self.jwt_token,  # login credentials
             # https://sdk.collaboraonline.com/docs/theming.html
             ui_defaults=api.portal.get_registry_record(
@@ -249,7 +240,7 @@ class CollaboraEditView(FileView):
             lang=self.ui_language,
         )
         quoted_args = urlencode(args)
-        return "%s%s" % (self.editor_url, quoted_args)
+        return f"{self.editor_url}{quoted_args}"
 
     @property
     @memoize
