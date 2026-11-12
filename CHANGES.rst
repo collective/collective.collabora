@@ -3,6 +3,43 @@ Changelog
 
 .. towncrier release notes start
 
+2.0.0 (2026-11-12)
+------------------
+
+Breaking changes:
+
+
+- Drop Archetypes support: the ``ATStoredFile`` adapter, the views for ``IATFile`` and ``IDummy``.
+  [gyst]
+- Drop Plone 4/5 and Python 2.7 compatibility code, and the ``future`` and ``python-dateutil`` dependencies.
+  Removed from ``collective.collabora.utils``: ``IS_PLONE4``, ``IS_PLONE5``, ``IS_PLONE6``, ``PLONE_VERSION``,
+  ``disallow`` and ``human_readable_size``; use ``plone.base.utils.human_readable_size`` instead.
+  [gyst]
+- Replace ``pkg_resources`` namespace with PEP 420 native namespace.
+  Support only Plone 6.2 and Python 3.11+.
+
+
+Bug fixes:
+
+
+- Close the ``@import url(...)`` of ``edit.css``, drop the Plone 4/5 iframe offsets and CSS rules,
+  and register the Collabora message listener once when ``edit.js`` loads twice.
+  [gyst]
+- Document how to let Collabora accept more than one Plone site, and make the example
+  ``coolwsd.xml`` trust its development site explicitly instead of the first site that connects.
+  [gyst]
+- Issue proper log level when encountering an unsupported mimetype.
+  [gyst]
+
+
+Internal:
+
+
+- Update configuration files.
+  [plone devs]
+- Use ``logger.warning`` instead of the deprecated ``logger.warn``.
+  [gyst]
+
 
 1.x series
 ==========

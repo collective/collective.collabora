@@ -1,4 +1,0 @@
-Drop Plone 4/5 and Python 2.7 compatibility code, and the ``future`` and ``python-dateutil`` dependencies.
-Removed from ``collective.collabora.utils``: ``IS_PLONE4``, ``IS_PLONE5``, ``IS_PLONE6``, ``PLONE_VERSION``,
-``disallow`` and ``human_readable_size``; use ``plone.base.utils.human_readable_size`` instead.
-[gyst]
