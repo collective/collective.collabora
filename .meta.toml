@@ -23,12 +23,17 @@ check_manifest_ignores = """
 """
 dependencies_ignores = """
 [
-    \"Products.ATContentTypes\", \"Products.CMFPlone\", \"Products.Five\",
-    \"Products.GenericSetup\", \"Products.PluggableAuthService\", \"StringIO\",
+    \"Products.CMFPlone\", \"Products.Five\",
+    \"Products.GenericSetup\", \"Products.PluggableAuthService\",
     \"lxml\", \"pkg_resources\", \"plone.base\", \"plone.browserlayer\",
     \"plone.event\", \"plone.memoize\", \"plone.namedfile\", \"plone.uuid\",
     \"requests\", \"zope.component\", \"zope.configuration\",
     \"zope.event\", \"zope.i18nmessageid\", \"zope.interface\",
     \"zope.lifecycleevent\", \"zope.publisher\",
 ]
+"""
+
+[gitignore]
+extra_lines = """
+.venv
 """

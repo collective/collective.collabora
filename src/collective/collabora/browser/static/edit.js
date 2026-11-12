@@ -55,14 +55,11 @@ function resize_iframe() {
     var plone_version = iframe.getAttribute("plone_version");
 
     console.log("Resizing iframe on document loaded");
+    // plone_version names the host UI; anything but Quaive gets the Plone 6 offset.
     if (plone_version == "quaive") {
         var offset = iframe.offsetTop + 80;
-    } else if (plone_version == "plone6") {
-        var offset = iframe.offsetTop + 5;
-    } else if (plone_version == "plone5") {
-        var offset = window.document.getElementById("main-container").offsetTop + 55;
     } else {
-        var offset = window.document.getElementById("content").offsetTop + 210;
+        var offset = iframe.offsetTop + 5;
     }
     iframe.style.height = 'calc(100vh - ' + offset  + 'px)';
     console.log("Resized cool-iframe");
@@ -128,6 +125,11 @@ function handlePostMessage(e) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  window.addEventListener('message', handlePostMessage, false);
-});
+// Quaive loads this script on every page, and @@collabora-edit loads it again:
+// register the listener once.
+if (!window.collective_collabora_listening) {
+  window.collective_collabora_listening = true;
+  document.addEventListener("DOMContentLoaded", () => {
+    window.addEventListener('message', handlePostMessage, false);
+  });
+}

@@ -1,7 +1,3 @@
-from future import standard_library
-
-standard_library.install_aliases()
-
 from collective.collabora.adapters import IStoredFile
 from logging import getLogger
 from plone import api
@@ -16,8 +12,7 @@ from zope.interface import implementer
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.publisher.interfaces import IPublishTraverse
 
-# datetime.datetime.fromisotime() is not available in py27
-import dateutil.parser
+import datetime
 import json
 
 logger = getLogger(__name__)
@@ -28,8 +23,7 @@ class CollaboraWOPIView(BrowserView):
     """Callback view used by Collabora Online to talk to Plone"""
 
     def __init__(self, context, request):
-        # newsuper throws an infinite loop in py27
-        super(BrowserView, self).__init__(context, request)
+        super().__init__(context, request)
         self.wopi_mode = None
         self.stored_file = IStoredFile(self.context)
 
@@ -138,7 +132,7 @@ class CollaboraWOPIView(BrowserView):
 
         user_timestamp = self.request.get("HTTP_X_COOL_WOPI_TIMESTAMP", None)
         if user_timestamp:
-            user_dt = dateutil.parser.isoparse(user_timestamp)
+            user_dt = datetime.datetime.fromisoformat(user_timestamp)
             if pydt(self.context.modified()) > user_dt:
                 # Document modified by another user. Return and let LibreOffice /
                 # Collabora ask the user to overwrite or not. If called again
@@ -191,7 +185,7 @@ class CollaboraWOPIView(BrowserView):
             self.request.response.setStatus(200)
             return json.dumps(self.file_info)
 
-        logger.warn(
+        logger.warning(
             "Unhandled wopi_put_file request: %r",
             {k: v for k, v in self.request.items() if "WOPI" in k},
         )

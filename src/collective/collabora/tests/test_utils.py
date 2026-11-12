@@ -1,7 +1,3 @@
-from future import standard_library
-
-standard_library.install_aliases()
-
 from collective.collabora import utils
 from collective.collabora.testing import COLLECTIVE_COLLABORA_INTEGRATION_TESTING
 from collective.collabora.testing import temporary_registry_record
@@ -9,27 +5,6 @@ from plone import api
 from unittest import mock
 
 import unittest
-
-
-class TestUtilsUnit(unittest.TestCase):
-    def test_human_readable_size(self):
-        self.assertEqual(utils.human_readable_size(None), "0 KB")
-        self.assertEqual(utils.human_readable_size(""), "0 KB")
-        self.assertEqual(utils.human_readable_size("foo"), "foo")
-        self.assertEqual(utils.human_readable_size(0), "0 KB")
-        self.assertEqual(utils.human_readable_size(540), "1 KB")
-        self.assertEqual(utils.human_readable_size(600 * 1024), "600.0 KB")
-        self.assertEqual(utils.human_readable_size(1635 * 1024), "1.6 MB")
-        self.assertEqual(utils.human_readable_size(1655 * 1024), "1.6 MB")
-        self.assertEqual(utils.human_readable_size(1765 * 1024 * 1024), "1.7 GB")
-
-    def test_disallow(self):
-        with self.assertRaises(RuntimeError):
-            utils.disallow()
-        with self.assertRaises(RuntimeError):
-            utils.disallow("foo")
-        with self.assertRaises(RuntimeError):
-            utils.disallow(foo="bar")
 
 
 class TestUtilsIntegration(unittest.TestCase):

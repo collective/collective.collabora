@@ -7,13 +7,7 @@ ZODB.POSException.ConnectionStateError. Let's simply trust the plone.restapi JWT
 token authentication, and verify permission checks by directly logging in here.
 """
 
-from future import standard_library
-
-standard_library.install_aliases()
-
-from collective.collabora import utils
 from collective.collabora.interfaces import IStoredFile
-from collective.collabora.testing import AT_COLLECTIVE_COLLABORA_INTEGRATION_TESTING
 from collective.collabora.testing import COLLECTIVE_COLLABORA_INTEGRATION_TESTING
 from plone import api
 from plone.app.testing import logout
@@ -157,6 +151,49 @@ class TestCoolWOPI(unittest.TestCase):
         self.assertEqual(IStoredFile(self.portal.testfile).data, old_data)
         self.assertFalse(IDisableCSRFProtection.providedBy(request))
 
+    def test_wopi_put_file_outdated_collabora_timestamp(self):
+        """Collabora sends UTC timestamps with a Z suffix and microseconds."""
+        new_data_io = io.BytesIO(b"Really Fake Byte Payload")
+        old_data = IStoredFile(self.portal.testfile).data
+
+        request = self.request.clone()
+        request._file = new_data_io
+
+        user_version_timestamp = pydt(self.portal.testfile.modified()).astimezone(
+            datetime.UTC
+        ) - datetime.timedelta(minutes=2)
+        request.set(
+            "HTTP_X_COOL_WOPI_TIMESTAMP",
+            user_version_timestamp.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+        )
+        request.set("HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER", "true")
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
+        payload = view.wopi_put_file()
+        self.assertDictEqual(json.loads(payload), {"COOLStatusCode": 1010})
+        self.assertEqual(view.request.response.status, 409)
+        self.assertEqual(IStoredFile(self.portal.testfile).data, old_data)
+
+    def test_wopi_put_file_current_collabora_timestamp(self):
+        new_data_io = io.BytesIO(b"Really Fake Byte Payload")
+        new_data = new_data_io.read()
+        new_data_io.seek(0)
+
+        request = self.request.clone()
+        request._file = new_data_io
+
+        user_version_timestamp = pydt(self.portal.testfile.modified()).astimezone(
+            datetime.UTC
+        ) + datetime.timedelta(microseconds=1)
+        request.set(
+            "HTTP_X_COOL_WOPI_TIMESTAMP",
+            user_version_timestamp.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+        )
+        request.set("HTTP_X_COOL_WOPI_ISMODIFIEDBYUSER", "true")
+        view = api.content.get_view("collabora-wopi", self.portal.testfile, request)
+        view.wopi_put_file()
+        self.assertEqual(view.request.response.status, 200)
+        self.assertEqual(IStoredFile(self.portal.testfile).data, new_data)
+
     def test_wopi_put_file_write_member(self):
         new_data_io = io.BytesIO(b"Really Fake Byte Payload")
         new_data = new_data_io.read()
@@ -238,29 +275,15 @@ class TestCoolWOPI(unittest.TestCase):
         event_handler = mock.MagicMock()
         gsm = zope.component.getGlobalSiteManager()
 
-        if self.layer.IS_DX:
-            gsm.registerHandler(
+        gsm.registerHandler(
+            event_handler, (IFile, zope.lifecycleevent.IObjectModifiedEvent)
+        )
+        try:
+            payload = view.wopi_put_file()
+        finally:
+            gsm.unregisterHandler(
                 event_handler, (IFile, zope.lifecycleevent.IObjectModifiedEvent)
             )
-            try:
-                payload = view.wopi_put_file()
-            finally:
-                gsm.unregisterHandler(
-                    event_handler, (IFile, zope.lifecycleevent.IObjectModifiedEvent)
-                )
-
-        else:
-            from Products.ATContentTypes.interfaces import IATFile
-
-            gsm.registerHandler(
-                event_handler, (IATFile, zope.lifecycleevent.IObjectModifiedEvent)
-            )
-            try:
-                payload = view.wopi_put_file()
-            finally:
-                gsm.unregisterHandler(
-                    event_handler, (IATFile, zope.lifecycleevent.IObjectModifiedEvent)
-                )
 
         event_handler.assert_called_once()
         self.assertIsNotNone(event_handler.call_args)
@@ -309,10 +332,3 @@ class TestCoolWOPI(unittest.TestCase):
         view.wopi_put_file = mock.MagicMock()
         view()
         view.wopi_put_file.assert_called()
-
-
-@unittest.skipUnless(utils.IS_PLONE4, "Archetypes tested only in Plone4")
-class TestCoolWopiAT(TestCoolWOPI):
-    """Test user interface view against Archetypes."""
-
-    layer = AT_COLLECTIVE_COLLABORA_INTEGRATION_TESTING

@@ -8,14 +8,13 @@ For full SDK integration documentation docs, see:
 Development setup
 -----------------
 
-A working development setup is provided with this package. To run it::
+A Collabora server for development is provided with this package. To run it::
 
   docker compose -f docker/docker-compose.yaml create --remove-orphans
   docker compose -f docker/docker-compose.yaml start
-  make start61
 
-This will start Collabora and build and start Plone. You will need to
-define a host alias ``host.docker.internal``, see below.
+Then run a Plone 6.2 site with this package installed in development mode.
+You will need to define a host alias ``host.docker.internal``, see below.
 
 The ``collective.collabora:default`` profile configures the registry record
 ``collective.collabora.collabora_server_url`` to point at the :ref:`Collabora server URL`.
@@ -61,35 +60,66 @@ This is intended to make it easier to support objects whose file field has
 a name which is different from ``file``: just subclass and provide the correct
 ``file_field_name`` in your subclass; you won't have to copy any of the actual logic.
 
+Integrating the editor in another UI
+------------------------------------
+
+``@@collabora-edit`` renders the editor iframe ``#cool-iframe``. The iframe
+carries what ``edit.js`` needs as its own attributes, so an integration can
+inject just that element into its own page, as Quaive does:
+
+- ``collabora_server_url``: the target origin for ``postMessage`` calls.
+- ``plone_version``: the host UI, from the view property of that name.
+  ``edit.js`` sizes the iframe to the viewport from it: ``quaive`` uses the
+  Quaive offset, any other value the Plone 6 offset. The value is also a CSS
+  class on the two sections of the page, for host-specific styles.
+
+To support another host UI, override ``plone_version`` in a subclass of
+``CollaboraEditView``, register it for ``collabora-edit`` on your browser layer,
+and load ``++resource++collective.collabora/edit.js`` on the pages that show
+the iframe. The action buttons call the global ``collabora_action_*`` functions
+of ``edit.js``.
+
 Building, testing and CI
 ------------------------
 
-This package uses ``tox`` to drive buildout and test runners.
+This package is configured with `plone.meta <https://github.com/plone/meta>`_.
+``tox`` drives the linters and the test runners.
 
-See the provided ``Makefile`` for some usage pointers.
-To build and test all environments::
+Version 2.x supports Plone 6.2 on Python 3.11 to 3.14.
+For older Plone versions, Archetypes or Python 2.7, use the 1.x series.
 
-  make all
+To run the whole matrix in parallel, with ``tox-uv`` fetching any missing
+Python version::
 
-To run a single development server::
+  uvx --with tox-uv tox -p auto -o
 
-  make start61
+Plain ``tox`` works too, if Python 3.11 to 3.14 are installed.
 
-To run all tests for only that environment::
+To list the environments::
 
-  tox -e py312-Plone61
+  tox -l
 
-To run a single test in a single environment and spawn a debugger::
+To run all tests on one Python version::
 
-  tox -e py312-Plone61 -- -t your_test_substring -D -x
+  tox -e py312-plone62
 
-To run all linters in parallel::
+To run a single test and spawn a debugger::
 
-  tox -p -f lint
+  tox -e py312-plone62 -- -t your_test_substring -D -x
+
+To run the linters, and to reformat the code::
+
+  tox -e lint
+  tox -e format
+
+To check that the package declares all its dependencies::
+
+  tox -e dependencies
 
 Github CI testing is configured in::
 
-  .github/workflows/plone-package.yml
+  .github/workflows/meta.yml
+  .github/workflows/test-matrix.yml
 
 For the tox CLI documentation, see:
 
@@ -104,12 +134,7 @@ Provide a full description of the problem you're encountering, including all nec
 To fix an issue, open a PR.
 Please make sure all tests pass locally::
 
-  tox -p
+  uvx --with tox-uv tox -p auto -o
 
-
-Running the tests locally ensures, that your changes do not break backward compatibility
-with older Plone versions running on Python 2.7.
-
-.. note::
-
-   The Github actions CI runs only Python 3.x tests. It does not run Python 2.7 tests.
+Add a change log entry as a file in ``news/``, see
+`towncrier <https://towncrier.readthedocs.io/>`_.

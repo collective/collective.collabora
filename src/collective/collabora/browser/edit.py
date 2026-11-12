@@ -1,8 +1,3 @@
-from future import standard_library
-from future.utils import bytes_to_native_str as n
-
-standard_library.install_aliases()
-
 from collective.collabora import _
 from collective.collabora import utils
 from collective.collabora.adapters import IStoredFile
@@ -10,6 +5,7 @@ from logging import getLogger
 from lxml import etree
 from plone import api
 from plone.app.contenttypes.browser.file import FileView
+from plone.base.utils import human_readable_size
 from plone.memoize.view import memoize
 from plone.uuid.interfaces import IUUID
 from Products.PluggableAuthService.interfaces.plugins import IAuthenticationPlugin
@@ -29,8 +25,7 @@ class CollaboraEditView(FileView):
     """User interface for interacting with Collabora Online."""
 
     def __init__(self, context, request):
-        # newsuper throws an infinite loop in py27
-        super(FileView, self).__init__(context, request)
+        super().__init__(context, request)
         self.error_msg = None
         self.stored_file = IStoredFile(context)
 
@@ -38,17 +33,17 @@ class CollaboraEditView(FileView):
         if not all([self.plone_server_url, self.collabora_server_url, self.wopi_url]):
             # accessing those detects errors and sets self.error_msg
             pass
-        return super(FileView, self).__call__()
+        return super().__call__()
 
     def human_readable_size(self):
-        """Use our own reimplementation, against our own adapter"""
-        return utils.human_readable_size(self.stored_file.getSize())
+        """The file size, read through our own adapter"""
+        return human_readable_size(self.stored_file.getSize())
 
     @property
     @memoize
     def plone_version(self):
-        """Get the major version we're running in."""
-        return "plone%i" % utils.PLONE_VERSION
+        """The host UI, as a CSS class and iframe attribute."""
+        return "plone6"
 
     @property
     @memoize
@@ -80,7 +75,7 @@ class CollaboraEditView(FileView):
     def plone_server_url(self):
         """The base URL for Collabora to reach Plone on"""
         plone_server_url = api.portal.get_registry_record(
-            n(b"collective.collabora.plone_server_url"), default=None
+            "collective.collabora.plone_server_url", default=None
         )
         if not plone_server_url:
             plone_server_url = self.portal_url
@@ -104,7 +99,7 @@ class CollaboraEditView(FileView):
     @memoize
     def collabora_server_url(self):
         collabora_server_url = api.portal.get_registry_record(
-            n(b"collective.collabora.collabora_server_url"), default=None
+            "collective.collabora.collabora_server_url", default=None
         )
         if not collabora_server_url:
             self.error_msg = _(
@@ -234,7 +229,7 @@ class CollaboraEditView(FileView):
             access_token=self.jwt_token,  # login credentials
             # https://sdk.collaboraonline.com/docs/theming.html
             ui_defaults=api.portal.get_registry_record(
-                n(b"collective.collabora.ui_defaults"),
+                "collective.collabora.ui_defaults",
                 default="UIMode=compact;TextSidebar=false;TextRuler=false;PresentationStatusbar=false;SpreadsheetSidebar=false;",  # noqa: E501
             ),
             lang=self.ui_language,
@@ -256,5 +251,6 @@ class CollaboraEditView(FileView):
     @property
     def css_import(self):
         return (
-            "@import url(%s/++resource++collective.collabora/edit.css" % self.portal_url
+            "@import url(%s/++resource++collective.collabora/edit.css);"
+            % self.portal_url
         )

@@ -1,9 +1,5 @@
 """Module where all interfaces, events and exceptions live."""
 
-from future import standard_library
-
-standard_library.install_aliases()
-
 from zope.interface import Attribute
 from zope.interface import Interface
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
@@ -14,7 +10,7 @@ class ICollectiveCollaboraLayer(IDefaultBrowserLayer):
 
 
 class IStoredFile(Interface):
-    """Support a minimal set of File accessors across AT and DX.
+    """Support a minimal set of File accessors on Dexterity content.
 
     This provides a subset of DX INamedBlobFile.
 
@@ -35,7 +31,3 @@ class IStoredFile(Interface):
 
     def getSize():
         """file size"""
-
-
-class IDummy(Interface):
-    """Disables adaptation for components that are not installed"""

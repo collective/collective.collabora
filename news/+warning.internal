@@ -1,0 +1,2 @@
+Use ``logger.warning`` instead of the deprecated ``logger.warn``.
+[gyst]
